@@ -1,0 +1,26 @@
+'use client'
+
+import { useTransition } from 'react'
+import { setLocale } from '@/lib/actions/locale'
+import { useI18n } from '@/components/providers/I18nProvider'
+import type { Locale } from '@/lib/i18n'
+
+export default function LanguageToggle() {
+  const { locale, dict } = useI18n()
+  const [isPending, startTransition] = useTransition()
+
+  function toggle() {
+    const next: Locale = locale === 'en' ? 'es' : 'en'
+    startTransition(() => setLocale(next))
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={isPending}
+      className="w-8 h-8 flex items-center justify-center rounded-sm font-mono text-[10px] font-bold tracking-wider text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-40"
+    >
+      {locale === 'en' ? dict.lang.es : dict.lang.en}
+    </button>
+  )
+}

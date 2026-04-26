@@ -1,4 +1,4 @@
-# prueba-claude
+# Rankingboard
 
 A Next.js starter app scaffolded with TypeScript, Tailwind CSS, and ESLint.
 

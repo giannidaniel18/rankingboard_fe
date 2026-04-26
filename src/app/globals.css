@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* Class-based dark mode for next-themes */
+@variant dark (&:where(.dark, .dark *));
+
+/* ─── Surface tokens ─────────────────────────────────────────────────────── */
+:root {
+  --rb-canvas:   #F0F4F8;
+  --rb-surface:  #FFFFFF;
+  --rb-elevated: #F8FAFC;
+
+  /* Light-mode text scale */
+  --rb-text-primary:   #0F172A;   /* ~18:1 on white */
+  --rb-text-secondary: #334155;   /* ~9:1  on white */
+  --rb-text-caption:   #64748B;   /* ~4.6:1 on white — AA */
+}
+
+.dark {
+  --rb-canvas:   #080C12;
+  --rb-surface:  #0E1520;
+  --rb-elevated: #141E2E;
+
+  /*
+   * Dark-mode text scale — all ratios against #080C12
+   * neutral-100 #F1F5F9 → ~18:1  AAA  primary content
+   * neutral-300 #CBD5E1 → ~12:1  AAA  secondary / nav links
+   * neutral-400 #94A3B8 →  ~8:1  AAA  captions / metadata / labels
+   * neutral-600 #475569 →  ~2.8:1      structural-only (decorators, "—")
+   */
+  --rb-text-primary:   #F1F5F9;
+  --rb-text-secondary: #CBD5E1;
+  --rb-text-caption:   #94A3B8;
+}
+
+/* ─── Tailwind v4 theme tokens ───────────────────────────────────────────── */
+@theme inline {
+  /* Surfaces (theme-aware) */
+  --color-background: var(--rb-canvas);
+  --color-foreground: var(--rb-text-primary);
+  --color-canvas:     var(--rb-canvas);
+  --color-surface:    var(--rb-surface);
+  --color-elevated:   var(--rb-elevated);
+
+  /* Typography scale tokens — use as text-tx-primary, text-tx-secondary, etc. */
+  --color-tx-primary:   var(--rb-text-primary);
+  --color-tx-secondary: var(--rb-text-secondary);
+  --color-tx-caption:   var(--rb-text-caption);
+
+  /* Accent palette (static) */
+  --color-gold:  #F59E0B;
+  --color-live:  #22D3EE;
+  --color-win:   #34D399;
+  --color-loss:  #F87171;
+
+  /* Fonts */
+  --font-sans:    var(--font-dm-sans);
+  --font-mono:    var(--font-jetbrains);
+  --font-heading: var(--font-syne);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+body {
+  background: var(--rb-canvas);
+  color: var(--rb-text-primary);
+  font-family: var(--font-dm-sans, system-ui, sans-serif);
+}
+
+/* Hide scrollbar on mobile group tabs */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

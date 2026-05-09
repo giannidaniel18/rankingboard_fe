@@ -2,10 +2,12 @@
 
 import { useState, useTransition, useRef, useEffect } from 'react'
 import { searchUsers, sendFriendRequest } from '@/lib/actions/friends'
-import type { User, Friendship } from '@/lib/types'
+import type { User, FriendRequestWithUser } from '@/lib/types'
 
 interface UserSearchProps {
   currentUserId: string
+  sentRequests: FriendRequestWithUser[]
+  onRequestSent: (req: FriendRequestWithUser) => void
 }
 
 const AVATAR_PALETTE = [
@@ -35,10 +37,9 @@ function WinRateBar({ rate }: { rate: number }) {
   )
 }
 
-export function UserSearch({ currentUserId }: UserSearchProps) {
+export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserSearchProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<User[]>([])
-  const [requests, setRequests] = useState<Record<string, Friendship>>({})
   const [isPending, startTransition] = useTransition()
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -64,17 +65,14 @@ export function UserSearch({ currentUserId }: UserSearchProps) {
     }, 200)
   }
 
-  const handleAddFriend = (userId: string) => {
+  const handleAddFriend = (user: User) => {
     startTransition(async () => {
-      const friendship = await sendFriendRequest(currentUserId, userId)
-      setRequests(prev => ({ ...prev, [userId]: friendship }))
+      const friendship = await sendFriendRequest(currentUserId, user.id)
+      onRequestSent({
+        id: friendship.id,
+        user: { id: user.id, name: user.name, email: user.email, alias: user.alias },
+      })
     })
-  }
-
-  const requestState = (userId: string): 'idle' | 'pending' | 'accepted' => {
-    const req = requests[userId]
-    if (!req) return 'idle'
-    return req.status
   }
 
   return (
@@ -97,7 +95,7 @@ export function UserSearch({ currentUserId }: UserSearchProps) {
           type="text"
           value={query}
           onChange={e => handleChange(e.target.value)}
-          placeholder="Search players…"
+          placeholder="Search by alias (e.g. #alice)…"
           className="
             w-full pl-9 pr-4 py-2.5
             bg-neutral-900 dark:bg-neutral-900
@@ -121,7 +119,7 @@ export function UserSearch({ currentUserId }: UserSearchProps) {
       {results.length > 0 && (
         <ul className="mt-2 divide-y divide-neutral-800 rounded-lg border border-neutral-800 bg-neutral-900 overflow-hidden">
           {results.map(user => {
-            const state = requestState(user.id)
+            const alreadySent = sentRequests.some(r => r.user.id === user.id)
             const initials = user.name.slice(0, 2).toUpperCase()
 
             return (
@@ -129,20 +127,17 @@ export function UserSearch({ currentUserId }: UserSearchProps) {
                 key={user.id}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-800/60 transition-colors duration-150"
               >
-                {/* Avatar */}
                 <div
-                  className={`
-                    flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center
-                    text-xs font-bold text-white select-none
-                    ${avatarColor(user.name)}
-                  `}
+                  className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white select-none ${avatarColor(user.name)}`}
                 >
                   {initials}
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-neutral-100 truncate">{user.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-neutral-100 truncate">{user.name}</p>
+                    <span className="text-xs font-mono text-amber-400/70 truncate">{user.alias}</span>
+                  </div>
                   <div className="flex items-center gap-3 mt-0.5">
                     <span className="text-xs font-mono text-amber-400">
                       {user.profile.stats.rankingPoints} pts
@@ -151,23 +146,19 @@ export function UserSearch({ currentUserId }: UserSearchProps) {
                   </div>
                 </div>
 
-                {/* Action */}
-                <button
-                  onClick={() => state === 'idle' && handleAddFriend(user.id)}
-                  disabled={state !== 'idle' || isPending}
-                  className={`
-                    flex-shrink-0 px-3 py-1 rounded-md text-xs font-semibold
-                    border transition-all duration-200
-                    ${state === 'idle'
-                      ? 'border-cyan-600 text-cyan-400 hover:bg-cyan-500/10 cursor-pointer'
-                      : state === 'pending'
-                        ? 'border-amber-700 text-amber-500 cursor-default'
-                        : 'border-emerald-700 text-emerald-500 cursor-default'
-                    }
-                  `}
-                >
-                  {state === 'idle' ? '+ Add' : state === 'pending' ? 'Pending' : 'Friends'}
-                </button>
+                {alreadySent ? (
+                  <span className="flex-shrink-0 text-[10px] font-mono text-amber-600 border border-amber-600/30 dark:border-amber-900/60 px-2 py-0.5 rounded-sm">
+                    Pending
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleAddFriend(user)}
+                    disabled={isPending}
+                    className="flex-shrink-0 px-3 py-1 rounded-md text-xs font-semibold border border-cyan-600 text-cyan-400 hover:bg-cyan-500/10 transition-all duration-200 disabled:opacity-50"
+                  >
+                    + Add
+                  </button>
+                )}
               </li>
             )
           })}

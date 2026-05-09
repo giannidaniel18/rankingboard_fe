@@ -37,6 +37,7 @@ export interface User {
   id: string
   email: string
   name: string
+  alias: string
   image?: string
   bio?: string
   friends: string[]
@@ -73,4 +74,16 @@ export interface Match {
   winner_id: string
   date: Date
   comments?: string
+}
+
+export interface FriendRequestWithUser {
+  id: string
+  user: { id: string; name: string; email: string; alias: string }
+}
+
+export interface FriendUser {
+  id: string
+  name: string
+  email: string
+  alias: string
 }

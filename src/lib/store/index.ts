@@ -1,4 +1,10 @@
-import type { User, Group, Game, Match, Friendship } from '@/lib/types'
+import type { User, Group, Game, Match, Friendship, FriendRequestWithUser, FriendUser } from '@/lib/types'
+
+export function generateAlias(name: string): string {
+  const base = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '') || 'user'
+  const digits = Math.floor(1000 + Math.random() * 9000)
+  return `#${base}_${digits}`
+}
 
 export function makeStats(
   totalMatches = 0,
@@ -24,6 +30,7 @@ const SEED_USERS: User[] = [
     id: 'u1',
     email: 'alice@example.com',
     name: 'Alice',
+    alias: '#alice_pool',
     friends: [],
     profile: {
       stats: makeStats(8, 5, 3, 3, 3, 225),
@@ -34,6 +41,7 @@ const SEED_USERS: User[] = [
     id: 'u2',
     email: 'bob@example.com',
     name: 'Bob',
+    alias: '#bob_pro',
     friends: [],
     profile: {
       stats: makeStats(8, 3, 5, 0, 2, 155),
@@ -44,6 +52,7 @@ const SEED_USERS: User[] = [
     id: 'u3',
     email: 'carol@example.com',
     name: 'Carol',
+    alias: '#carol_gg',
     friends: [],
     profile: {
       stats: makeStats(6, 2, 4, 1, 2, 120),
@@ -54,6 +63,7 @@ const SEED_USERS: User[] = [
     id: 'u4',
     email: 'dave@example.com',
     name: 'Dave',
+    alias: '#dave_xyz',
     friends: [],
     profile: {
       stats: makeStats(),
@@ -151,11 +161,67 @@ class Store {
   searchUsers(query: string, currentUserId: string): User[] {
     const q = query.toLowerCase().trim()
     if (!q) return []
-    return Array.from(this.users.values()).filter(
-      u =>
-        u.id !== currentUserId &&
-        (u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+
+    const qStripped = q.startsWith('#') ? q.slice(1) : q
+    const all = Array.from(this.users.values()).filter(u => u.id !== currentUserId)
+
+    const aliasHits = all.filter(u =>
+      u.alias.toLowerCase().includes(q) || u.alias.slice(1).toLowerCase().includes(qStripped)
     )
+    const aliasIds = new Set(aliasHits.map(u => u.id))
+
+    const nameHits = all.filter(u => !aliasIds.has(u.id) && u.name.toLowerCase().includes(qStripped))
+    const nameIds = new Set(nameHits.map(u => u.id))
+
+    const emailHits = all.filter(
+      u => !aliasIds.has(u.id) && !nameIds.has(u.id) && u.email.toLowerCase().includes(qStripped)
+    )
+
+    return [...aliasHits, ...nameHits, ...emailHits]
+  }
+
+  getPendingIncoming(userId: string): FriendRequestWithUser[] {
+    return Array.from(this.friendships.values())
+      .filter(f => f.toId === userId && f.status === 'pending')
+      .map(f => {
+        const user = this.users.get(f.fromId)
+        return {
+          id: f.id,
+          user: { id: f.fromId, name: user?.name ?? 'Unknown', email: user?.email ?? '', alias: user?.alias ?? '' },
+        }
+      })
+  }
+
+  getPendingSent(userId: string): FriendRequestWithUser[] {
+    return Array.from(this.friendships.values())
+      .filter(f => f.fromId === userId && f.status === 'pending')
+      .map(f => {
+        const user = this.users.get(f.toId)
+        return {
+          id: f.id,
+          user: { id: f.toId, name: user?.name ?? 'Unknown', email: user?.email ?? '', alias: user?.alias ?? '' },
+        }
+      })
+  }
+
+  getFriends(userId: string): FriendUser[] {
+    return Array.from(this.friendships.values())
+      .filter(f => f.status === 'accepted' && (f.fromId === userId || f.toId === userId))
+      .map(f => {
+        const otherId = f.fromId === userId ? f.toId : f.fromId
+        const user = this.users.get(otherId)
+        return { id: otherId, name: user?.name ?? 'Unknown', email: user?.email ?? '', alias: user?.alias ?? '' }
+      })
+  }
+
+  declineFriendRequest(requestId: string): void {
+    this.friendships.delete(requestId)
+  }
+
+  getPendingCount(userId: string): number {
+    return Array.from(this.friendships.values())
+      .filter(f => f.toId === userId && f.status === 'pending')
+      .length
   }
 }
 

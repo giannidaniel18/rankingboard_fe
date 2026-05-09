@@ -30,6 +30,7 @@ const en = {
   },
   user: {
     profile: 'Profile',
+    social: 'Social',
     settings: 'Settings',
     logout: 'Logout',
   },
@@ -70,6 +71,23 @@ const en = {
     commentsPlaceholder: 'Optional comments…',
     gameLabel: 'Game',
     scoresLabel: 'Players & Scores',
+  },
+  social: {
+    title: 'Social',
+    tabSearch: 'Search',
+    tabPending: 'Pending',
+    tabFriends: 'Friends',
+    incoming: 'Incoming Requests',
+    sent: 'Sent Requests',
+    accept: 'Accept',
+    decline: 'Decline',
+    noIncoming: 'No incoming requests.',
+    noSent: 'No sent requests.',
+    noFriends: 'No friends yet.',
+    viewProfile: 'View Profile',
+    myAlias: 'My Alias',
+    copyAlias: 'Copy',
+    copied: 'Copied!',
   },
 }
 

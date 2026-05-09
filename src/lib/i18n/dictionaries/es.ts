@@ -32,6 +32,7 @@ const es: Dictionary = {
   },
   user: {
     profile: 'Perfil',
+    social: 'Social',
     settings: 'Configuración',
     logout: 'Cerrar sesión',
   },
@@ -72,6 +73,23 @@ const es: Dictionary = {
     commentsPlaceholder: 'Comentarios opcionales…',
     gameLabel: 'Juego',
     scoresLabel: 'Jugadores y puntajes',
+  },
+  social: {
+    title: 'Social',
+    tabSearch: 'Buscar',
+    tabPending: 'Pendientes',
+    tabFriends: 'Amigos',
+    incoming: 'Solicitudes entrantes',
+    sent: 'Solicitudes enviadas',
+    accept: 'Aceptar',
+    decline: 'Rechazar',
+    noIncoming: 'Sin solicitudes entrantes.',
+    noSent: 'Sin solicitudes enviadas.',
+    noFriends: 'Sin amigos todavía.',
+    viewProfile: 'Ver perfil',
+    myAlias: 'Mi alias',
+    copyAlias: 'Copiar',
+    copied: '¡Copiado!',
   },
 }
 

@@ -9,6 +9,7 @@ import { logoutAction } from '@/lib/actions/auth'
 
 interface Props {
   dropUp?: boolean
+  pendingCount?: number
 }
 
 function getInitials(name: string): string {
@@ -20,7 +21,7 @@ function getInitials(name: string): string {
     .toUpperCase()
 }
 
-export default function UserAvatar({ dropUp = false }: Props) {
+export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) {
   const { data: session, status } = useSession()
   const { dict } = useI18n()
   const [open, setOpen] = useState(false)
@@ -85,6 +86,16 @@ export default function UserAvatar({ dropUp = false }: Props) {
             className="flex items-center px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
           >
             {dict.user.profile}
+          </Link>
+          <Link
+            href="/social"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-between px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+          >
+            {dict.user.social}
+            {pendingCount > 0 && (
+              <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+            )}
           </Link>
           <Link
             href="/settings"

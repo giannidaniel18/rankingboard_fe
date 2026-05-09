@@ -2,7 +2,7 @@
 
 import { AuthError } from 'next-auth'
 import { signIn, signOut } from '@/lib/auth'
-import { store } from '@/lib/store'
+import { store, generateAlias } from '@/lib/store'
 
 export async function loginAction(_: string | null, formData: FormData): Promise<string | null> {
   try {
@@ -34,6 +34,7 @@ export async function registerAction(_: string | null, formData: FormData): Prom
     id,
     email,
     name,
+    alias: generateAlias(name),
     friends: [],
     profile: {
       stats: {

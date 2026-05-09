@@ -1,7 +1,7 @@
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
-import { store } from '@/lib/store'
+import { store, generateAlias } from '@/lib/store'
 
 declare module 'next-auth' {
   interface Session {
@@ -38,10 +38,12 @@ export const authConfig: NextAuthConfig = {
     async signIn({ user, account }) {
       if (account?.provider === 'google' && user.id && user.email) {
         if (!store.users.has(user.id)) {
+          const name = user.name ?? user.email.split('@')[0]
           store.users.set(user.id, {
             id: user.id,
             email: user.email,
-            name: user.name ?? user.email.split('@')[0],
+            name,
+            alias: generateAlias(name),
             image: user.image ?? undefined,
             friends: [],
             profile: {

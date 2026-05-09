@@ -1,6 +1,6 @@
 'use server'
 
-import { store, makeStats } from '@/lib/store'
+import { store, makeStats, generateAlias } from '@/lib/store'
 import type { User } from '@/lib/types'
 
 interface ProvisionData {
@@ -14,10 +14,12 @@ export async function getUser(id: string, provision?: ProvisionData): Promise<Us
   if (existing) return existing
   if (!provision) return undefined
 
+  const name = provision.name || provision.email.split('@')[0]
   const user: User = {
     id,
     email: provision.email,
-    name: provision.name || provision.email.split('@')[0],
+    name,
+    alias: generateAlias(name),
     image: provision.image,
     friends: [],
     profile: { stats: makeStats(), achievements: [] },

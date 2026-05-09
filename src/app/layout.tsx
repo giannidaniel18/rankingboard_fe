@@ -6,6 +6,7 @@ import NextAuthProvider from '@/components/providers/NextAuthProvider'
 import { I18nProvider } from '@/components/providers/I18nProvider'
 import { getLocale, getDictionary } from '@/lib/i18n'
 import Navbar from '@/components/layout/Navbar'
+import NavigationShell from '@/components/layout/NavigationShell'
 
 const syne = Syne({ variable: '--font-syne', subsets: ['latin'], weight: ['600', '700', '800'] })
 const dmSans = DM_Sans({ variable: '--font-dm-sans', subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -27,7 +28,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ThemeProvider>
             <I18nProvider locale={locale} dictionary={dictionary}>
               <Navbar />
-              <div className="pt-14">
+              <NavigationShell />
+              <div className="pt-14 md:pl-56 pb-20 md:pb-0">
                 {children}
               </div>
             </I18nProvider>

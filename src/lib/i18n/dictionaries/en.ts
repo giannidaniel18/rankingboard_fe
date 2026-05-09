@@ -3,6 +3,10 @@ const en = {
   nav: {
     dashboard: 'Dashboard',
     groups: 'Groups',
+    social:   'Social',
+    history:  'History',
+    profile:  'Profile',
+    newMatch: 'New Match',
   },
   theme: { toggle: 'Toggle theme' },
   lang: { en: 'EN', es: 'ES' },

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition, useEffect } from 'react'
+import { Copy, Check } from 'lucide-react'
 import { UserSearch } from '@/components/social/UserSearch'
 import { PendingRequests } from '@/components/social/PendingRequests'
 import { FriendsList } from '@/components/social/FriendsList'
@@ -88,9 +89,19 @@ export default function SocialManager({ userId, userAlias, dict }: Props) {
           </div>
           <button
             onClick={handleCopy}
-            className="px-3 py-1.5 rounded-sm text-xs font-semibold border border-black/[0.10] dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors min-w-[4.5rem] text-center"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold border border-black/[0.10] dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors min-w-[4.5rem] justify-center"
           >
-            {copied ? dict.copied : dict.copyAlias}
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                {dict.copied}
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                {dict.copyAlias}
+              </>
+            )}
           </button>
         </div>
       )}

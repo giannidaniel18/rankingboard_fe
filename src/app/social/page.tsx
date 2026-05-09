@@ -2,8 +2,7 @@ import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { getDictionary, getLocale } from '@/lib/i18n'
-import GroupSidebar from '@/components/dashboard/GroupSidebar'
-import MobileNav from '@/components/layout/MobileNav'
+
 import SocialManager from '@/components/social/SocialManager'
 import { getUser } from '@/lib/actions/users'
 
@@ -25,14 +24,10 @@ export default async function SocialPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <Suspense fallback={<div className="hidden md:block w-56 bg-canvas border-r border-white/[0.07]" />}>
-        <GroupSidebar />
-      </Suspense>
+     
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Suspense fallback={null}>
-          <MobileNav />
-        </Suspense>
+      
 
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-2xl w-full">

@@ -26,13 +26,13 @@ function WinRateBar({ rate }: { rate: number }) {
   const pct = Math.round(rate * 100)
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1 w-16 rounded-full bg-neutral-700 overflow-hidden">
+      <div className="h-1 w-16 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
         <div
           className="h-full rounded-full bg-cyan-400 transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs font-mono text-neutral-400">{pct}%</span>
+      <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">{pct}%</span>
     </div>
   )
 }
@@ -96,17 +96,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
           value={query}
           onChange={e => handleChange(e.target.value)}
           placeholder="Search by alias (e.g. #alice)…"
-          className="
-            w-full pl-9 pr-4 py-2.5
-            bg-neutral-900 dark:bg-neutral-900
-            border border-neutral-800
-            rounded-lg
-            text-sm text-neutral-100 placeholder:text-neutral-600
-            font-mono
-            outline-none
-            focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30
-            transition-all duration-200
-          "
+          className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 font-mono outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition-all duration-200"
         />
         {isPending && (
           <div className="absolute inset-y-0 right-3 flex items-center">
@@ -117,7 +107,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
 
       {/* Results */}
       {results.length > 0 && (
-        <ul className="mt-2 divide-y divide-neutral-800 rounded-lg border border-neutral-800 bg-neutral-900 overflow-hidden">
+        <ul className="mt-2 divide-y divide-zinc-200 dark:divide-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
           {results.map(user => {
             const alreadySent = sentRequests.some(r => r.user.id === user.id)
             const initials = user.name.slice(0, 2).toUpperCase()
@@ -125,7 +115,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
             return (
               <li
                 key={user.id}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-800/60 transition-colors duration-150"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors duration-150"
               >
                 <div
                   className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white select-none ${avatarColor(user.name)}`}
@@ -135,7 +125,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-neutral-100 truncate">{user.name}</p>
+                    <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">{user.name}</p>
                     <span className="text-xs font-mono text-amber-400/70 truncate">{user.alias}</span>
                   </div>
                   <div className="flex items-center gap-3 mt-0.5">
@@ -167,7 +157,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
 
       {/* Empty state */}
       {query.trim() && !isPending && results.length === 0 && (
-        <p className="mt-3 text-center text-xs text-neutral-600 font-mono">
+        <p className="mt-3 text-center text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           No players found for &ldquo;{query}&rdquo;
         </p>
       )}

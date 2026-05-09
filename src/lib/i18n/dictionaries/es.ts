@@ -4,12 +4,16 @@ const es: Dictionary = {
   app: { name: 'RankingBoard' },
   nav: {
     dashboard: 'Inicio',
-    groups: 'Grupos',
+    groups:   'Grupos',
+    social:   'Social',
+    history:  'Historial',
+    profile:  'Perfil',
+    newMatch: 'Nueva partida',
   },
   theme: { toggle: 'Cambiar tema' },
   lang: { en: 'EN', es: 'ES' },
   dashboard: {
-    title: 'Inicio',
+    title: 'Tu actividad',
     subtitle: 'Actividad reciente en todos tus grupos',
     noMatches: 'Sin partidas aún. ¡Registra la primera!',
   },

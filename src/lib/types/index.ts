@@ -24,12 +24,22 @@ export interface UserProfile {
   achievements: Achievement[]
 }
 
+export type FriendshipStatus = 'pending' | 'accepted'
+
+export interface Friendship {
+  id: string
+  fromId: string
+  toId: string
+  status: FriendshipStatus
+}
+
 export interface User {
   id: string
   email: string
   name: string
   image?: string
   bio?: string
+  friends: string[]
   profile: UserProfile
 }
 

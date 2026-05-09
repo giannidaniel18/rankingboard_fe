@@ -1,4 +1,4 @@
-import type { User, Group, Game, Match } from '@/lib/types'
+import type { User, Group, Game, Match, Friendship } from '@/lib/types'
 
 export function makeStats(
   totalMatches = 0,
@@ -24,6 +24,7 @@ const SEED_USERS: User[] = [
     id: 'u1',
     email: 'alice@example.com',
     name: 'Alice',
+    friends: [],
     profile: {
       stats: makeStats(8, 5, 3, 3, 3, 225),
       achievements: [],
@@ -33,6 +34,7 @@ const SEED_USERS: User[] = [
     id: 'u2',
     email: 'bob@example.com',
     name: 'Bob',
+    friends: [],
     profile: {
       stats: makeStats(8, 3, 5, 0, 2, 155),
       achievements: [],
@@ -42,6 +44,7 @@ const SEED_USERS: User[] = [
     id: 'u3',
     email: 'carol@example.com',
     name: 'Carol',
+    friends: [],
     profile: {
       stats: makeStats(6, 2, 4, 1, 2, 120),
       achievements: [],
@@ -51,6 +54,7 @@ const SEED_USERS: User[] = [
     id: 'u4',
     email: 'dave@example.com',
     name: 'Dave',
+    friends: [],
     profile: {
       stats: makeStats(),
       achievements: [],
@@ -113,6 +117,46 @@ class Store {
   groups = new Map<string, Group>(SEED_GROUPS.map(g => [g.id, g]))
   games = new Map<string, Game>(SEED_GAMES.map(g => [g.id, g]))
   matches = new Map<string, Match>(SEED_MATCHES.map(m => [m.id, m]))
+  friendships = new Map<string, Friendship>()
+
+  sendFriendRequest(from: string, to: string): Friendship {
+    const existing = Array.from(this.friendships.values()).find(
+      f => (f.fromId === from && f.toId === to) || (f.fromId === to && f.toId === from)
+    )
+    if (existing) return existing
+
+    const id = `fr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
+    const friendship: Friendship = { id, fromId: from, toId: to, status: 'pending' }
+    this.friendships.set(id, friendship)
+    return friendship
+  }
+
+  acceptFriendRequest(requestId: string): void {
+    const friendship = this.friendships.get(requestId)
+    if (!friendship) throw new Error(`Friend request ${requestId} not found`)
+
+    friendship.status = 'accepted'
+
+    const fromUser = this.users.get(friendship.fromId)
+    const toUser = this.users.get(friendship.toId)
+
+    if (fromUser && !fromUser.friends.includes(friendship.toId)) {
+      fromUser.friends.push(friendship.toId)
+    }
+    if (toUser && !toUser.friends.includes(friendship.fromId)) {
+      toUser.friends.push(friendship.fromId)
+    }
+  }
+
+  searchUsers(query: string, currentUserId: string): User[] {
+    const q = query.toLowerCase().trim()
+    if (!q) return []
+    return Array.from(this.users.values()).filter(
+      u =>
+        u.id !== currentUserId &&
+        (u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+    )
+  }
 }
 
 // Module-level singleton — persists across requests in the same Node.js process

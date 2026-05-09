@@ -19,6 +19,7 @@ export async function getUser(id: string, provision?: ProvisionData): Promise<Us
     email: provision.email,
     name: provision.name || provision.email.split('@')[0],
     image: provision.image,
+    friends: [],
     profile: { stats: makeStats(), achievements: [] },
   }
   store.users.set(id, user)

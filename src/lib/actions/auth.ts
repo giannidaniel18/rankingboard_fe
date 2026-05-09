@@ -34,6 +34,7 @@ export async function registerAction(_: string | null, formData: FormData): Prom
     id,
     email,
     name,
+    friends: [],
     profile: {
       stats: {
         totalMatches: 0, wins: 0, losses: 0,

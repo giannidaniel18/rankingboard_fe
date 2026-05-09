@@ -43,6 +43,7 @@ export const authConfig: NextAuthConfig = {
             email: user.email,
             name: user.name ?? user.email.split('@')[0],
             image: user.image ?? undefined,
+            friends: [],
             profile: {
               stats: {
                 totalMatches: 0, wins: 0, losses: 0,

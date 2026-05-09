@@ -9,7 +9,7 @@ export const metadata = { title: 'Profile — RankingBoard' }
 
 export default async function ProfilePage() {
   const session = await auth()
-
+console.log(session);
   if (!session?.user) return null
 
   const [user, locale] = await Promise.all([

@@ -1,4 +1,5 @@
-import type { User, Group, Game, Match, Friendship, FriendRequestWithUser, FriendUser } from '@/lib/types'
+import type { User, Group, GroupMember, Game, Match, Friendship, FriendRequestWithUser, FriendUser } from '@/lib/types'
+
 
 export function generateAlias(name: string): string {
   const base = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '') || 'user'
@@ -31,7 +32,7 @@ const SEED_USERS: User[] = [
     email: 'alice@example.com',
     name: 'Alice',
     alias: '#alice_pool',
-    friends: [],
+    friends: ['u2', 'u4'],
     profile: {
       stats: makeStats(8, 5, 3, 3, 3, 225),
       achievements: [],
@@ -42,7 +43,7 @@ const SEED_USERS: User[] = [
     email: 'bob@example.com',
     name: 'Bob',
     alias: '#bob_pro',
-    friends: [],
+    friends: ['u1', 'u3'],
     profile: {
       stats: makeStats(8, 3, 5, 0, 2, 155),
       achievements: [],
@@ -53,7 +54,7 @@ const SEED_USERS: User[] = [
     email: 'carol@example.com',
     name: 'Carol',
     alias: '#carol_gg',
-    friends: [],
+    friends: ['u2'],
     profile: {
       stats: makeStats(6, 2, 4, 1, 2, 120),
       achievements: [],
@@ -64,7 +65,7 @@ const SEED_USERS: User[] = [
     email: 'dave@example.com',
     name: 'Dave',
     alias: '#dave_xyz',
-    friends: [],
+    friends: ['u1'],
     profile: {
       stats: makeStats(),
       achievements: [],
@@ -72,18 +73,34 @@ const SEED_USERS: User[] = [
   },
 ]
 
+const SEED_FRIENDSHIPS: Friendship[] = [
+  { id: 'fs1', fromId: 'u1', toId: 'u2', status: 'accepted' },
+  { id: 'fs2', fromId: 'u1', toId: 'u4', status: 'accepted' },
+  { id: 'fs3', fromId: 'u2', toId: 'u3', status: 'accepted' },
+]
+
 const SEED_GROUPS: Group[] = [
   {
     id: 'g1',
     name: 'Friday Night Gamers',
-    members: ['u1', 'u2', 'u3', 'u4'],
+    groupTag: '#fridaynight_1234',
+    members: [
+      { userId: 'u1', role: 'admin' },
+      { userId: 'u2', role: 'member' },
+      { userId: 'u3', role: 'member' },
+      { userId: 'u4', role: 'member' },
+    ],
     game_ids: ['gm1', 'gm2'],
     createdAt: new Date('2024-01-01'),
   },
   {
     id: 'g2',
     name: 'Chess Club',
-    members: ['u1', 'u3'],
+    groupTag: '#chessclub_5678',
+    members: [
+      { userId: 'u1', role: 'admin' },
+      { userId: 'u3', role: 'member' },
+    ],
     game_ids: ['gm3'],
     createdAt: new Date('2024-02-01'),
   },
@@ -127,7 +144,7 @@ class Store {
   groups = new Map<string, Group>(SEED_GROUPS.map(g => [g.id, g]))
   games = new Map<string, Game>(SEED_GAMES.map(g => [g.id, g]))
   matches = new Map<string, Match>(SEED_MATCHES.map(m => [m.id, m]))
-  friendships = new Map<string, Friendship>()
+  friendships = new Map<string, Friendship>(SEED_FRIENDSHIPS.map(f => [f.id, f]))
 
   sendFriendRequest(from: string, to: string): Friendship {
     const existing = Array.from(this.friendships.values()).find(
@@ -222,6 +239,45 @@ class Store {
     return Array.from(this.friendships.values())
       .filter(f => f.toId === userId && f.status === 'pending')
       .length
+  }
+
+  createGroup(name: string, adminId: string): Group {
+    if (!adminId) throw new Error('adminId is required to create a group')
+    const base = name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '') || 'group'
+    const digits = Math.floor(1000 + Math.random() * 9000)
+    const groupTag = `#${base}_${digits}`
+    const group: Group = {
+      id: `g_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      name,
+      groupTag,
+      members: [{ userId: adminId, role: 'admin' }],
+      game_ids: [],
+      createdAt: new Date(),
+    }
+    this.groups.set(group.id, group)
+    return group
+  }
+
+  getUserGroups(userId: string): Group[] {
+    return Array.from(this.groups.values()).filter(g =>
+      g.members.some(m => m.userId === userId)
+    )
+  }
+
+  addMemberToGroup(groupId: string, userId: string): Group {
+    const group = this.groups.get(groupId)
+    if (!group) throw new Error(`Group ${groupId} not found`)
+    if (group.members.some(m => m.userId === userId)) return group
+    const updated = { ...group, members: [...group.members, { userId, role: 'member' as const }] }
+    this.groups.set(groupId, updated)
+    return updated
+  }
+
+  getAvailableFriendsForGroup(groupId: string, currentUserId: string): FriendUser[] {
+    const group = this.groups.get(groupId)
+    if (!group) return []
+    const memberIds = new Set(group.members.map(m => m.userId))
+    return this.getFriends(currentUserId).filter(f => !memberIds.has(f.id))
   }
 }
 

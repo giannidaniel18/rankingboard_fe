@@ -44,10 +44,18 @@ export interface User {
   profile: UserProfile
 }
 
+export type GroupRole = 'admin' | 'member'
+
+export interface GroupMember {
+  userId: string
+  role: GroupRole
+}
+
 export interface Group {
   id: string
   name: string
-  members: string[]
+  groupTag: string
+  members: GroupMember[]
   game_ids: string[]
   createdAt: Date
 }

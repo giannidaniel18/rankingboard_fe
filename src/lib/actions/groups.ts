@@ -1,7 +1,7 @@
 'use server'
 
 import { store } from '@/lib/store'
-import type { Group } from '@/lib/types'
+import type { FriendUser, Group } from '@/lib/types'
 
 export async function getGroups(): Promise<Group[]> {
   return [...store.groups.values()].sort(
@@ -13,12 +13,13 @@ export async function getGroup(id: string): Promise<Group | undefined> {
   return store.groups.get(id)
 }
 
-export async function createGroup(
-  data: Omit<Group, 'id' | 'createdAt'>
-): Promise<Group> {
-  const group: Group = { ...data, id: crypto.randomUUID(), createdAt: new Date() }
-  store.groups.set(group.id, group)
-  return group
+export async function getUserGroups(userId: string): Promise<Group[]> {
+  return store.getUserGroups(userId)
+}
+
+export async function createGroup(name: string, adminId: string): Promise<Group> {
+  if (!adminId) throw new Error('adminId is required')
+  return store.createGroup(name, adminId)
 }
 
 export async function updateGroup(
@@ -37,8 +38,9 @@ export async function deleteGroup(id: string): Promise<void> {
 }
 
 export async function addMemberToGroup(groupId: string, userId: string): Promise<Group> {
-  const group = store.groups.get(groupId)
-  if (!group) throw new Error(`Group ${groupId} not found`)
-  if (group.members.includes(userId)) return group
-  return updateGroup(groupId, { members: [...group.members, userId] })
+  return store.addMemberToGroup(groupId, userId)
+}
+
+export async function getAvailableFriendsForGroup(groupId: string, currentUserId: string): Promise<FriendUser[]> {
+  return store.getAvailableFriendsForGroup(groupId, currentUserId)
 }

@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx tsc *)",
       "Bash(npx next *)",
-      "Bash(Select-String \"zustand\")"
+      "Bash(Select-String \"zustand\")",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

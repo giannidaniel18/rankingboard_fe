@@ -1,18 +1,21 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import GameList from '@/components/groups/GameList'
+import GroupDetails from '@/components/groups/GroupDetails'
 import MemberRankings from '@/components/groups/MemberRankings'
 import MatchForm from '@/components/match/MatchForm'
 import { getGroup } from '@/lib/actions/groups'
 import { getGamesByGroup } from '@/lib/actions/games'
 import { getUsersByIds } from '@/lib/actions/users'
 import { getDictionary, getLocale } from '@/lib/i18n'
+import { getServerSession } from '@/lib/auth/session'
 
 interface Props {
   params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
+
   const { id } = await params
   const group = await getGroup(id)
   return { title: group ? `${group.name} — RankingBoard` : 'Group — RankingBoard' }
@@ -20,16 +23,17 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function GroupPage({ params }: Props) {
   const { id } = await params
-  const [group, games, locale] = await Promise.all([
+  const [group, games, locale, session] = await Promise.all([
     getGroup(id),
     getGamesByGroup(id),
     getLocale(),
+    getServerSession().catch(() => null),
   ])
-
+console.log("session obtenida del getServerSession():", session);
   if (!group) notFound()
 
   const [members, dict] = await Promise.all([
-    getUsersByIds(group.members),
+    getUsersByIds(group.members.map(m => m.userId)),
     getDictionary(locale),
   ])
 
@@ -52,9 +56,15 @@ export default async function GroupPage({ params }: Props) {
               <MatchForm groupId={id} games={games} members={members} />
             </div>
 
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-6">
+              <GroupDetails
+                group={group}
+                memberUsers={members}
+                currentUserId={session?.user.id}
+                dict={dict}
+              />
               <Suspense fallback={<p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">…</p>}>
-                <MemberRankings memberIds={group.members} />
+                <MemberRankings memberIds={group.members.map(m => m.userId)} />
               </Suspense>
             </div>
           </div>

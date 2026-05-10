@@ -28,11 +28,11 @@ export default async function RecentMatches() {
         matches.map(async match => {
           const [game, group, players] = await Promise.all([
             getGame(match.game_id),
-            getGroup(match.group_id),
-            getUsersByIds(match.players.map(p => p.user_id)),
+            match.group_id ? getGroup(match.group_id) : Promise.resolve(undefined),
+            getUsersByIds(match.participants.map(p => p.userId)),
           ])
           const userMap = Object.fromEntries(players.map(u => [u.id, u]))
-          const sorted = [...match.players].sort((a, b) => a.rank - b.rank)
+          const sorted = [...match.participants].sort((a, b) => a.placement - b.placement)
 
           return (
             <div
@@ -66,27 +66,27 @@ export default async function RecentMatches() {
               {/* Player results */}
               <ol className="px-4 py-2 space-y-0.5">
                 {sorted.map(mp => {
-                  const user = userMap[mp.user_id]
-                  const isWinner = mp.user_id === match.winner_id
+                  const user = userMap[mp.userId]
+                  const isWinner = mp.placement === 1
                   return (
                     <li
-                      key={mp.user_id}
+                      key={mp.userId}
                       className={`flex items-center gap-3 text-sm px-2 py-1.5 rounded-sm ${
                         isWinner ? 'bg-amber-500/8' : ''
                       }`}
                     >
                       <span className="w-4 font-mono text-[11px] text-neutral-400 dark:text-neutral-400 text-center shrink-0">
-                        {mp.rank}
+                        {mp.placement}
                       </span>
                       <span className={`flex-1 truncate ${
                         isWinner
                           ? 'font-semibold text-amber-600 dark:text-amber-400'
                           : 'text-neutral-700 dark:text-neutral-300'
                       }`}>
-                        {user?.name ?? mp.user_id}
+                        {user?.name ?? mp.userId}
                       </span>
                       <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-400 shrink-0 tabular-nums">
-                        {mp.score} pts
+                        {mp.score != null ? `${mp.score} pts` : '—'}
                       </span>
                     </li>
                   )

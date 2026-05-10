@@ -1,4 +1,5 @@
-import type { User, Group, GroupMember, Game, Match, Friendship, FriendRequestWithUser, FriendUser } from '@/lib/types'
+import type { User, Group, GroupMember, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/lib/types'
+import { computePointsDelta } from '@/lib/engine/ranking'
 
 
 export function generateAlias(name: string): string {
@@ -107,22 +108,39 @@ const SEED_GROUPS: Group[] = [
 ]
 
 const SEED_GAMES: Game[] = [
-  { id: 'gm1', name: 'Catan', type: 'Board', scoring_type: 'points', group_id: 'g1' },
-  { id: 'gm2', name: 'FIFA', type: 'eSport', scoring_type: 'points', group_id: 'g1' },
-  { id: 'gm3', name: 'Chess', type: 'Board', scoring_type: 'elimination', group_id: 'g2' },
+  // Group-specific games (kept for backward-compat with existing matches / group pages)
+  { id: 'gm1', name: 'Catan',  type: 'Board',  scoring_type: 'points',      group_id: 'g1' },
+  { id: 'gm2', name: 'FIFA',   type: 'eSport', scoring_type: 'points',      group_id: 'g1' },
+  { id: 'gm3', name: 'Chess',  type: 'Board',  scoring_type: 'elimination', group_id: 'g2' },
+  // Global game catalog (15 games — no group_id)
+  { id: 'game_cs2',     name: 'Counter-Strike 2',    type: 'eSport', scoring_type: 'elimination' },
+  { id: 'game_lol',     name: 'League of Legends',   type: 'eSport', scoring_type: 'elimination' },
+  { id: 'game_val',     name: 'Valorant',             type: 'eSport', scoring_type: 'elimination' },
+  { id: 'game_dota2',   name: 'Dota 2',               type: 'eSport', scoring_type: 'elimination' },
+  { id: 'game_rl',      name: 'Rocket League',        type: 'eSport', scoring_type: 'points'      },
+  { id: 'game_chess',   name: 'Ajedrez',              type: 'Board',  scoring_type: 'elimination' },
+  { id: 'game_catan',   name: 'Catan',                type: 'Board',  scoring_type: 'points'      },
+  { id: 'game_dnd',     name: 'Dungeons & Dragons',   type: 'Board',  scoring_type: 'points'      },
+  { id: 'game_teg',     name: 'TEG',                  type: 'Board',  scoring_type: 'elimination' },
+  { id: 'game_monopoly',name: 'Monopoly',             type: 'Board',  scoring_type: 'points'      },
+  { id: 'game_pool',    name: 'Pool (Billiards)',      type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_futbol',  name: 'Fútbol',               type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_padel',   name: 'Pádel',                type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_tenis',   name: 'Tenis',                type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_basquet', name: 'Básquet',              type: 'Sports', scoring_type: 'points'      },
 ]
 
 const SEED_MATCHES: Match[] = [
+  // --- Group g1: Friday Night Gamers ---
   {
     id: 'm1',
     group_id: 'g1',
     game_id: 'gm1',
-    players: [
-      { user_id: 'u1', score: 10, rank: 1 },
-      { user_id: 'u2', score: 8, rank: 2 },
-      { user_id: 'u3', score: 5, rank: 3 },
+    participants: [
+      { userId: 'u1', placement: 1, score: 10 },
+      { userId: 'u2', placement: 2, score: 8 },
+      { userId: 'u3', placement: 3, score: 5 },
     ],
-    winner_id: 'u1',
     date: new Date('2024-03-10'),
     comments: 'Close game!',
   },
@@ -130,12 +148,77 @@ const SEED_MATCHES: Match[] = [
     id: 'm2',
     group_id: 'g1',
     game_id: 'gm2',
-    players: [
-      { user_id: 'u2', score: 3, rank: 1 },
-      { user_id: 'u4', score: 1, rank: 2 },
+    participants: [
+      { userId: 'u2', placement: 1, score: 3 },
+      { userId: 'u4', placement: 2, score: 1 },
     ],
-    winner_id: 'u2',
     date: new Date('2024-03-15'),
+  },
+  {
+    id: 'm3',
+    group_id: 'g1',
+    game_id: 'gm1',
+    participants: [
+      { userId: 'u3', placement: 1, score: 12 },
+      { userId: 'u1', placement: 2, score: 9 },
+      { userId: 'u4', placement: 3, score: 4 },
+    ],
+    date: new Date('2024-03-22'),
+    comments: 'Carol dominates!',
+  },
+  {
+    id: 'm4',
+    group_id: 'g1',
+    game_id: 'gm2',
+    participants: [
+      { userId: 'u1', placement: 1, score: 2 },
+      { userId: 'u3', placement: 2, score: 1 },
+    ],
+    date: new Date('2024-03-29'),
+  },
+  // --- Group g2: Chess Club ---
+  {
+    id: 'm5',
+    group_id: 'g2',
+    game_id: 'gm3',
+    participants: [
+      { userId: 'u1', placement: 1, score: 1 },
+      { userId: 'u3', placement: 2, score: 0 },
+    ],
+    date: new Date('2024-04-05'),
+    comments: 'Checkmate in 32 moves.',
+  },
+  {
+    id: 'm6',
+    group_id: 'g2',
+    game_id: 'gm3',
+    participants: [
+      { userId: 'u3', placement: 1, score: 1 },
+      { userId: 'u1', placement: 2, score: 0 },
+    ],
+    date: new Date('2024-04-12'),
+    comments: 'Carol evens the score.',
+  },
+  // --- Global / Casual (no group) ---
+  {
+    id: 'm7',
+    game_id: 'gm1',
+    participants: [
+      { userId: 'u2', placement: 1, score: 15 },
+      { userId: 'u4', placement: 2, score: 10 },
+    ],
+    date: new Date('2024-04-20'),
+    comments: 'Casual session, no group.',
+  },
+  {
+    id: 'm8',
+    game_id: 'gm2',
+    participants: [
+      { userId: 'u4', placement: 1, score: 3 },
+      { userId: 'u1', placement: 2, score: 2 },
+    ],
+    date: new Date('2024-04-25'),
+    comments: 'Dave upsets Alice.',
   },
 ]
 
@@ -278,6 +361,70 @@ class Store {
     if (!group) return []
     const memberIds = new Set(group.members.map(m => m.userId))
     return this.getFriends(currentUserId).filter(f => !memberIds.has(f.id))
+  }
+
+  getAllGames(): Game[] {
+    const typeOrder: Record<string, number> = { Board: 0, eSport: 1, Sports: 2 }
+    return [...this.games.values()]
+      .filter(g => !g.group_id)
+      .sort((a, b) => {
+        const d = (typeOrder[a.type] ?? 0) - (typeOrder[b.type] ?? 0)
+        return d !== 0 ? d : a.name.localeCompare(b.name)
+      })
+  }
+
+  getGroupMembers(groupId: string, excludeUserId?: string): FriendUser[] {
+    const group = this.groups.get(groupId)
+    if (!group) return []
+    return group.members
+      .filter(m => m.userId !== excludeUserId)
+      .map(m => {
+        const user = this.users.get(m.userId)
+        return { id: m.userId, name: user?.name ?? 'Unknown', email: user?.email ?? '', alias: user?.alias ?? '' }
+      })
+  }
+
+  getGroupRankings(groupId: string): RankedMember[] {
+    const group = this.groups.get(groupId)
+    if (!group) return []
+
+    const groupMatches = [...this.matches.values()]
+      .filter(m => m.group_id === groupId)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+    type Acc = { wins: number; losses: number; totalMatches: number; points: number; streak: number }
+    const acc = new Map<string, Acc>()
+    for (const { userId } of group.members) {
+      acc.set(userId, { wins: 0, losses: 0, totalMatches: 0, points: 100, streak: 0 })
+    }
+
+    for (const match of groupMatches) {
+      const total = match.participants.length
+      for (const participant of match.participants) {
+        const s = acc.get(participant.userId)
+        if (!s) continue
+        const isWinner = participant.placement === 1
+        const delta = computePointsDelta(participant.placement, total)
+        s.totalMatches++
+        s.points = Math.max(0, s.points + delta)
+        if (isWinner) { s.wins++; s.streak++ }
+        else { s.losses++; s.streak = 0 }
+      }
+    }
+
+    return group.members
+      .map(({ userId }) => {
+        const user = this.users.get(userId)
+        const s = acc.get(userId)!
+        return {
+          userId,
+          name: user?.name ?? 'Unknown',
+          alias: user?.alias ?? '',
+          image: user?.image,
+          stats: { ...s, winRate: s.totalMatches > 0 ? s.wins / s.totalMatches : 0 },
+        }
+      })
+      .sort((a, b) => b.stats.points - a.stats.points)
   }
 }
 

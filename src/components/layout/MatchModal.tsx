@@ -1,52 +1,431 @@
 'use client'
 
-import { X, Swords } from 'lucide-react'
+import { useState, useEffect, useTransition } from 'react'
+import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target } from 'lucide-react'
+import { getUserGroups, getGroupMembers } from '@/lib/actions/groups'
+import { getAllGames } from '@/lib/actions/games'
+import { createMultiplayerMatch } from '@/lib/actions/matches'
+import type { Group, Game, FriendUser } from '@/lib/types'
+import { useI18n } from '@/components/providers/I18nProvider'
+import GameCombobox from '@/components/ui/GameCombobox'
+import ParticipantMultiSelect from '@/components/ui/ParticipantMultiSelect'
+
+type ResultMode = 'win_loss' | 'podium' | 'score'
+type PlayerResult = { placement?: number; score?: number }
 
 interface MatchModalProps {
   isOpen: boolean
   onClose: () => void
+  userId: string | null
+  userName: string | null
 }
 
-export default function MatchModal({ isOpen, onClose }: MatchModalProps) {
+function SelectField({
+  label,
+  value,
+  onChange,
+  disabled,
+  children,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  disabled?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-1.5">
+        {label}
+      </label>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          disabled={disabled}
+          className="w-full appearance-none bg-elevated border border-white/[0.07] hover:border-white/[0.13] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 pr-9 text-sm text-tx-primary font-medium transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {children}
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tx-caption pointer-events-none" />
+      </div>
+    </div>
+  )
+}
+
+export default function MatchModal({ isOpen, onClose, userId, userName }: MatchModalProps) {
+  const { dict } = useI18n()
+  const t = dict.match
+
+  const [userGroups, setUserGroups]     = useState<Group[]>([])
+  const [allGames, setAllGames]         = useState<Game[]>([])
+  const [groupMembers, setGroupMembers] = useState<FriendUser[]>([])
+
+  const [selectedGroupId, setSelectedGroupId]           = useState('')
+  const [selectedParticipants, setSelectedParticipants] = useState<FriendUser[]>([])
+  const [selectedGameId, setSelectedGameId]             = useState('')
+  const [resultMode, setResultMode]                     = useState<ResultMode>('win_loss')
+  const [participantResults, setParticipantResults]     = useState<Record<string, PlayerResult>>({})
+  const [success, setSuccess]                           = useState(false)
+
+  const [isPending, startTransition] = useTransition()
+
+  const allPlayers: { id: string; name: string }[] =
+    userId && userName
+      ? [{ id: userId, name: userName }, ...selectedParticipants]
+      : [...selectedParticipants]
+
+  useEffect(() => {
+    if (!isOpen || !userId) return
+    setSelectedGroupId('')
+    setSelectedParticipants([])
+    setSelectedGameId('')
+    setResultMode('win_loss')
+    setParticipantResults({})
+    setGroupMembers([])
+    setSuccess(false)
+
+    startTransition(async () => {
+      const [groups, games] = await Promise.all([getUserGroups(userId), getAllGames()])
+      setUserGroups(groups)
+      setAllGames(games)
+    })
+  }, [isOpen, userId])
+
+  const handleGroupChange = (groupId: string) => {
+    setSelectedGroupId(groupId)
+    setSelectedParticipants([])
+    setSelectedGameId('')
+    setParticipantResults({})
+    setGroupMembers([])
+    if (!groupId || !userId) return
+    startTransition(async () => {
+      const members = await getGroupMembers(groupId, userId)
+      setGroupMembers(members)
+    })
+  }
+
+  const handleParticipantsChange = (participants: FriendUser[]) => {
+    setSelectedParticipants(participants)
+    setParticipantResults({})
+  }
+
+  const handleResultModeChange = (mode: ResultMode) => {
+    setResultMode(mode)
+    setParticipantResults({})
+  }
+
+  const setPlayerResult = (playerId: string, result: PlayerResult) => {
+    setParticipantResults(prev => ({ ...prev, [playerId]: result }))
+  }
+
+  const isResultComplete = (result: PlayerResult | undefined): boolean => {
+    if (!result) return false
+    if (resultMode === 'score') return result.score !== undefined && result.score >= 0
+    return result.placement !== undefined && result.placement > 0
+  }
+
+  const allResultsComplete =
+    allPlayers.length > 0 && allPlayers.every(p => isResultComplete(participantResults[p.id]))
+
+  const canSubmit =
+    !!selectedGroupId &&
+    selectedParticipants.length > 0 &&
+    !!selectedGameId &&
+    allResultsComplete &&
+    !isPending
+
+  const handleSubmit = () => {
+    if (!userId || !selectedGameId || !canSubmit || isPending) return
+
+    let finalParticipants: { userId: string; placement: number; score?: number }[]
+
+    if (resultMode === 'score') {
+      const sorted = [...allPlayers].sort(
+        (a, b) => (participantResults[b.id]?.score ?? 0) - (participantResults[a.id]?.score ?? 0)
+      )
+      finalParticipants = sorted.map((p, i) => ({
+        userId: p.id,
+        placement: i + 1,
+        score: participantResults[p.id]?.score,
+      }))
+    } else {
+      finalParticipants = allPlayers.map(p => ({
+        userId: p.id,
+        placement: participantResults[p.id]?.placement ?? 0,
+        score: participantResults[p.id]?.score,
+      }))
+    }
+
+    startTransition(async () => {
+      await createMultiplayerMatch(selectedGameId, selectedGroupId || undefined, finalParticipants)
+      setSuccess(true)
+      setTimeout(onClose, 1800)
+    })
+  }
+
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+  const modes: { key: ResultMode; label: string; icon: React.ReactNode }[] = [
+    { key: 'win_loss', label: t.modeWinLoss, icon: <Trophy className="w-3 h-3" /> },
+    { key: 'podium',   label: t.modePodium,  icon: <Hash    className="w-3 h-3" /> },
+    { key: 'score',    label: t.modeScore,   icon: <Target  className="w-3 h-3" /> },
+  ]
 
-      <div className="relative w-full max-w-sm bg-surface border border-black/[0.08] dark:border-white/[0.08] rounded-2xl p-8 shadow-2xl shadow-black/50">
+  const showResults = selectedParticipants.length > 0 && !!selectedGameId
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Panel */}
+      <div className="relative w-full sm:max-w-sm bg-surface border border-white/[0.07] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/70 overflow-hidden">
+        {/* Amber accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+
+        {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-neutral-500 hover:text-tx-primary hover:bg-white/[0.06] transition-colors z-10"
           aria-label="Close"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3.5 h-3.5" />
         </button>
 
-        <div className="flex flex-col items-center text-center gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-            <Swords className="w-8 h-8 text-amber-500" />
+        {success ? (
+          <div className="flex flex-col items-center text-center gap-4 px-8 py-14">
+            <div className="w-14 h-14 rounded-full bg-win/10 border border-win/20 flex items-center justify-center">
+              <Check className="w-7 h-7 text-win" />
+            </div>
+            <div>
+              <p className="font-heading text-base font-bold tracking-[0.08em] uppercase text-tx-primary">
+                {t.successTitle}
+              </p>
+              <p className="text-xs text-tx-caption font-mono mt-1">Closing…</p>
+            </div>
           </div>
+        ) : (
+          <div className="px-6 pt-6 pb-7 sm:px-7 sm:pt-7 max-h-[90dvh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                {isPending
+                  ? <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
+                  : <Swords  className="w-5 h-5 text-amber-400" />
+                }
+              </div>
+              <div>
+                <h2 className="font-heading text-sm font-bold tracking-[0.1em] uppercase text-tx-primary leading-none">
+                  {t.title}
+                </h2>
+                <p className="text-[11px] text-tx-caption font-mono mt-1">Group match</p>
+              </div>
+            </div>
 
-          <div>
-            <h2 className="font-heading text-xl font-bold tracking-[0.08em] uppercase text-neutral-900 dark:text-white mb-2">
-              New Match
-            </h2>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Match registration is coming soon.
-            </p>
+            {/* Fields */}
+            <div className="space-y-3 mb-5">
+              {/* Step 1 — Group */}
+              <SelectField
+                label={t.selectGroup}
+                value={selectedGroupId}
+                onChange={handleGroupChange}
+                disabled={isPending || userGroups.length === 0}
+              >
+                <option value="" disabled className="bg-elevated text-tx-caption">
+                  {userGroups.length === 0 ? t.noGroups : `— ${t.selectGroup} —`}
+                </option>
+                {userGroups.map(g => (
+                  <option key={g.id} value={g.id} className="bg-elevated text-tx-primary">
+                    {g.name}
+                  </option>
+                ))}
+              </SelectField>
+
+              {/* Step 2 — Participants */}
+              <ParticipantMultiSelect
+                label={t.selectOpponent}
+                members={groupMembers}
+                selected={selectedParticipants}
+                onChange={handleParticipantsChange}
+                disabled={!selectedGroupId || isPending || groupMembers.length === 0}
+                placeholder={
+                  !selectedGroupId
+                    ? `— ${t.selectGroup} first —`
+                    : groupMembers.length === 0
+                      ? t.noMembers
+                      : 'Add players…'
+                }
+              />
+
+              {/* Step 3 — Game */}
+              <GameCombobox
+                label={t.selectGame}
+                games={allGames}
+                value={selectedGameId}
+                onChange={setSelectedGameId}
+                disabled={selectedParticipants.length === 0 || isPending || allGames.length === 0}
+                searchPlaceholder="Search game…"
+              />
+
+              {/* Step 4 — Result mode + player rows */}
+              {showResults && (
+                <div className="space-y-2">
+                  {/* Mode toggle */}
+                  <div className="flex gap-1 p-1 bg-elevated rounded-xl border border-white/[0.07]">
+                    {modes.map(mode => (
+                      <button
+                        key={mode.key}
+                        type="button"
+                        onClick={() => handleResultModeChange(mode.key)}
+                        className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-bold tracking-[0.07em] uppercase rounded-lg transition-all duration-200 ${
+                          resultMode === mode.key
+                            ? 'bg-amber-500 text-black shadow-sm'
+                            : 'text-tx-caption hover:text-tx-primary'
+                        }`}
+                      >
+                        {mode.icon}
+                        <span className="hidden xs:inline">{mode.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Player rows */}
+                  <div className="space-y-1.5">
+                    {allPlayers.map(player => {
+                      const result = participantResults[player.id]
+                      const done   = isResultComplete(result)
+                      const isMe   = player.id === userId
+
+                      return (
+                        <div
+                          key={player.id}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 ${
+                            done
+                              ? 'border-amber-500/25 bg-amber-500/[0.04]'
+                              : 'border-white/[0.07] bg-elevated'
+                          }`}
+                        >
+                          {/* Avatar */}
+                          <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                            <span className="text-[9px] font-bold text-amber-400 uppercase leading-none">
+                              {player.name.slice(0, 2)}
+                            </span>
+                          </div>
+
+                          {/* Name */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-tx-primary truncate">
+                              {player.name}
+                              {isMe && (
+                                <span className="ml-1.5 text-[9px] font-bold tracking-[0.1em] uppercase text-amber-500/60">
+                                  you
+                                </span>
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Win / Loss buttons */}
+                          {resultMode === 'win_loss' && (
+                            <div className="flex gap-1 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => setPlayerResult(player.id, { placement: 1 })}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                  result?.placement === 1
+                                    ? 'bg-emerald-500 text-black'
+                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                }`}
+                              >
+                                {t.winner}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setPlayerResult(player.id, { placement: 2 })}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                  result?.placement === 2
+                                    ? 'bg-rose-500/80 text-white'
+                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                }`}
+                              >
+                                {t.loser}
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Podium position input */}
+                          {resultMode === 'podium' && (
+                            <input
+                              type="number"
+                              min={1}
+                              placeholder={t.position.slice(0, 3)}
+                              value={result?.placement ?? ''}
+                              onChange={e => {
+                                const val = parseInt(e.target.value)
+                                if (!isNaN(val) && val > 0) setPlayerResult(player.id, { placement: val })
+                                else setPlayerResult(player.id, {})
+                              }}
+                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
+                            />
+                          )}
+
+                          {/* Score input */}
+                          {resultMode === 'score' && (
+                            <input
+                              type="number"
+                              min={0}
+                              placeholder={t.points.slice(0, 3)}
+                              value={result?.score ?? ''}
+                              onChange={e => {
+                                const val = parseFloat(e.target.value)
+                                if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
+                                else setPlayerResult(player.id, {})
+                              }}
+                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
+                            />
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Progress pills */}
+            <div className="flex gap-1.5 mb-5">
+              {[
+                !!selectedGroupId,
+                selectedParticipants.length > 0,
+                !!selectedGameId,
+                allResultsComplete,
+              ].map((done, i) => (
+                <div
+                  key={i}
+                  className={`h-0.5 flex-1 rounded-full transition-colors duration-300 ${
+                    done ? 'bg-amber-500' : 'bg-white/[0.08]'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Submit */}
+            <button
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {t.saving}
+                </>
+              ) : (
+                t.saveMatch
+              )}
+            </button>
           </div>
-
-          <button
-            onClick={onClose}
-            className="w-full py-2.5 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors border border-black/[0.06] dark:border-white/[0.06]"
-          >
-            Close
-          </button>
-        </div>
+        )}
       </div>
     </div>
   )

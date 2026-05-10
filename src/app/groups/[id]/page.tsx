@@ -64,7 +64,7 @@ console.log("session obtenida del getServerSession():", session);
                 dict={dict}
               />
               <Suspense fallback={<p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">…</p>}>
-                <MemberRankings memberIds={group.members.map(m => m.userId)} />
+                <MemberRankings groupId={id} />
               </Suspense>
             </div>
           </div>

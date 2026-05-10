@@ -4,7 +4,9 @@
       "Bash(npx tsc *)",
       "Bash(npx next *)",
       "Bash(Select-String \"zustand\")",
-      "Bash(Get-ChildItem *)"
+      "Bash(Get-ChildItem *)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(xargs -I {} basename {})"
     ]
   }
 }

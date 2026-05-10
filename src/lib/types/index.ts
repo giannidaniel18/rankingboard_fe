@@ -65,7 +65,7 @@ export interface Game {
   name: string
   type: GameType
   scoring_type: ScoringType
-  group_id: string
+  group_id?: string
 }
 
 export interface MatchPlayer {
@@ -74,14 +74,37 @@ export interface MatchPlayer {
   rank: number
 }
 
+export interface MatchParticipant {
+  userId: string
+  placement: number
+  score?: number
+  team?: string
+}
+
 export interface Match {
   id: string
-  group_id: string
+  group_id?: string
   game_id: string
-  players: MatchPlayer[]
-  winner_id: string
+  participants: MatchParticipant[]
   date: Date
   comments?: string
+}
+
+export interface MemberStats {
+  wins: number
+  losses: number
+  totalMatches: number
+  winRate: number
+  points: number
+  streak: number
+}
+
+export interface RankedMember {
+  userId: string
+  name: string
+  alias: string
+  image?: string
+  stats: MemberStats
 }
 
 export interface FriendRequestWithUser {

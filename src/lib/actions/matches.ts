@@ -1,9 +1,9 @@
 'use server'
 
 import { store } from '@/lib/store'
-import { rankPlayers, computePointsDelta, determineWinner } from '@/lib/engine/ranking'
+import { rankPlayers, computePointsDelta } from '@/lib/engine/ranking'
 import { checkAchievements, buildAchievement } from '@/lib/engine/achievements'
-import type { Match, MatchPlayer } from '@/lib/types'
+import type { Match, MatchParticipant } from '@/lib/types'
 
 export type CreateMatchInput = {
   group_id: string
@@ -15,31 +15,34 @@ export type CreateMatchInput = {
 
 export async function createMatch(input: CreateMatchInput): Promise<Match> {
   const rankedPlayers = rankPlayers(input.players)
-  const winner_id = determineWinner(rankedPlayers)
+  const participants: MatchParticipant[] = rankedPlayers.map(p => ({
+    userId: p.user_id,
+    placement: p.rank,
+    score: p.score,
+  }))
 
   const match: Match = {
     id: crypto.randomUUID(),
     group_id: input.group_id,
     game_id: input.game_id,
-    players: rankedPlayers,
-    winner_id,
+    participants,
     date: new Date(input.date),
     comments: input.comments,
   }
 
   store.matches.set(match.id, match)
-  applyMatchResults(rankedPlayers, winner_id)
+  applyMatchResults(participants)
 
   return match
 }
 
-function applyMatchResults(players: MatchPlayer[], winner_id: string): void {
-  for (const player of players) {
-    const user = store.users.get(player.user_id)
+function applyMatchResults(participants: MatchParticipant[]): void {
+  for (const participant of participants) {
+    const user = store.users.get(participant.userId)
     if (!user) continue
 
-    const isWinner = player.user_id === winner_id
-    const delta = computePointsDelta(player.rank, players.length)
+    const isWinner = participant.placement === 1
+    const delta = computePointsDelta(participant.placement, participants.length)
     const s = user.profile.stats
 
     s.totalMatches++
@@ -61,6 +64,27 @@ function applyMatchResults(players: MatchPlayer[], winner_id: string): void {
 
     store.users.set(user.id, user)
   }
+}
+
+export async function createMultiplayerMatch(
+  gameId: string,
+  groupId: string | undefined,
+  participants: Omit<MatchParticipant, 'score' | 'team'>[]
+): Promise<Match> {
+  const fullParticipants: MatchParticipant[] = participants.map(p => ({ ...p }))
+
+  const match: Match = {
+    id: crypto.randomUUID(),
+    game_id: gameId,
+    group_id: groupId,
+    participants: fullParticipants,
+    date: new Date(),
+  }
+
+  store.matches.set(match.id, match)
+  applyMatchResults(fullParticipants)
+
+  return match
 }
 
 export async function getMatchesByGroup(groupId: string): Promise<Match[]> {

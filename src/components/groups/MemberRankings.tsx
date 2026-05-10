@@ -1,4 +1,4 @@
-import { getRankedMembers } from '@/lib/actions/users'
+import { getGroupRankings } from '@/lib/actions/groups'
 import { getDictionary, getLocale } from '@/lib/i18n'
 
 type RankTier = 1 | 2 | 3 | 'other'
@@ -10,9 +10,9 @@ function getRankTier(rank: number): RankTier {
 
 const RANK_NUM_CLASS: Record<RankTier, string> = {
   1:     'text-amber-500 dark:text-amber-400',
-  2:     'text-neutral-400 dark:text-neutral-300',   /* silver — secondary */
+  2:     'text-neutral-400 dark:text-neutral-300',
   3:     'text-amber-700 dark:text-amber-600',
-  other: 'text-neutral-400 dark:text-neutral-400',   /* caption floor */
+  other: 'text-neutral-400 dark:text-neutral-400',
 }
 
 const RANK_ACCENT: Record<RankTier, string> = {
@@ -36,7 +36,6 @@ function WinRateBar({ rate }: { rate: number }) {
       <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
         <div className="h-full bg-amber-500 dark:bg-amber-400 transition-[width]" style={{ width: `${pct}%` }} />
       </div>
-      {/* Caption level — 8:1 AAA */}
       <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400 w-8 text-right shrink-0 tabular-nums">
         {pct}%
       </span>
@@ -44,8 +43,8 @@ function WinRateBar({ rate }: { rate: number }) {
   )
 }
 
-export default async function MemberRankings({ memberIds }: { memberIds: string[] }) {
-  const [members, locale] = await Promise.all([getRankedMembers(memberIds), getLocale()])
+export default async function MemberRankings({ groupId }: { groupId: string }) {
+  const [members, locale] = await Promise.all([getGroupRankings(groupId), getLocale()])
   const dict = await getDictionary(locale)
   const t = dict.table
 
@@ -56,7 +55,6 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
         <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
           {dict.group.rankings}
         </h2>
-        {/* Caption-level metadata */}
         <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
           {members.length} players
         </span>
@@ -74,7 +72,6 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
                 { label: t.streak, cls: 'w-16 text-center' },
               ].map(col => (
                 <th key={col.label} className={`px-4 py-2.5 ${col.cls}`}>
-                  {/* Column headers — caption floor (8:1 AAA) */}
                   <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400">
                     {col.label}
                   </span>
@@ -84,14 +81,14 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
           </thead>
 
           <tbody>
-            {members.map((user, index) => {
+            {members.map((member, index) => {
               const rank = index + 1
               const tier = getRankTier(rank)
-              const { stats } = user.profile
+              const { stats } = member
 
               return (
                 <tr
-                  key={user.id}
+                  key={member.userId}
                   className={`${RANK_ACCENT[tier]} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.025] transition-colors ${tier === 1 ? 'bg-amber-500/[0.04]' : ''}`}
                 >
                   {/* Rank number */}
@@ -105,13 +102,12 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
                       <div className={`w-6 h-6 rounded-sm flex items-center justify-center font-bold text-[11px] shrink-0 ${AVATAR_CLASS[tier]}`}>
-                        {user.name[0].toUpperCase()}
+                        {member.name[0].toUpperCase()}
                       </div>
                       <div>
                         <p className="font-medium text-neutral-900 dark:text-neutral-100 leading-tight">
-                          {user.name}
+                          {member.name}
                         </p>
-                        {/* Match count — caption level */}
                         <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400 leading-tight tabular-nums">
                           {stats.totalMatches} {dict.group.played}
                         </p>
@@ -123,7 +119,6 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
                   <td className="px-4 py-3.5 text-center">
                     <span className="font-mono text-[11px]">
                       <span className="text-emerald-600 dark:text-emerald-500">{stats.wins}W</span>
-                      {/* "/" is structural-only decorator */}
                       <span className="text-neutral-300 dark:text-neutral-600 mx-0.5">/</span>
                       <span className="text-red-500 dark:text-red-400">{stats.losses}L</span>
                     </span>
@@ -141,18 +136,17 @@ export default async function MemberRankings({ memberIds }: { memberIds: string[
                         ? 'text-amber-500 dark:text-amber-400'
                         : 'text-neutral-600 dark:text-neutral-300'
                     }`}>
-                      {stats.rankingPoints}
+                      {stats.points}
                     </span>
                   </td>
 
                   {/* Streak */}
                   <td className="px-4 py-3.5 text-center">
-                    {stats.currentStreak > 0 ? (
+                    {stats.streak > 0 ? (
                       <span className="font-mono text-[11px] font-semibold text-amber-500 tabular-nums">
-                        🔥{stats.currentStreak}
+                        🔥{stats.streak}
                       </span>
                     ) : (
-                      /* "—" is decorative — structural-only */
                       <span className="text-neutral-300 dark:text-neutral-600 text-[11px] font-mono">—</span>
                     )}
                   </td>

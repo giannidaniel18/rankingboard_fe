@@ -8,6 +8,7 @@ import { getLocale, getDictionary } from '@/lib/i18n'
 import Navbar from '@/components/layout/Navbar'
 import NavigationShell from '@/components/layout/NavigationShell'
 import { getServerSession } from '@/lib/auth/session'
+import ToastContainer from '@/components/ui/ToastContainer'
 
 const syne = Syne({ variable: '--font-syne', subsets: ['latin'], weight: ['600', '700', '800'] })
 const dmSans = DM_Sans({ variable: '--font-dm-sans', subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </I18nProvider>
           </ThemeProvider>
         </NextAuthProvider>
+        <ToastContainer />
       </body>
     </html>
   )

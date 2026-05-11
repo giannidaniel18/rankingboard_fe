@@ -1,3 +1,12 @@
+// Standard envelope returned by the backend for every response.
+// The response interceptor unwraps this so services always receive T directly.
+export interface ApiResponse<T> {
+  isSuccess: boolean
+  data: T
+  error: string | null
+  timestamp: string
+}
+
 export type GameType = 'Board' | 'eSport' | 'Sports'
 export type ScoringType = 'points' | 'time' | 'elimination'
 export type AchievementId = 'first_win' | 'win_streak_3' | 'win_streak_5' | 'veteran_10'

@@ -8,7 +8,8 @@
       "Bash(Select-Object Name, PSIsContainer)",
       "Bash(xargs -I {} basename {})",
       "Bash(Select-Object FullName)",
-      "Bash(Sort-Object FullName)"
+      "Bash(Sort-Object FullName)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

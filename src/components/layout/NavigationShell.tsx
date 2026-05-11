@@ -1,17 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SideNavBar from './SideNavBar'
 import MobileBottomNav from './MobileBottomNav'
 import MatchModal from './MatchModal'
+import { useAuth } from '@/hooks/domain/useAuth'
+import type { User } from '@/types'
 
 interface Props {
-  userId: string | null
-  userName: string | null
+  sessionUser: User | null
 }
 
-export default function NavigationShell({ userId, userName }: Props) {
+export default function NavigationShell({ sessionUser }: Props) {
+  const { hydrateAuth } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (sessionUser) hydrateAuth(sessionUser)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionUser?.id])
 
   return (
     <>
@@ -20,8 +27,8 @@ export default function NavigationShell({ userId, userName }: Props) {
       <MatchModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        userId={userId}
-        userName={userName}
+        userId={sessionUser?.id ?? null}
+        userName={sessionUser?.name ?? null}
       />
     </>
   )

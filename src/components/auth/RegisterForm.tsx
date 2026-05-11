@@ -1,14 +1,33 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { registerAction } from '@/lib/actions/auth'
+import { useAuth } from '@/hooks/domain/useAuth'
 
 export default function RegisterForm() {
-  const [error, formAction, isPending] = useActionState(registerAction, null)
+  const { register } = useAuth()
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, setIsPending] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const name     = fd.get('name')     as string
+    const email    = fd.get('email')    as string
+    const password = fd.get('password') as string
+
+    setIsPending(true)
+    setError(null)
+    try {
+      const err = await register(name, email, password)
+      if (err) setError(err)
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-2.5">
+    <form onSubmit={handleSubmit} className="space-y-2.5">
       {error && (
         <p className="text-[11px] font-mono text-red-500 dark:text-red-400 px-0.5">{error}</p>
       )}

@@ -6,7 +6,9 @@
       "Bash(Select-String \"zustand\")",
       "Bash(Get-ChildItem *)",
       "Bash(Select-Object Name, PSIsContainer)",
-      "Bash(xargs -I {} basename {})"
+      "Bash(xargs -I {} basename {})",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)"
     ]
   }
 }

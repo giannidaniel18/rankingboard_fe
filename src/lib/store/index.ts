@@ -1,4 +1,4 @@
-import type { User, Group, GroupMember, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/lib/types'
+﻿import type { User, Group, GroupMember, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/types'
 import { computePointsDelta } from '@/lib/engine/ranking'
 
 
@@ -112,7 +112,7 @@ const SEED_GAMES: Game[] = [
   { id: 'gm1', name: 'Catan',  type: 'Board',  scoring_type: 'points',      group_id: 'g1' },
   { id: 'gm2', name: 'FIFA',   type: 'eSport', scoring_type: 'points',      group_id: 'g1' },
   { id: 'gm3', name: 'Chess',  type: 'Board',  scoring_type: 'elimination', group_id: 'g2' },
-  // Global game catalog (15 games — no group_id)
+  // Global game catalog (15 games â€” no group_id)
   { id: 'game_cs2',     name: 'Counter-Strike 2',    type: 'eSport', scoring_type: 'elimination' },
   { id: 'game_lol',     name: 'League of Legends',   type: 'eSport', scoring_type: 'elimination' },
   { id: 'game_val',     name: 'Valorant',             type: 'eSport', scoring_type: 'elimination' },
@@ -124,10 +124,10 @@ const SEED_GAMES: Game[] = [
   { id: 'game_teg',     name: 'TEG',                  type: 'Board',  scoring_type: 'elimination' },
   { id: 'game_monopoly',name: 'Monopoly',             type: 'Board',  scoring_type: 'points'      },
   { id: 'game_pool',    name: 'Pool (Billiards)',      type: 'Sports', scoring_type: 'points'      },
-  { id: 'game_futbol',  name: 'Fútbol',               type: 'Sports', scoring_type: 'points'      },
-  { id: 'game_padel',   name: 'Pádel',                type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_futbol',  name: 'FÃºtbol',               type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_padel',   name: 'PÃ¡del',                type: 'Sports', scoring_type: 'points'      },
   { id: 'game_tenis',   name: 'Tenis',                type: 'Sports', scoring_type: 'points'      },
-  { id: 'game_basquet', name: 'Básquet',              type: 'Sports', scoring_type: 'points'      },
+  { id: 'game_basquet', name: 'BÃ¡squet',              type: 'Sports', scoring_type: 'points'      },
 ]
 
 const SEED_MATCHES: Match[] = [
@@ -428,5 +428,5 @@ class Store {
   }
 }
 
-// Module-level singleton — persists across requests in the same Node.js process
+// Module-level singleton â€” persists across requests in the same Node.js process
 export const store = new Store()

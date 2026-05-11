@@ -1,14 +1,9 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import { updateUserProfile } from '@/lib/actions/users'
+import { useState, useTransition, useEffect } from 'react'
+import { useAuth } from '@/hooks/domain/useAuth'
 import { useI18n } from '@/components/providers/I18nProvider'
-import type { User, AchievementId } from '@/lib/types'
-
-interface Props {
-  user: User
-}
+import type { AchievementId } from '@/types'
 
 const ACHIEVEMENT_META: Record<AchievementId, { emoji: string; label: string }> = {
   first_win:    { emoji: '🥇', label: 'First Win' },
@@ -23,7 +18,6 @@ function StatCell({ value, label }: { value: string | number; label: string }) {
       <span className="font-mono font-bold text-2xl text-neutral-900 dark:text-neutral-100 tabular-nums leading-none">
         {value}
       </span>
-      {/* Stat label — caption level (8:1 AAA) */}
       <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
         {label}
       </span>
@@ -31,57 +25,77 @@ function StatCell({ value, label }: { value: string | number; label: string }) {
   )
 }
 
-export default function ProfileCard({ user }: Props) {
-  const router = useRouter()
+function ProfileSkeleton() {
+  return (
+    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden animate-pulse">
+      <div className="px-6 py-5">
+        <div className="flex items-start gap-5">
+          <div className="w-14 h-14 rounded-sm bg-black/[0.08] dark:bg-white/[0.08]" />
+          <div className="flex-1 space-y-2">
+            <div className="h-6 w-32 rounded-sm bg-black/[0.06] dark:bg-white/[0.06]" />
+            <div className="h-3.5 w-40 rounded-sm bg-black/[0.04] dark:bg-white/[0.04]" />
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-black/[0.06] dark:border-white/[0.05] h-24" />
+    </div>
+  )
+}
+
+export default function ProfileCard() {
+  const { currentUser, updateProfile } = useAuth()
   const { dict } = useI18n()
   const p = dict.profile
   const [isPending, startTransition] = useTransition()
-
   const [editing, setEditing] = useState(false)
-  const [name, setName] = useState(user.name)
-  const [bio, setBio] = useState(user.bio ?? '')
+  const [name, setName] = useState('')
+  const [bio, setBio] = useState('')
 
-  const { stats, achievements } = user.profile
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name)
+      setBio(currentUser.bio ?? '')
+    }
+  }, [currentUser?.id])
+
+  if (!currentUser) return <ProfileSkeleton />
+
+  const { stats, achievements } = currentUser.profile
   const winPct = Math.round(stats.winRate * 100)
 
   function handleCancel() {
-    setName(user.name)
-    setBio(user.bio ?? '')
+    setName(currentUser!.name)
+    setBio(currentUser!.bio ?? '')
     setEditing(false)
   }
 
   function handleSave() {
     startTransition(async () => {
-      await updateUserProfile({ id: user.id, name, bio })
-      router.refresh()
+      await updateProfile(name, bio)
       setEditing(false)
     })
   }
 
   return (
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
-      {/* Edit mode top accent — fades in on edit */}
       <div
         className={`h-0.5 w-full transition-colors duration-200 ${
           editing ? 'bg-amber-500' : 'bg-transparent'
         }`}
       />
 
-      {/* ── Identity section ── */}
+      {/* Identity */}
       <div className="px-6 py-5">
         <div className="flex items-start gap-5">
-          {/* Player emblem */}
           <div className="shrink-0 w-14 h-14 rounded-sm bg-amber-500 flex items-center justify-center select-none">
             <span className="font-heading font-bold text-2xl text-black">
-              {(editing ? name : user.name)[0]?.toUpperCase() ?? '?'}
+              {(editing ? name : currentUser.name)[0]?.toUpperCase() ?? '?'}
             </span>
           </div>
 
-          {/* Identity info + actions */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0 space-y-1.5">
-                {/* Name */}
                 {editing ? (
                   <input
                     type="text"
@@ -93,16 +107,14 @@ export default function ProfileCard({ user }: Props) {
                   />
                 ) : (
                   <h2 className="font-heading font-bold text-lg tracking-[0.06em] uppercase text-neutral-900 dark:text-neutral-100 truncate">
-                    {user.name}
+                    {currentUser.name}
                   </h2>
                 )}
 
-                {/* Email — caption level (always readable) */}
                 <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
-                  {user.email}
+                  {currentUser.email}
                 </p>
 
-                {/* Bio */}
                 {editing ? (
                   <textarea
                     value={bio}
@@ -112,18 +124,15 @@ export default function ProfileCard({ user }: Props) {
                     className="w-full text-sm bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-200 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1.5 focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
                   />
                 ) : (
-                  /* Bio — secondary level (12:1 AAA) */
                   <p className="text-sm text-neutral-600 dark:text-neutral-300 italic leading-relaxed">
-                    {user.bio || p.bioEmpty}
+                    {currentUser.bio || p.bioEmpty}
                   </p>
                 )}
               </div>
 
-              {/* Action buttons */}
               <div className="shrink-0 flex items-center gap-2 pt-0.5">
                 {editing ? (
                   <>
-                    {/* Cancel — caption level, secondary action */}
                     <button
                       onClick={handleCancel}
                       disabled={isPending}
@@ -153,9 +162,8 @@ export default function ProfileCard({ user }: Props) {
         </div>
       </div>
 
-      {/* ── Career Stats ── */}
+      {/* Career Stats */}
       <div className="border-t border-black/[0.06] dark:border-white/[0.05]">
-        {/* Section label — caption level */}
         <div className="px-5 py-2 border-b border-black/[0.04] dark:border-white/[0.04]">
           <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
             {p.statsTitle}
@@ -171,7 +179,6 @@ export default function ProfileCard({ user }: Props) {
 
         {stats.bestStreak > 0 && (
           <div className="px-5 pb-3 pt-1 border-t border-black/[0.04] dark:border-white/[0.04]">
-            {/* Caption level */}
             <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
               {p.bestStreak}:{' '}
               <span className="text-amber-500 font-semibold tabular-nums">
@@ -182,9 +189,8 @@ export default function ProfileCard({ user }: Props) {
         )}
       </div>
 
-      {/* ── Achievements ── */}
+      {/* Achievements */}
       <div className="border-t border-black/[0.06] dark:border-white/[0.05]">
-        {/* Section label — caption level */}
         <div className="px-5 py-2 border-b border-black/[0.04] dark:border-white/[0.04]">
           <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
             {p.achievementsTitle}
@@ -193,7 +199,6 @@ export default function ProfileCard({ user }: Props) {
 
         <div className="px-5 py-4">
           {achievements.length === 0 ? (
-            /* Empty state — caption level */
             <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
               {p.noAchievements}
             </p>

@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
-import type { FriendUser } from '@/lib/types'
+import type { FriendUser } from '@/types'
 import type { Dictionary } from '@/lib/i18n'
 
 const AVATAR_PALETTE = ['bg-cyan-500', 'bg-amber-500', 'bg-emerald-500', 'bg-violet-500', 'bg-rose-500']

@@ -1,5 +1,8 @@
-import { getGroupRankings } from '@/lib/actions/groups'
-import { getDictionary, getLocale } from '@/lib/i18n'
+'use client'
+
+import { useEffect } from 'react'
+import { useRankings } from '@/hooks/domain/useRankings'
+import { useI18n } from '@/components/providers/I18nProvider'
 
 type RankTier = 1 | 2 | 3 | 'other'
 
@@ -43,10 +46,31 @@ function WinRateBar({ rate }: { rate: number }) {
   )
 }
 
-export default async function MemberRankings({ groupId }: { groupId: string }) {
-  const [members, locale] = await Promise.all([getGroupRankings(groupId), getLocale()])
-  const dict = await getDictionary(locale)
+function RankingsSkeleton() {
+  return (
+    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden animate-pulse">
+      <div className="h-11 border-b border-black/[0.08] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.02]" />
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="h-14 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 bg-black/[0.01] dark:bg-white/[0.01]" />
+      ))}
+    </div>
+  )
+}
+
+export default function MemberRankings({ groupId }: { groupId: string }) {
+  const { rankingsByGroup, isLoading, loadRankings } = useRankings()
+  const { dict } = useI18n()
   const t = dict.table
+
+  useEffect(() => {
+    loadRankings(groupId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId])
+
+  const members = rankingsByGroup[groupId]
+
+  if (isLoading && !members) return <RankingsSkeleton />
+  if (!members) return null
 
   return (
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
@@ -91,14 +115,12 @@ export default async function MemberRankings({ groupId }: { groupId: string }) {
                   key={member.userId}
                   className={`${RANK_ACCENT[tier]} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.025] transition-colors ${tier === 1 ? 'bg-amber-500/[0.04]' : ''}`}
                 >
-                  {/* Rank number */}
                   <td className="pl-5 pr-4 py-3.5">
                     <span className={`font-mono font-bold text-sm ${RANK_NUM_CLASS[tier]}`}>
                       {rank}
                     </span>
                   </td>
 
-                  {/* Player */}
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
                       <div className={`w-6 h-6 rounded-sm flex items-center justify-center font-bold text-[11px] shrink-0 ${AVATAR_CLASS[tier]}`}>
@@ -115,7 +137,6 @@ export default async function MemberRankings({ groupId }: { groupId: string }) {
                     </div>
                   </td>
 
-                  {/* Record */}
                   <td className="px-4 py-3.5 text-center">
                     <span className="font-mono text-[11px]">
                       <span className="text-emerald-600 dark:text-emerald-500">{stats.wins}W</span>
@@ -124,12 +145,10 @@ export default async function MemberRankings({ groupId }: { groupId: string }) {
                     </span>
                   </td>
 
-                  {/* Win Rate */}
                   <td className="px-4 py-3.5">
                     <WinRateBar rate={stats.winRate} />
                   </td>
 
-                  {/* Points */}
                   <td className="px-4 py-3.5 text-right">
                     <span className={`font-mono font-bold text-sm tabular-nums ${
                       tier === 1
@@ -140,7 +159,6 @@ export default async function MemberRankings({ groupId }: { groupId: string }) {
                     </span>
                   </td>
 
-                  {/* Streak */}
                   <td className="px-4 py-3.5 text-center">
                     {stats.streak > 0 ? (
                       <span className="font-mono text-[11px] font-semibold text-amber-500 tabular-nums">

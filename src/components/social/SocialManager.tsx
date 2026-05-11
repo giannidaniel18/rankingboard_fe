@@ -1,79 +1,50 @@
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Copy, Check } from 'lucide-react'
 import { UserSearch } from '@/components/social/UserSearch'
 import { PendingRequests } from '@/components/social/PendingRequests'
 import { FriendsList } from '@/components/social/FriendsList'
-import {
-  getPendingRequests,
-  getSentRequests,
-  getFriends,
-  acceptFriendRequest,
-  declineFriendRequest,
-} from '@/lib/actions/friends'
-import type { FriendRequestWithUser, FriendUser } from '@/lib/types'
+import { useSocial } from '@/hooks/domain/useSocial'
+import { useAuth } from '@/hooks/domain/useAuth'
 import type { Dictionary } from '@/lib/i18n'
 
 type Tab = 'search' | 'pending' | 'friends'
 
 interface Props {
   userId: string
-  userAlias: string
   dict: Dictionary['social']
 }
 
-export default function SocialManager({ userId, userAlias, dict }: Props) {
+export default function SocialManager({ userId, dict }: Props) {
   const [tab, setTab] = useState<Tab>('search')
-  const [incoming, setIncoming] = useState<FriendRequestWithUser[]>([])
-  const [sent, setSent] = useState<FriendRequestWithUser[]>([])
-  const [friends, setFriends] = useState<FriendUser[]>([])
   const [copied, setCopied] = useState(false)
-  const [isPending, startTransition] = useTransition()
+
+  const { friends, incomingRequests, sentRequests, isLoading, loadSocialDashboard, acceptReq, rejectReq } = useSocial()
+  const { currentUser } = useAuth()
 
   useEffect(() => {
-    startTransition(async () => {
-      const [inc, snt, frds] = await Promise.all([
-        getPendingRequests(userId),
-        getSentRequests(userId),
-        getFriends(userId),
-      ])
-      setIncoming(inc)
-      setSent(snt)
-      setFriends(frds)
-    })
+    void loadSocialDashboard(userId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
-  const handleAccept = (requestId: string) => {
-    startTransition(async () => {
-      await acceptFriendRequest(requestId)
-      const accepted = incoming.find(r => r.id === requestId)
-      setIncoming(prev => prev.filter(r => r.id !== requestId))
-      if (accepted) setFriends(prev => [...prev, accepted.user])
-    })
-  }
-
-  const handleDecline = (requestId: string) => {
-    startTransition(async () => {
-      await declineFriendRequest(requestId)
-      setIncoming(prev => prev.filter(r => r.id !== requestId))
-    })
-  }
-
-  const handleRequestSent = (req: FriendRequestWithUser) => {
-    setSent(prev => [...prev, req])
-  }
+  const handleAccept = (requestId: string) => { void acceptReq(requestId) }
+  const handleDecline = (requestId: string) => { void rejectReq(requestId) }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(userAlias).then(() => {
+    const alias = currentUser?.alias ?? ''
+    if (!alias) return
+    navigator.clipboard.writeText(alias).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     })
   }
 
+  const userAlias = currentUser?.alias ?? ''
+
   const tabs: { id: Tab; label: string; count?: number }[] = [
     { id: 'search',  label: dict.tabSearch },
-    { id: 'pending', label: dict.tabPending, count: incoming.length },
+    { id: 'pending', label: dict.tabPending, count: incomingRequests.length },
     { id: 'friends', label: dict.tabFriends, count: friends.length },
   ]
 
@@ -137,18 +108,14 @@ export default function SocialManager({ userId, userAlias, dict }: Props) {
       </div>
 
       {tab === 'search' && (
-        <UserSearch
-          currentUserId={userId}
-          sentRequests={sent}
-          onRequestSent={handleRequestSent}
-        />
+        <UserSearch currentUserId={userId} />
       )}
 
       {tab === 'pending' && (
         <PendingRequests
-          incoming={incoming}
-          sent={sent}
-          isPending={isPending}
+          incoming={incomingRequests}
+          sent={sentRequests}
+          isPending={isLoading}
           onAccept={handleAccept}
           onDecline={handleDecline}
           dict={dict}

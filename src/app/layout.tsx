@@ -7,7 +7,7 @@ import { I18nProvider } from '@/components/providers/I18nProvider'
 import { getLocale, getDictionary } from '@/lib/i18n'
 import Navbar from '@/components/layout/Navbar'
 import NavigationShell from '@/components/layout/NavigationShell'
-import { auth } from '@/lib/auth'
+import { getServerSession } from '@/lib/auth/session'
 
 const syne = Syne({ variable: '--font-syne', subsets: ['latin'], weight: ['600', '700', '800'] })
 const dmSans = DM_Sans({ variable: '--font-dm-sans', subsets: ['latin'], weight: ['300', '400', '500', '600'] })
@@ -19,10 +19,8 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [locale, session] = await Promise.all([getLocale(), auth()])
+  const [locale, session] = await Promise.all([getLocale(), getServerSession().catch(() => null)])
   const dictionary = await getDictionary(locale)
-  const userId   = session?.user?.id   ?? null
-  const userName = session?.user?.name ?? null
 
   return (
     <html lang={locale} className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full`} suppressHydrationWarning>
@@ -31,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ThemeProvider>
             <I18nProvider locale={locale} dictionary={dictionary}>
               <Navbar />
-              <NavigationShell userId={userId} userName={userName} />
+              <NavigationShell sessionUser={session?.user ?? null} />
               <div className="pt-14 md:pl-56 pb-20 md:pb-0">
                 {children}
               </div>

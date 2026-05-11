@@ -1,17 +1,18 @@
 'use client'
 
 import { useTransition } from 'react'
-import { setLocale } from '@/lib/actions/locale'
+import { useAppI18n } from '@/hooks/domain/useAppI18n'
 import { useI18n } from '@/components/providers/I18nProvider'
 import type { Locale } from '@/lib/i18n'
 
 export default function LanguageToggle() {
   const { locale, dict } = useI18n()
+  const { setLanguage } = useAppI18n()
   const [isPending, startTransition] = useTransition()
 
   function toggle() {
     const next: Locale = locale === 'en' ? 'es' : 'en'
-    startTransition(() => setLocale(next))
+    startTransition(() => setLanguage(next))
   }
 
   return (

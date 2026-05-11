@@ -1,4 +1,4 @@
-import type { Achievement, AchievementId, User } from '@/lib/types'
+﻿import type { Achievement, AchievementId, User } from '@/types'
 
 const DEFINITIONS: Record<AchievementId, Omit<Achievement, 'unlockedAt'>> = {
   first_win: {

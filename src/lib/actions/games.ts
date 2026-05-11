@@ -1,7 +1,7 @@
-'use server'
+﻿'use server'
 
 import { store } from '@/lib/store'
-import type { Game } from '@/lib/types'
+import type { Game } from '@/types'
 
 export async function getGamesByGroup(groupId: string): Promise<Game[]> {
   return [...store.games.values()].filter(g => g.group_id === groupId)

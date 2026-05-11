@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { UserPlus, Users, Shield } from 'lucide-react'
 import InviteMemberModal from '@/components/groups/InviteMemberModal'
-import type { Group, GroupRole, User, FriendUser } from '@/lib/types'
+import { useGroups } from '@/hooks/domain/useGroups'
+import { useAuth } from '@/hooks/domain/useAuth'
+import type { Group, GroupRole, User } from '@/types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/en'
 
 type MemberRow = { userId: string; name: string; alias: string; role: GroupRole }
@@ -17,31 +19,39 @@ interface Props {
 
 export default function GroupDetails({ group, memberUsers, currentUserId, dict }: Props) {
   const t = dict.group
+  const { addMember } = useGroups()
+  const { currentUser } = useAuth()
 
-  const [memberList, setMemberList] = useState<MemberRow[]>(() =>
-    group.members.map(m => {
-      const user = memberUsers.find(u => u.id === m.userId)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  // Derive from store state on every render — no local domain state.
+  // Union: existing members (with their roles) + any user in memberUsers not yet
+  // reflected in group.members (newly added, defaults to 'member').
+  const memberList: MemberRow[] = [
+    ...group.members.map(m => {
+      const user =
+        memberUsers.find(u => u.id === m.userId) ||
+        (m.userId === currentUser?.id ? currentUser : null)
       return {
         userId: m.userId,
         name: user?.name || 'Unknown User',
         alias: user?.alias || `#${m.userId}`,
         role: m.role,
       }
-    })
-  )
+    }),
+    ...memberUsers
+      .filter(u => !group.members.some(m => m.userId === u.id))
+      .map(u => ({ userId: u.id, name: u.name, alias: u.alias, role: 'member' as GroupRole })),
+  ]
 
-  const [modalOpen, setModalOpen] = useState(false)
-
-  // Admin always has access to invite; also visible to any group member
   const isAdmin = !!currentUserId && memberList.some(m => m.userId === currentUserId && m.role === 'admin')
   const isMember = !!currentUserId && memberList.some(m => m.userId === currentUserId)
   const canInvite = isAdmin || isMember
 
-  const handleMemberAdded = (friend: FriendUser) => {
-    setMemberList(prev => [...prev, { userId: friend.id, name: friend.name, alias: friend.alias, role: 'member' }])
+  const handleMemberAdded = async (user: User): Promise<void> => {
+    await addMember(group.id, user)
   }
-console.log("idUsuarioObtenido:", currentUserId);
-console.log("Miembros:", memberList);
+
   return (
     <>
       <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">

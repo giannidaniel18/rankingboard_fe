@@ -1,7 +1,7 @@
-'use server'
+﻿'use server'
 
 import { store, makeStats, generateAlias } from '@/lib/store'
-import type { User } from '@/lib/types'
+import type { User } from '@/types'
 
 interface ProvisionData {
   name: string

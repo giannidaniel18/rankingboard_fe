@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, X } from 'lucide-react'
-import type { FriendUser } from '@/lib/types'
+import type { FriendUser } from '@/types'
 
 interface ParticipantMultiSelectProps {
   members: FriendUser[]
@@ -19,7 +19,7 @@ export default function ParticipantMultiSelect({
   onChange,
   disabled,
   label,
-  placeholder = 'Add players…',
+  placeholder = 'Add playersâ€¦',
 }: ParticipantMultiSelectProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -70,7 +70,7 @@ export default function ParticipantMultiSelect({
         <div className="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
           {selected.length === 0 ? (
             <span className="text-sm text-tx-caption font-medium py-0.5">
-              {disabled ? `— ${label} —` : placeholder}
+              {disabled ? `â€” ${label} â€”` : placeholder}
             </span>
           ) : (
             selected.map(p => (

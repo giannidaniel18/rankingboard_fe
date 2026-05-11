@@ -89,7 +89,7 @@ const es: Dictionary = {
     commentsPlaceholder: 'Comentarios opcionales…',
     gameLabel: 'Juego',
     scoresLabel: 'Jugadores y puntajes',
-    selectOpponent: 'Seleccionar oponente',
+    selectPlayers: 'Seleccionar jugadores',
     iWon: 'Gané',
     iLost: 'Perdí',
     saveMatch: 'Guardar partida',

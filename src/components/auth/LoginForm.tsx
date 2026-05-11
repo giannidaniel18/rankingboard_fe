@@ -1,14 +1,32 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { loginAction } from '@/lib/actions/auth'
+import { useAuth } from '@/hooks/domain/useAuth'
 
 export default function LoginForm() {
-  const [error, formAction, isPending] = useActionState(loginAction, null)
+  const { login } = useAuth()
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, setIsPending] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const email    = fd.get('email')    as string
+    const password = fd.get('password') as string
+
+    setIsPending(true)
+    setError(null)
+    try {
+      const err = await login(email, password)
+      if (err) setError(err)
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-2.5">
+    <form onSubmit={handleSubmit} className="space-y-2.5">
       {error && (
         <p className="text-[11px] font-mono text-red-500 dark:text-red-400 px-0.5">{error}</p>
       )}

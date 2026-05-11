@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useTransition, useRef, useEffect } from 'react'
-import { searchUsers, sendFriendRequest } from '@/lib/actions/friends'
-import type { User, FriendRequestWithUser } from '@/lib/types'
+import { useState, useRef, useEffect } from 'react'
+import { useSocial } from '@/hooks/domain/useSocial'
+import type { User } from '@/types'
 
 interface UserSearchProps {
   currentUserId: string
-  sentRequests: FriendRequestWithUser[]
-  onRequestSent: (req: FriendRequestWithUser) => void
 }
 
 const AVATAR_PALETTE = [
@@ -37,12 +35,13 @@ function WinRateBar({ rate }: { rate: number }) {
   )
 }
 
-export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserSearchProps) {
+export function UserSearch({ currentUserId }: UserSearchProps) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<User[]>([])
-  const [isPending, startTransition] = useTransition()
+  const [isSearching, setIsSearching] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const { searchResults, sentRequests, search, sendReq } = useSocial()
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -53,26 +52,19 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
     if (!value.trim()) {
-      setResults([])
+      void search('', currentUserId)
+      setIsSearching(false)
       return
     }
 
+    setIsSearching(true)
     debounceRef.current = setTimeout(() => {
-      startTransition(async () => {
-        const users = await searchUsers(value, currentUserId)
-        setResults(users)
-      })
+      void search(value, currentUserId).then(() => setIsSearching(false))
     }, 200)
   }
 
   const handleAddFriend = (user: User) => {
-    startTransition(async () => {
-      const friendship = await sendFriendRequest(currentUserId, user.id)
-      onRequestSent({
-        id: friendship.id,
-        user: { id: user.id, name: user.name, email: user.email, alias: user.alias },
-      })
-    })
+    void sendReq(currentUserId, user.id)
   }
 
   return (
@@ -98,7 +90,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
           placeholder="Search by alias (e.g. #alice)…"
           className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 font-mono outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition-all duration-200"
         />
-        {isPending && (
+        {isSearching && (
           <div className="absolute inset-y-0 right-3 flex items-center">
             <div className="w-3 h-3 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
           </div>
@@ -106,9 +98,9 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
       </div>
 
       {/* Results */}
-      {results.length > 0 && (
+      {searchResults.length > 0 && (
         <ul className="mt-2 divide-y divide-zinc-200 dark:divide-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
-          {results.map(user => {
+          {searchResults.map(user => {
             const alreadySent = sentRequests.some(r => r.user.id === user.id)
             const initials = user.name.slice(0, 2).toUpperCase()
 
@@ -143,8 +135,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
                 ) : (
                   <button
                     onClick={() => handleAddFriend(user)}
-                    disabled={isPending}
-                    className="flex-shrink-0 px-3 py-1 rounded-md text-xs font-semibold border border-cyan-600 text-cyan-400 hover:bg-cyan-500/10 transition-all duration-200 disabled:opacity-50"
+                    className="flex-shrink-0 px-3 py-1 rounded-md text-xs font-semibold border border-cyan-600 text-cyan-400 hover:bg-cyan-500/10 transition-all duration-200"
                   >
                     + Add
                   </button>
@@ -156,7 +147,7 @@ export function UserSearch({ currentUserId, sentRequests, onRequestSent }: UserS
       )}
 
       {/* Empty state */}
-      {query.trim() && !isPending && results.length === 0 && (
+      {query.trim() && !isSearching && searchResults.length === 0 && (
         <p className="mt-3 text-center text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           No players found for &ldquo;{query}&rdquo;
         </p>

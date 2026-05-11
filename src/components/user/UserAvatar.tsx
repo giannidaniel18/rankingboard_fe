@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useI18n } from '@/components/providers/I18nProvider'
-import { logoutAction } from '@/lib/actions/auth'
+import { useAuth } from '@/hooks/domain/useAuth'
 
 interface Props {
   dropUp?: boolean
@@ -24,6 +24,7 @@ function getInitials(name: string): string {
 export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) {
   const { data: session, status } = useSession()
   const { dict } = useI18n()
+  const { logout } = useAuth()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -36,9 +37,7 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
   }, [open])
 
   if (status === 'loading') {
-    return (
-      <div className="w-7 h-7 rounded-sm bg-amber-500/30 animate-pulse" />
-    )
+    return <div className="w-7 h-7 rounded-sm bg-amber-500/30 animate-pulse" />
   }
 
   if (status === 'unauthenticated') {
@@ -106,14 +105,13 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
           </Link>
 
           <div className="border-t border-black/[0.08] dark:border-white/[0.07] mt-1 pt-1">
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="w-full text-left px-3 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-              >
-                {dict.user.logout}
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={() => { setOpen(false); void logout() }}
+              className="w-full text-left px-3 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            >
+              {dict.user.logout}
+            </button>
           </div>
         </div>
       )}

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target } from 'lucide-react'
-import { getUserGroups, getGroupMembers } from '@/lib/actions/groups'
-import { getAllGames } from '@/lib/actions/games'
-import { createMultiplayerMatch } from '@/lib/actions/matches'
-import type { Group, Game, FriendUser } from '@/lib/types'
+import { useGroups } from '@/hooks/domain/useGroups'
+import { useGames } from '@/hooks/domain/useGames'
+import { useMatches } from '@/hooks/domain/useMatches'
+import { useRankings } from '@/hooks/domain/useRankings'
+import type { FriendUser } from '@/types'
 import { useI18n } from '@/components/providers/I18nProvider'
 import GameCombobox from '@/components/ui/GameCombobox'
 import ParticipantMultiSelect from '@/components/ui/ParticipantMultiSelect'
@@ -57,9 +58,13 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
   const { dict } = useI18n()
   const t = dict.match
 
-  const [userGroups, setUserGroups]     = useState<Group[]>([])
-  const [allGames, setAllGames]         = useState<Game[]>([])
+  const { groups, isLoading: groupsLoading, loadUserGroups, fetchGroupMembers } = useGroups()
+  const { games, isLoading: gamesLoading, loadAllGames } = useGames()
+  const { isSubmitting, recordMatch, loadGroupMatches } = useMatches()
+  const { loadRankings } = useRankings()
+
   const [groupMembers, setGroupMembers] = useState<FriendUser[]>([])
+  const [isMembersLoading, setMembersLoading] = useState(false)
 
   const [selectedGroupId, setSelectedGroupId]           = useState('')
   const [selectedParticipants, setSelectedParticipants] = useState<FriendUser[]>([])
@@ -68,12 +73,9 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
   const [participantResults, setParticipantResults]     = useState<Record<string, PlayerResult>>({})
   const [success, setSuccess]                           = useState(false)
 
-  const [isPending, startTransition] = useTransition()
+  const isBusy = groupsLoading || gamesLoading || isMembersLoading || isSubmitting
 
-  const allPlayers: { id: string; name: string }[] =
-    userId && userName
-      ? [{ id: userId, name: userName }, ...selectedParticipants]
-      : [...selectedParticipants]
+  const allPlayers = selectedParticipants
 
   useEffect(() => {
     if (!isOpen || !userId) return
@@ -85,24 +87,25 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     setGroupMembers([])
     setSuccess(false)
 
-    startTransition(async () => {
-      const [groups, games] = await Promise.all([getUserGroups(userId), getAllGames()])
-      setUserGroups(groups)
-      setAllGames(games)
-    })
+    loadAllGames()
+    loadUserGroups(userId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, userId])
 
-  const handleGroupChange = (groupId: string) => {
+  const handleGroupChange = async (groupId: string) => {
     setSelectedGroupId(groupId)
     setSelectedParticipants([])
     setSelectedGameId('')
     setParticipantResults({})
     setGroupMembers([])
     if (!groupId || !userId) return
-    startTransition(async () => {
-      const members = await getGroupMembers(groupId, userId)
-      setGroupMembers(members)
-    })
+    setMembersLoading(true)
+    try {
+      const users = await fetchGroupMembers(groupId)
+      setGroupMembers(users)
+    } finally {
+      setMembersLoading(false)
+    }
   }
 
   const handleParticipantsChange = (participants: FriendUser[]) => {
@@ -130,13 +133,13 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
 
   const canSubmit =
     !!selectedGroupId &&
-    selectedParticipants.length > 0 &&
+    selectedParticipants.length >= 2 &&
     !!selectedGameId &&
     allResultsComplete &&
-    !isPending
+    !isBusy
 
-  const handleSubmit = () => {
-    if (!userId || !selectedGameId || !canSubmit || isPending) return
+  const handleSubmit = async () => {
+    if (!userId || !selectedGameId || !canSubmit) return
 
     let finalParticipants: { userId: string; placement: number; score?: number }[]
 
@@ -157,11 +160,11 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
       }))
     }
 
-    startTransition(async () => {
-      await createMultiplayerMatch(selectedGameId, selectedGroupId || undefined, finalParticipants)
-      setSuccess(true)
-      setTimeout(onClose, 1800)
-    })
+    await recordMatch(selectedGameId, selectedGroupId || undefined, finalParticipants)
+    await loadRankings(selectedGroupId)
+    await loadGroupMatches(selectedGroupId)
+    setSuccess(true)
+    setTimeout(onClose, 1800)
   }
 
   if (!isOpen) return null
@@ -210,7 +213,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                {isPending
+                {isBusy
                   ? <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
                   : <Swords  className="w-5 h-5 text-amber-400" />
                 }
@@ -229,13 +232,13 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
               <SelectField
                 label={t.selectGroup}
                 value={selectedGroupId}
-                onChange={handleGroupChange}
-                disabled={isPending || userGroups.length === 0}
+                onChange={groupId => { void handleGroupChange(groupId) }}
+                disabled={groupsLoading || groups.length === 0}
               >
                 <option value="" disabled className="bg-elevated text-tx-caption">
-                  {userGroups.length === 0 ? t.noGroups : `— ${t.selectGroup} —`}
+                  {groups.length === 0 ? t.noGroups : `— ${t.selectGroup} —`}
                 </option>
-                {userGroups.map(g => (
+                {groups.map(g => (
                   <option key={g.id} value={g.id} className="bg-elevated text-tx-primary">
                     {g.name}
                   </option>
@@ -244,11 +247,11 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
 
               {/* Step 2 — Participants */}
               <ParticipantMultiSelect
-                label={t.selectOpponent}
+                label={t.selectPlayers}
                 members={groupMembers}
                 selected={selectedParticipants}
                 onChange={handleParticipantsChange}
-                disabled={!selectedGroupId || isPending || groupMembers.length === 0}
+                disabled={!selectedGroupId || isMembersLoading || groupMembers.length === 0}
                 placeholder={
                   !selectedGroupId
                     ? `— ${t.selectGroup} first —`
@@ -261,10 +264,10 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
               {/* Step 3 — Game */}
               <GameCombobox
                 label={t.selectGame}
-                games={allGames}
+                games={games}
                 value={selectedGameId}
                 onChange={setSelectedGameId}
-                disabled={selectedParticipants.length === 0 || isPending || allGames.length === 0}
+                disabled={selectedParticipants.length === 0 || gamesLoading || games.length === 0}
                 searchPlaceholder="Search game…"
               />
 
@@ -415,7 +418,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
               disabled={!canSubmit}
               className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
             >
-              {isPending ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
                   {t.saving}

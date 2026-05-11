@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import RecentMatches from '@/components/dashboard/RecentMatches'
 import { getDictionary, getLocale } from '@/lib/i18n'
 
@@ -21,9 +20,7 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          <Suspense fallback={<p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">…</p>}>
-            <RecentMatches />
-          </Suspense>
+          <RecentMatches />
         </main>
       </div>
     </div>

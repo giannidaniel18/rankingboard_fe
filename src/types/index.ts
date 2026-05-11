@@ -118,3 +118,22 @@ export interface FriendUser {
   email: string
   alias: string
 }
+
+export interface MatchParticipantDetail {
+  userId: string
+  name: string
+  placement: number
+  score?: number
+}
+
+export interface MatchDetail {
+  id: string
+  group_id?: string
+  game_id: string
+  gameName: string
+  gameType?: GameType
+  groupName?: string
+  participants: MatchParticipantDetail[]
+  date: Date
+  comments?: string
+}

@@ -1,9 +1,9 @@
-'use server'
+﻿'use server'
 
 import { store } from '@/lib/store'
 import { rankPlayers, computePointsDelta } from '@/lib/engine/ranking'
 import { checkAchievements, buildAchievement } from '@/lib/engine/achievements'
-import type { Match, MatchParticipant } from '@/lib/types'
+import type { Match, MatchParticipant } from '@/types'
 
 export type CreateMatchInput = {
   group_id: string

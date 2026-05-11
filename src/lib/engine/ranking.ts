@@ -1,4 +1,4 @@
-import type { MatchPlayer } from '@/lib/types'
+﻿import type { MatchPlayer } from '@/types'
 
 const WIN_POINTS = 25
 const MAX_LOSS_POINTS = 15

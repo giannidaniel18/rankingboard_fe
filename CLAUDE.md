@@ -5,12 +5,27 @@
 - **Frontend/Backend:** Next.js 16+ (App Router).
 - **Language:** TypeScript (Strict mode).
 - **Styling:** Tailwind CSS v4 — mobile-first, `dark:` classes everywhere.
-- **Theming:** `next-themes` — default dark mode, class-based (`attribute="class"`). Toggle via `ThemeToggle` in sidebar/navbar.
-- **I18n:** Dictionary-based (`src/lib/i18n/`). Locale stored in cookie via `setLocale` server action. Server components call `getDictionary(await getLocale())` directly. Client components use `useI18n()` hook from `I18nProvider`.
-- **State/Logic:** Server Actions for CRUD, React Hooks for UI state. Zustand for global client state.
-- **Forms:** React Hook Form for all form handling and validation.
-- **HTTP:** Axios for all external HTTP requests (never use `fetch` directly for API calls).
-- **Architecture:** Modular. Folders: `/src/app`, `/src/components`, `/src/lib`.
+- **Theming:** `next-themes` — default dark mode, class-based (`attribute="class"`).
+- **I18n:** Dictionary-based (`src/lib/i18n/`). Locale stored in cookie.
+- **State Management:** Zustand EXCLUSIVELY for global business state. Independent slices in `src/store/` (e.g., `useAuthStore.ts`). Forbidden to use Context for domain data. Zero prop drilling.
+- **HTTP / Fetching:** Axios. Configured through a base instance in `src/services/axiosInstance.ts` (global interceptors and headers handling). 
+  - *Infrastructure Note:* The Base URL for the Production (PRD) environment is `apps` (replaces the old APIM-PRD-GS nomenclature).
+- **Forms:** React Hook Form for form handling and validation.
+
+## Architecture and Folder Structure (Hexagonal)
+Strict structure to separate UI, Business Logic, and External Services:
+```
+src/
+  app/           ← Pages and layouts (Next.js App Router)
+  components/    ← Pure UI components (No logic)
+  hooks/
+    domain/      ← Business logic (e.g., useGroups.ts)
+    infra/       ← Reusable primitives (e.g., useLocalStorage.ts)
+    ui/          ← Visual behavior (e.g., useModal.ts)
+  services/      ← Isolated HTTP calls (axiosInstance.ts, authService.ts)
+  store/         ← Zustand slices by concept
+  types/         ← Unique and shared interfaces and types
+```
 
 ## Code Style & Rules
 - **DRY & Clean:** Prioritize reusable components and logic.
@@ -37,6 +52,7 @@
 - **UI Design:** Always invoke the `frontend-design` skill when designing or implementing any layout, component, view, or UI-related element.
 
 ## Development Workflow
-- **Validation:** Always run `tsc --noEmit` before finishing a large task.
-- **Git:** Use descriptive commit messages (e.g., "feat: add match engine logic").
-- **Dependencies:** Ask before adding new npm packages.
+- **Validation:** Always run `tsc --noEmit` before finishing a task to ensure strict type safety across the hexagonal layers.
+- **Git:** Use descriptive Conventional Commits (e.g., "feat(groups): implement domain hooks" or "refactor(matches): migrate to zustand store").
+- **Dependencies:** Ask for explicit approval before adding any new npm packages.
+- **UI Design:** Apply a minimalist, dark-mode first, and mobile-first approach. Always invoke the `frontend-design` skill when designing or implementing any layout, component, view, or UI-related element.

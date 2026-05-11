@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import type { FriendRequestWithUser } from '@/lib/types'
+import type { FriendRequestWithUser } from '@/types'
 import type { Dictionary } from '@/lib/i18n'
 
 const AVATAR_PALETTE = ['bg-cyan-500', 'bg-amber-500', 'bg-emerald-500', 'bg-violet-500', 'bg-rose-500']

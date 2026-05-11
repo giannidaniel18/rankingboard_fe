@@ -1,7 +1,7 @@
-'use server'
+﻿'use server'
 
 import { store } from '@/lib/store'
-import type { FriendUser, Group, RankedMember } from '@/lib/types'
+import type { FriendUser, Group, RankedMember } from '@/types'
 
 export async function getGroups(): Promise<Group[]> {
   return [...store.groups.values()].sort(

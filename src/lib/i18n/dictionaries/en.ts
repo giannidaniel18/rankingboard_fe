@@ -87,7 +87,7 @@ const en = {
     commentsPlaceholder: 'Optional comments…',
     gameLabel: 'Game',
     scoresLabel: 'Players & Scores',
-    selectOpponent: 'Select Opponent',
+    selectPlayers: 'Select Players',
     iWon: 'I Won',
     iLost: 'I Lost',
     saveMatch: 'Save Match',

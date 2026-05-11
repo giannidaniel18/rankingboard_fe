@@ -1,36 +1,15 @@
-import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import ProfileCard from '@/components/user/ProfileCard'
-import { auth } from '@/lib/auth'
-import { getUser } from '@/lib/actions/users'
 import { getDictionary, getLocale } from '@/lib/i18n'
 
 export const metadata = { title: 'Profile — RankingBoard' }
 
 export default async function ProfilePage() {
-  const session = await auth()
-console.log(session);
-  if (!session?.user) return null
-
-  const [user, locale] = await Promise.all([
-    getUser(session.user.id, {
-      name:  session.user.name  ?? '',
-      email: session.user.email ?? '',
-      image: session.user.image ?? undefined,
-    }),
-    getLocale(),
-  ])
-  if (!user) notFound()
-
+  const locale = await getLocale()
   const dict = await getDictionary(locale)
 
   return (
     <div className="flex min-h-screen bg-canvas">
-   
-
       <div className="flex-1 flex flex-col min-w-0">
-      
-
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-xl w-full">
             <div className="mb-6">
@@ -39,7 +18,7 @@ console.log(session);
               </h1>
             </div>
 
-            <ProfileCard user={user} />
+            <ProfileCard />
           </div>
         </main>
       </div>

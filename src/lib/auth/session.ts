@@ -1,6 +1,6 @@
-import { auth } from '@/lib/auth'
+﻿import { auth } from '@/lib/auth'
 import { store, generateAlias, makeStats } from '@/lib/store'
-import type { User } from '@/lib/types'
+import type { User } from '@/types'
 
 export type Session = { user: User }
 

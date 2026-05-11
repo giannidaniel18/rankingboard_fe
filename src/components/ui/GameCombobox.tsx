@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, Search, X } from 'lucide-react'
-import type { Game } from '@/lib/types'
+import type { Game } from '@/types'
 
 interface GameComboboxProps {
   games: Game[]
@@ -21,7 +21,7 @@ export default function GameCombobox({
   onChange,
   disabled,
   label,
-  searchPlaceholder = 'Search…',
+  searchPlaceholder = 'Searchâ€¦',
 }: GameComboboxProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -89,7 +89,7 @@ export default function GameCombobox({
         }`}
       >
         <span className={`flex-1 truncate font-medium ${selectedGame ? 'text-tx-primary' : 'text-tx-caption'}`}>
-          {selectedGame ? selectedGame.name : `— ${label} —`}
+          {selectedGame ? selectedGame.name : `â€” ${label} â€”`}
         </span>
         {selectedGame && !disabled ? (
           <X

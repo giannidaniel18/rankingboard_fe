@@ -1,37 +1,41 @@
 'use client'
 
 import { useState, useTransition, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createGroup } from '@/lib/actions/groups'
+import { useGroups } from '@/hooks/domain/useGroups'
+import { useAuth } from '@/hooks/domain/useAuth'
 import type { Dictionary } from '@/lib/i18n/dictionaries/en'
-import type { Group } from '@/lib/types'
+import type { Group } from '@/types'
 
 interface Props {
-  groups: Group[]
-  userId: string
   dict: Dictionary
 }
 
-export default function GroupsClient({ groups, userId, dict }: Props) {
+export default function GroupsClient({ dict }: Props) {
   const t = dict.groups
-  const router = useRouter()
+  const { currentUser } = useAuth()
+  const { groups, isLoading, loadUserGroups, createNewGroup } = useGroups()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [isPending, startTransition] = useTransition()
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    if (!currentUser) return
+    loadUserGroups(currentUser.id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id])
+
+  useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 50)
   }, [open])
 
   function handleCreate() {
-    if (!name.trim() || isPending) return
+    if (!name.trim() || isPending || !currentUser) return
     startTransition(async () => {
-      await createGroup(name.trim(), userId)
+      await createNewGroup(name.trim(), currentUser.id)
       setName('')
       setOpen(false)
-      router.refresh()
     })
   }
 
@@ -61,7 +65,9 @@ export default function GroupsClient({ groups, userId, dict }: Props) {
       </div>
 
       {/* Content */}
-      {groups.length === 0 ? (
+      {isLoading ? (
+        <LoadingSkeleton />
+      ) : groups.length === 0 ? (
         <EmptyState t={t} onCreateClick={() => setOpen(true)} />
       ) : (
         <GroupGrid groups={groups} t={t} />
@@ -122,6 +128,19 @@ export default function GroupsClient({ groups, userId, dict }: Props) {
         </div>
       )}
     </>
+  )
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-32 rounded-sm border border-black/[0.08] dark:border-white/[0.07] bg-black/[0.04] dark:bg-white/[0.04]"
+        />
+      ))}
+    </div>
   )
 }
 

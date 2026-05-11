@@ -1,7 +1,7 @@
-'use server'
+﻿'use server'
 
 import { store } from '@/lib/store'
-import type { Friendship, User, FriendRequestWithUser, FriendUser } from '@/lib/types'
+import type { Friendship, User, FriendRequestWithUser, FriendUser } from '@/types'
 
 export async function sendFriendRequest(from: string, to: string): Promise<Friendship> {
   return store.sendFriendRequest(from, to)

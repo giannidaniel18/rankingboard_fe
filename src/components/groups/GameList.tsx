@@ -1,5 +1,5 @@
-import { getDictionary, getLocale } from '@/lib/i18n'
-import type { Game } from '@/lib/types'
+﻿import { getDictionary, getLocale } from '@/lib/i18n'
+import type { Game } from '@/types'
 
 const TYPE_STYLES: Record<Game['type'], string> = {
   Board:  'text-amber-600  dark:text-amber-500  bg-amber-500/10  border-amber-500/20',
@@ -8,9 +8,9 @@ const TYPE_STYLES: Record<Game['type'], string> = {
 }
 
 const TYPE_ICONS: Record<Game['type'], string> = {
-  Board:  '🎲',
-  eSport: '🎮',
-  Sports: '⚽',
+  Board:  'ðŸŽ²',
+  eSport: 'ðŸŽ®',
+  Sports: 'âš½',
 }
 
 export default async function GameList({ games, groupId: _ }: { games: Game[]; groupId: string }) {

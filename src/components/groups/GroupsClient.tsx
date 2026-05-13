@@ -179,6 +179,9 @@ function GroupGrid({ groups, t }: { groups: Group[]; t: Dictionary['groups'] }) 
 }
 
 function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
+  const activeMemberCount = group.members.filter(m => m.isActive).length
+  const initial = group.name[0]?.toUpperCase() ?? '#'
+
   return (
     <Link
       href={`/groups/${group.id}`}
@@ -188,20 +191,33 @@ function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
       <div className="h-0.5 bg-amber-500/0 group-hover:bg-amber-500/60 transition-all duration-200 rounded-t-sm" />
 
       <div className="p-5">
-        {/* Name */}
-        <h2 className="font-heading text-sm font-bold tracking-[0.05em] text-neutral-900 dark:text-neutral-100 truncate">
-          {group.name}
-        </h2>
-
-        {/* Tag */}
-        <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 mt-1 truncate">
-          {group.groupTag}
-        </p>
+        {/* Avatar + Name */}
+        <div className="flex items-center gap-3 mb-1">
+          {group.avatarUrl ? (
+            <img
+              src={group.avatarUrl}
+              alt={group.name}
+              className="w-9 h-9 rounded-full object-cover shrink-0 border border-black/[0.08] dark:border-white/[0.08]"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-sm text-amber-500 dark:text-amber-400 shrink-0">
+              {initial}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <h2 className="font-heading text-sm font-bold tracking-[0.05em] text-neutral-900 dark:text-neutral-100 truncate">
+              {group.name}
+            </h2>
+            <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate">
+              {group.groupTag}
+            </p>
+          </div>
+        </div>
 
         {/* Footer row */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-black/[0.06] dark:border-white/[0.05]">
           <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500 tabular-nums">
-            {group.members.length} {t.members}
+            {activeMemberCount} {t.members}
           </span>
           <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-amber-500 dark:text-amber-400 group-hover:translate-x-0.5 transition-transform duration-150">
             {t.viewGroup} →

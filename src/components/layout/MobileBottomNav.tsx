@@ -7,9 +7,10 @@ import { useI18n } from '@/components/providers/I18nProvider'
 
 interface MobileBottomNavProps {
   onOpenModal: () => void
+  canRecordMatch?: boolean
 }
 
-export default function MobileBottomNav({ onOpenModal }: MobileBottomNavProps) {
+export default function MobileBottomNav({ onOpenModal, canRecordMatch = true }: MobileBottomNavProps) {
   const pathname = usePathname()
   const { dict } = useI18n()
 
@@ -49,19 +50,21 @@ export default function MobileBottomNav({ onOpenModal }: MobileBottomNavProps) {
           )
         })}
 
-        {/* Central FAB with label */}
-        <div className="relative -top-4 flex flex-col items-center gap-1">
-          <button
-            onClick={onOpenModal}
-            className="w-14 h-14 rounded-full bg-amber-500 hover:bg-amber-400 active:bg-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/40 transition-all active:scale-95 border-4 border-white dark:border-[#080C12]"
-            aria-label={dict.nav.newMatch}
-          >
-            <Plus className="w-6 h-6 text-black" strokeWidth={2.5} />
-          </button>
-          <span className="text-[8px] font-semibold tracking-wide uppercase leading-none text-amber-500 dark:text-amber-400 whitespace-nowrap">
-            {dict.nav.newMatch}
-          </span>
-        </div>
+        {/* Central FAB — hidden for read-only members */}
+        {canRecordMatch && (
+          <div className="relative -top-4 flex flex-col items-center gap-1">
+            <button
+              onClick={onOpenModal}
+              className="w-14 h-14 rounded-full bg-amber-500 hover:bg-amber-400 active:bg-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/40 transition-all active:scale-95 border-4 border-white dark:border-[#080C12]"
+              aria-label={dict.nav.newMatch}
+            >
+              <Plus className="w-6 h-6 text-black" strokeWidth={2.5} />
+            </button>
+            <span className="text-[8px] font-semibold tracking-wide uppercase leading-none text-amber-500 dark:text-amber-400 whitespace-nowrap">
+              {dict.nav.newMatch}
+            </span>
+          </div>
+        )}
 
         {rightItems.map(({ href, icon: Icon, label }) => {
           const active = isActive(href)

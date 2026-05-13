@@ -7,9 +7,10 @@ import { useI18n } from '@/components/providers/I18nProvider'
 
 interface SideNavBarProps {
   onOpenModal: () => void
+  canRecordMatch?: boolean
 }
 
-export default function SideNavBar({ onOpenModal }: SideNavBarProps) {
+export default function SideNavBar({ onOpenModal, canRecordMatch = true }: SideNavBarProps) {
   const pathname = usePathname()
   const { dict } = useI18n()
 
@@ -25,15 +26,17 @@ export default function SideNavBar({ onOpenModal }: SideNavBarProps) {
 
   return (
     <aside className="hidden md:flex fixed left-0 top-14 bottom-0 w-56 flex-col bg-canvas border-r border-black/[0.08] dark:border-white/[0.07] z-30">
-      <div className="p-3 border-b border-black/[0.08] dark:border-white/[0.07]">
-        <button
-          onClick={onOpenModal}
-          className="group w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-heading text-[11px] font-bold tracking-[0.15em] uppercase transition-all shadow-md shadow-amber-500/20"
-        >
-          <Plus className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90" strokeWidth={3} />
-          {dict.nav.newMatch}
-        </button>
-      </div>
+      {canRecordMatch && (
+        <div className="p-3 border-b border-black/[0.08] dark:border-white/[0.07]">
+          <button
+            onClick={onOpenModal}
+            className="group w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-heading text-[11px] font-bold tracking-[0.15em] uppercase transition-all shadow-md shadow-amber-500/20"
+          >
+            <Plus className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90" strokeWidth={3} />
+            {dict.nav.newMatch}
+          </button>
+        </div>
+      )}
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map(({ href, icon: Icon, label }) => {

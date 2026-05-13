@@ -53,17 +53,20 @@ export interface User {
   profile: UserProfile
 }
 
-export type GroupRole = 'admin' | 'member'
+export type GroupRole = 'admin' | 'maintainer' | 'member'
 
 export interface GroupMember {
   userId: string
   role: GroupRole
+  joinedAt: string
+  isActive: boolean
 }
 
 export interface Group {
   id: string
   name: string
   groupTag: string
+  avatarUrl?: string
   members: GroupMember[]
   game_ids: string[]
   createdAt: Date
@@ -113,6 +116,7 @@ export interface RankedMember {
   name: string
   alias: string
   image?: string
+  isActive: boolean
   stats: MemberStats
 }
 

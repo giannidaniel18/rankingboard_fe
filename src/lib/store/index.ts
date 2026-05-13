@@ -1,4 +1,4 @@
-﻿import type { User, Group, GroupMember, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/types'
+﻿import type { User, Group, GroupMember, GroupRole, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/types'
 import { computePointsDelta } from '@/lib/engine/ranking'
 
 export function generateAlias(name: string): string {
@@ -109,12 +109,12 @@ const SEED_GROUPS: Group[] = [
     name: 'Los Pibes del Pool',
     groupTag: '#lospibesdelpool_2025',
     members: [
-      { userId: 'u_daniel', role: 'admin' },
-      { userId: 'u_gasti',  role: 'member' },
-      { userId: 'u_nenuco', role: 'member' },
-      { userId: 'u_sonico', role: 'member' },
-      { userId: 'u_leo',    role: 'member' },
-      { userId: 'u_felix',  role: 'member' },
+      { userId: 'u_daniel', role: 'admin',      joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
+      { userId: 'u_gasti',  role: 'maintainer', joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
+      { userId: 'u_nenuco', role: 'member',     joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
+      { userId: 'u_sonico', role: 'member',     joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
+      { userId: 'u_leo',    role: 'member',     joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
+      { userId: 'u_felix',  role: 'member',     joinedAt: '2025-01-01T00:00:00.000Z', isActive: true },
     ],
     game_ids: ['game_pool8', 'game_cs2', 'game_catan', 'game_monopoly'],
     createdAt: new Date('2025-01-01'),
@@ -420,7 +420,7 @@ class Store {
       id: `g_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
       name,
       groupTag,
-      members: [{ userId: adminId, role: 'admin' }],
+      members: [{ userId: adminId, role: 'admin', joinedAt: new Date().toISOString(), isActive: true }],
       game_ids: [],
       createdAt: new Date(),
     }
@@ -430,7 +430,7 @@ class Store {
 
   getUserGroups(userId: string): Group[] {
     let groups = Array.from(this.groups.values()).filter(g =>
-      g.members.some(m => m.userId === userId)
+      g.members.some(m => m.userId === userId && m.isActive)
     )
     if (groups.length > 0) return groups
     // Self-healing: if the caller's ID hasn't been bridged yet (client bundle
@@ -439,7 +439,7 @@ class Store {
     if (callerEmail) {
       this.bridgeIdentity(userId, callerEmail)
       groups = Array.from(this.groups.values()).filter(g =>
-        g.members.some(m => m.userId === userId)
+        g.members.some(m => m.userId === userId && m.isActive)
       )
     }
     return groups
@@ -448,8 +448,54 @@ class Store {
   addMemberToGroup(groupId: string, userId: string): Group {
     const group = this.groups.get(groupId)
     if (!group) throw new Error(`Group ${groupId} not found`)
-    if (group.members.some(m => m.userId === userId)) return group
-    const updated = { ...group, members: [...group.members, { userId, role: 'member' as const }] }
+    const existing = group.members.find(m => m.userId === userId)
+    if (existing) {
+      if (existing.isActive) return group
+      // Re-activate a previously kicked member
+      const updated: Group = {
+        ...group,
+        members: group.members.map(m => m.userId === userId ? { ...m, isActive: true, role: 'member' as const } : m),
+      }
+      this.groups.set(groupId, updated)
+      return updated
+    }
+    const updated: Group = {
+      ...group,
+      members: [...group.members, { userId, role: 'member' as const, joinedAt: new Date().toISOString(), isActive: true }],
+    }
+    this.groups.set(groupId, updated)
+    return updated
+  }
+
+  updateGroupDetails(groupId: string, name: string, avatarUrl?: string): Group {
+    const group = this.groups.get(groupId)
+    if (!group) throw new Error(`Group ${groupId} not found`)
+    const updated: Group = { ...group, name, avatarUrl }
+    this.groups.set(groupId, updated)
+    return updated
+  }
+
+  updateMemberRole(groupId: string, userId: string, role: GroupRole): Group {
+    const group = this.groups.get(groupId)
+    if (!group) throw new Error(`Group ${groupId} not found`)
+    const updated: Group = {
+      ...group,
+      members: group.members.map(m => m.userId === userId ? { ...m, role } : m),
+    }
+    this.groups.set(groupId, updated)
+    return updated
+  }
+
+  removeMemberFromGroup(groupId: string, userId: string): Group {
+    const group = this.groups.get(groupId)
+    if (!group) throw new Error(`Group ${groupId} not found`)
+    // Soft-delete: preserve history, mark inactive and demote to member
+    const updated: Group = {
+      ...group,
+      members: group.members.map(m =>
+        m.userId === userId ? { ...m, isActive: false, role: 'member' as const } : m
+      ),
+    }
     this.groups.set(groupId, updated)
     return updated
   }
@@ -457,8 +503,9 @@ class Store {
   getAvailableFriendsForGroup(groupId: string, currentUserId: string): FriendUser[] {
     const group = this.groups.get(groupId)
     if (!group) return []
-    const memberIds = new Set(group.members.map(m => m.userId))
-    return this.getFriends(currentUserId).filter(f => !memberIds.has(f.id))
+    // Only exclude active members — inactive (kicked) users can be re-invited
+    const activeMemberIds = new Set(group.members.filter(m => m.isActive).map(m => m.userId))
+    return this.getFriends(currentUserId).filter(f => !activeMemberIds.has(f.id))
   }
 
   getAllGames(): Game[] {
@@ -475,7 +522,7 @@ class Store {
     const group = this.groups.get(groupId)
     if (!group) return []
     return group.members
-      .filter(m => m.userId !== excludeUserId)
+      .filter(m => m.isActive && m.userId !== excludeUserId)
       .map(m => {
         const user = this.users.get(m.userId)
         return { id: m.userId, name: user?.name ?? 'Unknown', email: user?.email ?? '', alias: user?.alias ?? '' }
@@ -584,7 +631,7 @@ class Store {
     }
 
     return group.members
-      .map(({ userId }) => {
+      .map(({ userId, isActive }) => {
         const user = this.users.get(userId)
         const s = acc.get(userId)!
         return {
@@ -592,6 +639,7 @@ class Store {
           name: user?.name ?? 'Unknown',
           alias: user?.alias ?? '',
           image: user?.image,
+          isActive,
           stats: { ...s, winRate: s.totalMatches > 0 ? s.wins / s.totalMatches : 0 },
         }
       })

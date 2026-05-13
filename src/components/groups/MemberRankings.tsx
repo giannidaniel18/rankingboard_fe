@@ -170,7 +170,8 @@ export default function MemberRankings({ groupId }: { groupId: string }) {
               const rank = index + 1
               const tier = getRankTier(rank)
               const { stats } = member
-              const isSelectedA = compareA?.userId === member.userId
+              const isSelectedA  = compareA?.userId === member.userId
+              const isInactive   = !member.isActive
 
               // Override tier accent with solid amber border when selected
               const rowAccent = isSelectedA ? 'border-l-2 border-amber-500' : RANK_ACCENT[tier]
@@ -180,7 +181,7 @@ export default function MemberRankings({ groupId }: { groupId: string }) {
               return (
                 <tr
                   key={member.userId}
-                  className={`${rowAccent} ${rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.025] transition-colors`}
+                  className={`${rowAccent} ${rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.025] transition-colors ${isInactive ? 'opacity-50' : ''}`}
                 >
                   {/* ── Frozen: Rank number ── */}
                   <td className={`pl-5 pr-4 py-3.5 sticky left-0 z-10 ${stickyBg}`}>
@@ -191,17 +192,24 @@ export default function MemberRankings({ groupId }: { groupId: string }) {
 
                   {/* ── Frozen: Avatar + Name — tappable identity trigger ── */}
                   <td
-                    onClick={() => handleCompare(member)}
-                    className={`px-4 py-3.5 sticky left-[52px] z-10 ${stickyBg} ${FROZEN_EDGE} cursor-pointer select-none hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors`}
+                    onClick={() => !isInactive && handleCompare(member)}
+                    className={`px-4 py-3.5 sticky left-[52px] z-10 ${stickyBg} ${FROZEN_EDGE} ${isInactive ? 'cursor-default' : 'cursor-pointer select-none hover:bg-black/[0.04] dark:hover:bg-white/[0.04]'} transition-colors`}
                   >
                     <div className="flex items-center gap-2.5 transition-all active:scale-[0.98]">
-                      <div className={`w-6 h-6 rounded-sm flex items-center justify-center font-bold text-[11px] shrink-0 ${AVATAR_CLASS[tier]}`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 ${isInactive ? 'grayscale bg-black/10 dark:bg-white/10 text-neutral-500' : AVATAR_CLASS[tier]}`}>
                         {member.name[0].toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-neutral-900 dark:text-neutral-100 leading-tight">
-                          {member.name}
-                        </p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-medium text-neutral-900 dark:text-neutral-100 leading-tight">
+                            {member.name}
+                          </p>
+                          {isInactive && (
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold tracking-[0.08em] uppercase bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 leading-none shrink-0">
+                              Inactivo
+                            </span>
+                          )}
+                        </div>
                         <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400 leading-tight tabular-nums">
                           {stats.totalMatches} {dict.group.played}
                         </p>
@@ -245,23 +253,25 @@ export default function MemberRankings({ groupId }: { groupId: string }) {
                     )}
                   </td>
 
-                  {/* ── Adaptive action column: text on md+, icon on mobile ── */}
+                  {/* ── Adaptive action column: hidden for inactive members ── */}
                   <td className="px-2 py-3.5 text-center md:px-4">
-                    <button
-                      onClick={() => handleCompare(member)}
-                      className={`font-mono text-[10px] font-semibold uppercase tracking-[0.1em] px-2.5 py-1 rounded transition-colors ${
-                        isSelectedA
-                          ? 'text-amber-500 dark:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20'
-                          : compareA
-                            ? 'text-sky-500 dark:text-sky-400 bg-sky-500/10 hover:bg-sky-500/20'
-                            : 'text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-black/[0.04] dark:hover:bg-white/[0.04]'
-                      }`}
-                    >
-                      <span className="hidden md:inline">
-                        {isSelectedA ? '× cancel' : compareA ? 'vs' : 'compare'}
-                      </span>
-                      <ArrowLeftRight className="md:hidden w-3.5 h-3.5" />
-                    </button>
+                    {!isInactive && (
+                      <button
+                        onClick={() => handleCompare(member)}
+                        className={`font-mono text-[10px] font-semibold uppercase tracking-[0.1em] px-2.5 py-1 rounded transition-colors ${
+                          isSelectedA
+                            ? 'text-amber-500 dark:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20'
+                            : compareA
+                              ? 'text-sky-500 dark:text-sky-400 bg-sky-500/10 hover:bg-sky-500/20'
+                              : 'text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-black/[0.04] dark:hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        <span className="hidden md:inline">
+                          {isSelectedA ? '× cancel' : compareA ? 'vs' : 'compare'}
+                        </span>
+                        <ArrowLeftRight className="md:hidden w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               )

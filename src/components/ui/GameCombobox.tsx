@@ -21,7 +21,7 @@ export default function GameCombobox({
   onChange,
   disabled,
   label,
-  searchPlaceholder = 'Searchâ€¦',
+  searchPlaceholder = 'Search…',
 }: GameComboboxProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -89,7 +89,7 @@ export default function GameCombobox({
         }`}
       >
         <span className={`flex-1 truncate font-medium ${selectedGame ? 'text-tx-primary' : 'text-tx-caption'}`}>
-          {selectedGame ? selectedGame.name : `â€” ${label} â€”`}
+          {selectedGame ? selectedGame.name : `— ${label} —`}
         </span>
         {selectedGame && !disabled ? (
           <X

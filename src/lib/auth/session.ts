@@ -11,9 +11,15 @@ export async function getServerSession(): Promise<Session | null> {
   let user = store.users.get(session.user.id)
 
   if (!user) {
-    // First-time sign-in via Credentials or any provider not covered by the
-    // signIn callback (e.g., token refresh without re-triggering signIn).
-    // Auto-provision a store record so the rest of the app can find this user.
+    // Bridge: if the session email matches a placeholder user in the mock store
+    // (e.g., after a server restart cleared the in-memory state), swap its ID
+    // for the real provider ID so all groups and matches remain visible.
+    store.bridgeIdentity(session.user.id, session.user.email ?? '')
+    user = store.users.get(session.user.id)
+  }
+
+  if (!user) {
+    // Truly new user (no matching placeholder). Auto-provision a bare record.
     const name = session.user.name ?? session.user.email?.split('@')[0] ?? 'Player'
     user = {
       id: session.user.id,

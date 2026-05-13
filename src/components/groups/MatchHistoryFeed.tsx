@@ -2,13 +2,19 @@
 
 import { useEffect } from 'react'
 import { useMatches } from '@/hooks/domain/useMatches'
-import type { MatchDetail } from '@/types'
+import type { MatchDetail, MatchParticipantDetail } from '@/types'
 
 type PlacementTier = 1 | 2 | 3 | 'other'
 
 function getTier(placement: number): PlacementTier {
   if (placement <= 3) return placement as PlacementTier
   return 'other'
+}
+
+// 1224 rule: rank = index of first participant sharing the same placement + 1
+function computeRank(sorted: MatchParticipantDetail[], participant: MatchParticipantDetail): number {
+  const firstIndex = sorted.findIndex(p => p.placement === participant.placement)
+  return firstIndex + 1
 }
 
 const PLACEMENT_LABEL: Record<PlacementTier, string> = {
@@ -80,11 +86,13 @@ function MatchCard({ match }: { match: MatchDetail }) {
       {/* Participants */}
       <div className="space-y-1">
         {sorted.map(p => {
-          const tier = getTier(p.placement)
+          const rank = computeRank(sorted, p)
+          const tier = getTier(rank)
+          const label = tier === 'other' ? `#${rank}` : PLACEMENT_LABEL[tier]
           return (
             <div key={p.userId} className={`flex items-center gap-2 ${ROW_ACCENT[tier]}`}>
               <span className={`font-mono text-[10px] w-6 shrink-0 tabular-nums ${PLACEMENT_CLASS[tier]}`}>
-                {PLACEMENT_LABEL[tier]}
+                {label}
               </span>
               <span className={`text-[13px] leading-snug truncate ${
                 tier === 1

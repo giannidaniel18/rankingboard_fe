@@ -30,9 +30,9 @@ export type MockSession = {
 // Active session used throughout the app while auth is mocked
 export const MOCK_SESSION: MockSession = {
   user: {
-    id: 'u1',
-    email: 'alice@example.com',
-    name: 'Alice',
+    id: 'u_daniel',
+    email: 'giannidaniel92@gmail.com',
+    name: 'Daniel',
   },
   expires: '2099-01-01',
 }

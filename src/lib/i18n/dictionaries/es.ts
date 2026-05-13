@@ -106,6 +106,7 @@ const es: Dictionary = {
     loser: 'Perdedor',
     position: 'Posición',
     points: 'Puntos',
+    tie: 'Empate',
   },
   groups: {
     title: 'Grupos',

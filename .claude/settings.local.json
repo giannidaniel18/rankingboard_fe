@@ -9,7 +9,12 @@
       "Bash(xargs -I {} basename {})",
       "Bash(Select-Object FullName)",
       "Bash(Sort-Object FullName)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\({...p.dependencies, ...p.devDependencies}, null, 2\\)\\)\")",
+      "Bash(findstr /i \"framer\\\\|motion\\\\|tailwind\")",
+      "Bash(node -e \"const p = require\\('./package.json'\\); const all = {...p.dependencies, ...p.devDependencies}; Object.keys\\(all\\).filter\\(k => k.includes\\('motion'\\) || k.includes\\('framer'\\)\\).forEach\\(k => console.log\\(k, all[k]\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(node *)"
     ]
   }
 }

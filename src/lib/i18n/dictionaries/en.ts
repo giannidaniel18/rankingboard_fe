@@ -104,6 +104,7 @@ const en = {
     loser: 'Loser',
     position: 'Position',
     points: 'Points',
+    tie: 'Tie',
   },
   groups: {
     title: 'Groups',

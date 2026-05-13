@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target } from 'lucide-react'
 import { useGroups } from '@/hooks/domain/useGroups'
 import { useGames } from '@/hooks/domain/useGames'
@@ -12,7 +12,7 @@ import GameCombobox from '@/components/ui/GameCombobox'
 import ParticipantMultiSelect from '@/components/ui/ParticipantMultiSelect'
 
 type ResultMode = 'win_loss' | 'podium' | 'score'
-type PlayerResult = { placement?: number; score?: number }
+type PlayerResult = { placement?: number; score?: number; tied?: boolean }
 
 interface MatchModalProps {
   isOpen: boolean
@@ -122,6 +122,28 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     setParticipantResults(prev => ({ ...prev, [playerId]: result }))
   }
 
+  // Win/Loss: clicking Win or Loss clears tied state from all players, then sets the individual result
+  const handleWinLossSelect = (playerId: string, placement: number) => {
+    setParticipantResults(prev => {
+      const updated: Record<string, PlayerResult> = { ...prev }
+      allPlayers.forEach(p => {
+        if (p.id === playerId) {
+          updated[p.id] = { placement }
+        } else if (prev[p.id]?.tied) {
+          updated[p.id] = {}
+        }
+      })
+      return updated
+    })
+  }
+
+  // EMPATE: sets ALL participants to tied (placement: 1, tied: true)
+  const handleSetAllTied = () => {
+    const tied: Record<string, PlayerResult> = {}
+    allPlayers.forEach(p => { tied[p.id] = { placement: 1, tied: true } })
+    setParticipantResults(tied)
+  }
+
   const isResultComplete = (result: PlayerResult | undefined): boolean => {
     if (!result) return false
     if (resultMode === 'score') return result.score !== undefined && result.score >= 0
@@ -138,21 +160,45 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     allResultsComplete &&
     !isBusy
 
+  // Live rank preview for score mode using the 1224 rule
+  const rankPreview = useMemo<Record<string, number>>(() => {
+    if (resultMode !== 'score') return {}
+    const withScores = allPlayers.filter(p => participantResults[p.id]?.score !== undefined)
+    if (withScores.length === 0) return {}
+
+    const sorted = [...withScores].sort(
+      (a, b) => (participantResults[b.id]?.score ?? 0) - (participantResults[a.id]?.score ?? 0)
+    )
+    const preview: Record<string, number> = {}
+    sorted.forEach(p => {
+      const score = participantResults[p.id]?.score ?? 0
+      const firstIdx = sorted.findIndex(x => (participantResults[x.id]?.score ?? 0) === score)
+      preview[p.id] = firstIdx + 1
+    })
+    return preview
+  }, [resultMode, allPlayers, participantResults])
+
   const handleSubmit = async () => {
     if (!userId || !selectedGameId || !canSubmit) return
 
     let finalParticipants: { userId: string; placement: number; score?: number }[]
 
     if (resultMode === 'score') {
+      // 1224 ranking rule: tied scores share placement, next rank skips
       const sorted = [...allPlayers].sort(
         (a, b) => (participantResults[b.id]?.score ?? 0) - (participantResults[a.id]?.score ?? 0)
       )
-      finalParticipants = sorted.map((p, i) => ({
-        userId: p.id,
-        placement: i + 1,
-        score: participantResults[p.id]?.score,
-      }))
+      finalParticipants = sorted.map(p => {
+        const score = participantResults[p.id]?.score ?? 0
+        const firstIdx = sorted.findIndex(x => (participantResults[x.id]?.score ?? 0) === score)
+        return {
+          userId: p.id,
+          placement: firstIdx + 1,
+          score: participantResults[p.id]?.score,
+        }
+      })
     } else {
+      // win_loss and podium: placement is stored directly (tied players already have placement: 1)
       finalParticipants = allPlayers.map(p => ({
         userId: p.id,
         placement: participantResults[p.id]?.placement ?? 0,
@@ -298,13 +344,16 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                     {allPlayers.map(player => {
                       const result = participantResults[player.id]
                       const done   = isResultComplete(result)
+                      const isTied = result?.tied === true
                       const isMe   = player.id === userId
 
                       return (
                         <div
                           key={player.id}
                           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 ${
-                            done
+                            isTied
+                              ? 'border-sky-500/25 bg-sky-500/[0.04]'
+                              : done
                               ? 'border-amber-500/25 bg-amber-500/[0.04]'
                               : 'border-white/[0.07] bg-elevated'
                           }`}
@@ -328,14 +377,14 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                             </p>
                           </div>
 
-                          {/* Win / Loss buttons */}
+                          {/* Win / Loss / Tie buttons */}
                           {resultMode === 'win_loss' && (
                             <div className="flex gap-1 shrink-0">
                               <button
                                 type="button"
-                                onClick={() => setPlayerResult(player.id, { placement: 1 })}
+                                onClick={() => handleWinLossSelect(player.id, 1)}
                                 className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
-                                  result?.placement === 1
+                                  result?.placement === 1 && !isTied
                                     ? 'bg-emerald-500 text-black'
                                     : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
                                 }`}
@@ -344,7 +393,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                               </button>
                               <button
                                 type="button"
-                                onClick={() => setPlayerResult(player.id, { placement: 2 })}
+                                onClick={() => handleWinLossSelect(player.id, 2)}
                                 className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
                                   result?.placement === 2
                                     ? 'bg-rose-500/80 text-white'
@@ -352,6 +401,17 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                                 }`}
                               >
                                 {t.loser}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleSetAllTied}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                  isTied
+                                    ? 'bg-sky-500/70 text-white'
+                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                }`}
+                              >
+                                {t.tie}
                               </button>
                             </div>
                           )}
@@ -372,20 +432,27 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                             />
                           )}
 
-                          {/* Score input */}
+                          {/* Score input + live rank preview */}
                           {resultMode === 'score' && (
-                            <input
-                              type="number"
-                              min={0}
-                              placeholder={t.points.slice(0, 3)}
-                              value={result?.score ?? ''}
-                              onChange={e => {
-                                const val = parseFloat(e.target.value)
-                                if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
-                                else setPlayerResult(player.id, {})
-                              }}
-                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
-                            />
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {rankPreview[player.id] !== undefined && (
+                                <span className="text-[9px] font-bold font-mono text-amber-400/70 w-5 text-right leading-none">
+                                  #{rankPreview[player.id]}
+                                </span>
+                              )}
+                              <input
+                                type="number"
+                                min={0}
+                                placeholder={t.points.slice(0, 3)}
+                                value={result?.score ?? ''}
+                                onChange={e => {
+                                  const val = parseFloat(e.target.value)
+                                  if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
+                                  else setPlayerResult(player.id, {})
+                                }}
+                                className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40"
+                              />
+                            </div>
                           )}
                         </div>
                       )

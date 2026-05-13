@@ -37,7 +37,7 @@ export function FriendsList({ friends, dict }: Props) {
             <p className="text-xs font-mono text-amber-500/80 dark:text-amber-500/70 truncate">{friend.alias}</p>
           </div>
           <Link
-            href="/profile"
+            href={`/profile/${friend.id}`}
             className="shrink-0 px-3 py-1 rounded-sm text-xs font-semibold border border-black/[0.10] dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
             {dict.viewProfile}

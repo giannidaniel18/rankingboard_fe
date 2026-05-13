@@ -60,6 +60,9 @@
   /* Toast animations */
   --animate-toast-enter: toast-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-toast-exit:  toast-exit  0.25s ease-in both;
+
+  /* Comparison bar entrance */
+  --animate-bar-enter: bar-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes toast-enter {
@@ -70,6 +73,11 @@
 @keyframes toast-exit {
   from { opacity: 1; transform: translateY(0)    scale(1);    }
   to   { opacity: 0; transform: translateY(10px) scale(0.97); }
+}
+
+@keyframes bar-enter {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── Base ───────────────────────────────────────────────────────────────── */

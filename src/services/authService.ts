@@ -5,6 +5,7 @@ import { signIn, signOut } from 'next-auth/react'
 
 const authService = {
   syncUserToMockDB(user: User): Promise<void> {
+    store.bridgeIdentity(user.id, user.email)
     store.users.set(user.id, user)
     return Promise.resolve()
   },

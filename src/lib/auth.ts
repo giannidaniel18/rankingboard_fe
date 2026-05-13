@@ -37,6 +37,10 @@ export const authConfig: NextAuthConfig = {
     },
     async signIn({ user, account }) {
       if (account?.provider === 'google' && user.id && user.email) {
+        // Swap any placeholder whose email matches the real Google account.
+        // Must run before the has(user.id) check so the bridged ID is found.
+        store.bridgeIdentity(user.id, user.email)
+
         if (!store.users.has(user.id)) {
           const name = user.name ?? user.email.split('@')[0]
           store.users.set(user.id, {

@@ -48,8 +48,6 @@ export default function GroupDetailClient({ id, userId, dict }: Props) {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <div className="w-full lg:w-60 shrink-0 space-y-0" />
-
             <div className="flex-1 min-w-0 space-y-6">
               <GroupDetails
                 group={currentGroup}

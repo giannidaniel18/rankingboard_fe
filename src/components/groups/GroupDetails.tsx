@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { UserPlus, Users, Shield } from 'lucide-react'
+import { UserPlus, Users, Shield, Wrench } from 'lucide-react'
 import InviteMemberModal from '@/components/groups/InviteMemberModal'
 import { useGroups } from '@/hooks/domain/useGroups'
 import { useAuth } from '@/hooks/domain/useAuth'
@@ -24,11 +24,9 @@ export default function GroupDetails({ group, memberUsers, currentUserId, dict }
 
   const [modalOpen, setModalOpen] = useState(false)
 
-  // Derive from store state on every render — no local domain state.
-  // Union: existing members (with their roles) + any user in memberUsers not yet
-  // reflected in group.members (newly added, defaults to 'member').
+  // Only show active members in the member list; inactive are visible in Rankings only.
   const memberList: MemberRow[] = [
-    ...group.members.map(m => {
+    ...group.members.filter(m => m.isActive).map(m => {
       const user =
         memberUsers.find(u => u.id === m.userId) ||
         (m.userId === currentUser?.id ? currentUser : null)
@@ -82,7 +80,7 @@ export default function GroupDetails({ group, memberUsers, currentUserId, dict }
               key={member.userId}
               className="flex items-center gap-3 px-5 py-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.025] transition-colors"
             >
-              <div className="w-7 h-7 rounded-sm bg-black/10 dark:bg-white/10 flex items-center justify-center font-bold text-[11px] text-neutral-600 dark:text-neutral-300 shrink-0">
+              <div className="w-7 h-7 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center font-bold text-[11px] text-neutral-600 dark:text-neutral-300 shrink-0">
                 {member.name[0]?.toUpperCase() ?? '?'}
               </div>
               <div className="flex-1 min-w-0">
@@ -97,6 +95,12 @@ export default function GroupDetails({ group, memberUsers, currentUserId, dict }
                 <span className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] font-bold tracking-[0.1em] uppercase shrink-0">
                   <Shield className="w-2.5 h-2.5" />
                   {t.admin}
+                </span>
+              )}
+              {member.role === 'maintainer' && (
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[9px] font-bold tracking-[0.1em] uppercase shrink-0">
+                  <Wrench className="w-2.5 h-2.5" />
+                  Maintainer
                 </span>
               )}
             </li>

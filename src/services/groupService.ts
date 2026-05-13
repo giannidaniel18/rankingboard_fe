@@ -1,4 +1,4 @@
-import type { Group, User } from '@/types'
+import type { Group, GroupRole, User } from '@/types'
 import { store } from '@/lib/store'
 
 const groupService = {
@@ -8,15 +8,17 @@ const groupService = {
     })
   },
 
-  getGroupMemberUsers(groupId: string): Promise<User[]> {
+  getGroupMemberUsers(groupId: string, activeOnly = false): Promise<User[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const group = store.groups.get(groupId)
         if (!group) { resolve([]); return }
-        const users = group.members.flatMap(m => {
-          const user = store.users.get(m.userId)
-          return user ? [user] : []
-        })
+        const users = group.members
+          .filter(m => !activeOnly || m.isActive)
+          .flatMap(m => {
+            const user = store.users.get(m.userId)
+            return user ? [user] : []
+          })
         resolve(users)
       }, 300)
     })
@@ -45,6 +47,42 @@ const groupService = {
       setTimeout(() => {
         try {
           resolve(store.createGroup(name, adminId))
+        } catch (err) {
+          reject(err)
+        }
+      }, 300)
+    })
+  },
+
+  updateGroupDetails(groupId: string, name: string, avatarUrl?: string): Promise<Group> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          resolve(store.updateGroupDetails(groupId, name, avatarUrl))
+        } catch (err) {
+          reject(err)
+        }
+      }, 300)
+    })
+  },
+
+  updateMemberRole(groupId: string, userId: string, role: GroupRole): Promise<Group> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          resolve(store.updateMemberRole(groupId, userId, role))
+        } catch (err) {
+          reject(err)
+        }
+      }, 300)
+    })
+  },
+
+  removeMemberFromGroup(groupId: string, userId: string): Promise<Group> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          resolve(store.removeMemberFromGroup(groupId, userId))
         } catch (err) {
           reject(err)
         }

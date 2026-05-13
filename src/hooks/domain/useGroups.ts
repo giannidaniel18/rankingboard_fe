@@ -1,11 +1,14 @@
 import useGroupsStore from '@/store/useGroupsStore'
+import useRankingsStore from '@/store/useRankingsStore'
 import groupService from '@/services/groupService'
-import type { User } from '@/types'
+import rankingsService from '@/services/rankingsService'
+import type { GroupRole, User } from '@/types'
 
 export function useGroups() {
   const {
     groups, currentGroup, memberUsers, isLoading, error,
-    setGroups, addGroup, setCurrentGroup, setMemberUsers, addMemberToCurrentGroup, setLoading, setError,
+    setGroups, addGroup, setCurrentGroup, setMemberUsers, addMemberToCurrentGroup,
+    updateCurrentGroup, removeMemberUser, setLoading, setError,
   } = useGroupsStore()
 
   async function loadUserGroups(userId: string): Promise<void> {
@@ -54,7 +57,7 @@ export function useGroups() {
   }
 
   async function fetchGroupMembers(groupId: string): Promise<User[]> {
-    return groupService.getGroupMemberUsers(groupId)
+    return groupService.getGroupMemberUsers(groupId, true) // active members only for match participation
   }
 
   async function createNewGroup(name: string, adminId: string): Promise<void> {
@@ -67,5 +70,50 @@ export function useGroups() {
     }
   }
 
-  return { groups, currentGroup, memberUsers, isLoading, error, loadUserGroups, loadGroupById, fetchGroupMembers, addMember, createNewGroup }
+  async function updateGroupDetails(groupId: string, name: string, avatarUrl?: string): Promise<void> {
+    setError(null)
+    try {
+      const group = await groupService.updateGroupDetails(groupId, name, avatarUrl)
+      updateCurrentGroup(group)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update group')
+    }
+  }
+
+  async function updateMemberRole(groupId: string, userId: string, role: GroupRole): Promise<void> {
+    setError(null)
+    try {
+      const group = await groupService.updateMemberRole(groupId, userId, role)
+      updateCurrentGroup(group)
+      const { setRankings, setLoading } = useRankingsStore.getState()
+      setLoading(true)
+      const rankings = await rankingsService.getGroupRankings(groupId)
+      setRankings(groupId, rankings)
+      setLoading(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update role')
+    }
+  }
+
+  async function removeMember(groupId: string, userId: string): Promise<void> {
+    setError(null)
+    try {
+      const group = await groupService.removeMemberFromGroup(groupId, userId)
+      updateCurrentGroup(group)
+      removeMemberUser(userId)
+      const { setRankings, setLoading } = useRankingsStore.getState()
+      setLoading(true)
+      const rankings = await rankingsService.getGroupRankings(groupId)
+      setRankings(groupId, rankings)
+      setLoading(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove member')
+    }
+  }
+
+  return {
+    groups, currentGroup, memberUsers, isLoading, error,
+    loadUserGroups, loadGroupById, fetchGroupMembers, addMember, createNewGroup,
+    updateGroupDetails, updateMemberRole, removeMember,
+  }
 }

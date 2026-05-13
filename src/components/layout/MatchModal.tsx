@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target } from 'lucide-react'
+import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target, Lock } from 'lucide-react'
 import { useGroups } from '@/hooks/domain/useGroups'
 import { useGames } from '@/hooks/domain/useGames'
 import { useMatches } from '@/hooks/domain/useMatches'
@@ -74,6 +74,11 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
   const [success, setSuccess]                           = useState(false)
 
   const isBusy = groupsLoading || gamesLoading || isMembersLoading || isSubmitting
+
+  // RBAC: only admin/maintainer can record matches
+  const selectedGroup = groups.find(g => g.id === selectedGroupId)
+  const currentUserRole = selectedGroup?.members.find(m => m.userId === userId)?.role
+  const canRecordMatch = !selectedGroupId || currentUserRole === 'admin' || currentUserRole === 'maintainer'
 
   const allPlayers = selectedParticipants
 
@@ -291,37 +296,55 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                 ))}
               </SelectField>
 
-              {/* Step 2 — Participants */}
-              <ParticipantMultiSelect
-                label={t.selectPlayers}
-                members={groupMembers}
-                selected={selectedParticipants}
-                onChange={handleParticipantsChange}
-                disabled={!selectedGroupId || isMembersLoading || groupMembers.length === 0}
-                placeholder={
-                  !selectedGroupId
-                    ? `— ${t.selectGroup} first —`
-                    : groupMembers.length === 0
-                      ? t.noMembers
-                      : 'Add players…'
-                }
-              />
+              {/* View-only notice for members */}
+              {selectedGroupId && !canRecordMatch && (
+                <div className="flex flex-col items-center text-center gap-3 py-8 px-4">
+                  <div className="w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center">
+                    <Lock className="w-5 h-5 text-neutral-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-400 dark:text-neutral-300">
+                      View Only
+                    </p>
+                    <p className="text-[11px] text-neutral-500 dark:text-neutral-500 font-mono mt-1 leading-relaxed">
+                      Only Admins and Maintainers<br />can record matches.
+                    </p>
+                  </div>
+                </div>
+              )}
 
-              {/* Step 3 — Game */}
-              <GameCombobox
-                label={t.selectGame}
-                games={games}
-                value={selectedGameId}
-                onChange={setSelectedGameId}
-                disabled={selectedParticipants.length === 0 || gamesLoading || games.length === 0}
-                searchPlaceholder="Search game…"
-              />
+              {/* Steps 2-4 — hidden for members */}
+              {canRecordMatch && (
+                <>
+                  <ParticipantMultiSelect
+                    label={t.selectPlayers}
+                    members={groupMembers}
+                    selected={selectedParticipants}
+                    onChange={handleParticipantsChange}
+                    disabled={!selectedGroupId || isMembersLoading || groupMembers.length === 0}
+                    placeholder={
+                      !selectedGroupId
+                        ? `— ${t.selectGroup} first —`
+                        : groupMembers.length === 0
+                          ? t.noMembers
+                          : 'Add players…'
+                    }
+                  />
 
-              {/* Step 4 — Result mode + player rows */}
-              {showResults && (
-                <div className="space-y-2">
-                  {/* Mode toggle */}
-                  <div className="flex gap-1 p-1 bg-elevated rounded-xl border border-white/[0.07]">
+                  <GameCombobox
+                    label={t.selectGame}
+                    games={games}
+                    value={selectedGameId}
+                    onChange={setSelectedGameId}
+                    disabled={selectedParticipants.length === 0 || gamesLoading || games.length === 0}
+                    searchPlaceholder="Search game…"
+                  />
+
+                  {/* Step 4 — Result mode + player rows */}
+                  {showResults && (
+                    <div className="space-y-2">
+                      {/* Mode toggle */}
+                      <div className="flex gap-1 p-1 bg-elevated rounded-xl border border-white/[0.07]">
                     {modes.map(mode => (
                       <button
                         key={mode.key}
@@ -458,42 +481,48 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                       )
                     })}
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Progress pills */}
-            <div className="flex gap-1.5 mb-5">
-              {[
-                !!selectedGroupId,
-                selectedParticipants.length > 0,
-                !!selectedGameId,
-                allResultsComplete,
-              ].map((done, i) => (
-                <div
-                  key={i}
-                  className={`h-0.5 flex-1 rounded-full transition-colors duration-300 ${
-                    done ? 'bg-amber-500' : 'bg-white/[0.08]'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Submit */}
-            <button
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t.saving}
+                    </div>
+                  )}
                 </>
-              ) : (
-                t.saveMatch
               )}
-            </button>
+            </div>
+
+            {/* Progress pills — hidden for members */}
+            {canRecordMatch && (
+              <div className="flex gap-1.5 mb-5">
+                {[
+                  !!selectedGroupId,
+                  selectedParticipants.length > 0,
+                  !!selectedGameId,
+                  allResultsComplete,
+                ].map((done, i) => (
+                  <div
+                    key={i}
+                    className={`h-0.5 flex-1 rounded-full transition-colors duration-300 ${
+                      done ? 'bg-amber-500' : 'bg-white/[0.08]'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Submit — hidden for members */}
+            {canRecordMatch && (
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {t.saving}
+                  </>
+                ) : (
+                  t.saveMatch
+                )}
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -1,4 +1,4 @@
-﻿import type { User, Group, GroupMember, GroupRole, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember } from '@/types'
+﻿import type { User, Group, GroupMember, GroupRole, Game, Match, MatchParticipant, Friendship, FriendRequestWithUser, FriendUser, RankedMember, Tournament, TournamentStatus } from '@/types'
 import { computePointsDelta } from '@/lib/engine/ranking'
 
 export function generateAlias(name: string): string {
@@ -142,6 +142,68 @@ const SEED_GAMES: Game[] = [
   { id: 'game_padel',    name: 'Pádel',                type: 'Sports', scoring_type: 'points'      },
   { id: 'game_tenis',    name: 'Tenis',                type: 'Sports', scoring_type: 'points'      },
   { id: 'game_basquet',  name: 'Básquet',              type: 'Sports', scoring_type: 'points'      },
+]
+
+// ─── Tournaments ──────────────────────────────────────────────────────────────
+const SEED_TOURNAMENTS: Tournament[] = [
+  {
+    id: 't_pibes_pool_01',
+    groupId: 'g_pibes',
+    gameId: 'game_pool8',
+    name: 'Torneo de Pool - Bracket 2025',
+    format: 'bracket',
+    status: 'in_progress',
+    teams: [
+      { id: 'tt_daniel', name: 'Daniel',  playerIds: ['u_daniel'] },
+      { id: 'tt_gasti',  name: 'Gasti',   playerIds: ['u_gasti']  },
+      { id: 'tt_nenuco', name: 'Nenuco',  playerIds: ['u_nenuco'] },
+      { id: 'tt_leo',    name: 'Leo',     playerIds: ['u_leo']    },
+    ],
+    rounds: [
+      {
+        id: 1,
+        name: 'Semifinales',
+        matches: [
+          {
+            id: 'tm_sf1',
+            roundId: 1,
+            matchNumber: 1,
+            teamAId: 'tt_daniel',
+            teamBId: 'tt_gasti',
+            status: 'completed',
+            winnerTeamId: 'tt_daniel',
+            referenceMatchId: 'mp01',
+          },
+          {
+            id: 'tm_sf2',
+            roundId: 1,
+            matchNumber: 2,
+            teamAId: 'tt_nenuco',
+            teamBId: 'tt_leo',
+            status: 'completed',
+            winnerTeamId: 'tt_nenuco',
+            referenceMatchId: 'mp03',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'Final',
+        matches: [
+          {
+            id: 'tm_final',
+            roundId: 2,
+            matchNumber: 1,
+            teamAId: 'tt_daniel',
+            teamBId: 'tt_nenuco',
+            status: 'pending',
+          },
+        ],
+      },
+    ],
+    bonusPoints: { first: 50, second: 25, third: 10 },
+    createdAt: '2025-05-01T00:00:00.000Z',
+  },
 ]
 
 // ─── Matches ─────────────────────────────────────────────────────────────────
@@ -315,6 +377,7 @@ class Store {
   games = new Map<string, Game>(SEED_GAMES.map(g => [g.id, g]))
   matches = new Map<string, Match>(SEED_MATCHES.map(m => [m.id, m]))
   friendships = new Map<string, Friendship>(SEED_FRIENDSHIPS.map(f => [f.id, f]))
+  tournaments = new Map<string, Tournament>(SEED_TOURNAMENTS.map(t => [t.id, t]))
 
   sendFriendRequest(from: string, to: string): Friendship {
     const existing = Array.from(this.friendships.values()).find(
@@ -644,6 +707,225 @@ class Store {
         }
       })
       .sort((a, b) => b.stats.points - a.stats.points)
+  }
+
+  createTournament(data: Partial<Tournament>): string {
+    const id = `t_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
+    const tournament: Tournament = {
+      id,
+      groupId: data.groupId ?? '',
+      gameId: data.gameId ?? '',
+      name: data.name ?? 'Untitled Tournament',
+      format: data.format ?? 'bracket',
+      status: data.status ?? 'draft',
+      teams: data.teams ?? [],
+      rounds: data.rounds ?? [],
+      bonusPoints: data.bonusPoints ?? { first: 50, second: 25, third: 10 },
+      prizePool: data.prizePool,
+      createdAt: data.createdAt ?? new Date().toISOString(),
+      completedAt: data.completedAt,
+    }
+    this.tournaments.set(id, tournament)
+    return id
+  }
+
+  getTournamentsByGroup(groupId: string): Tournament[] {
+    return Array.from(this.tournaments.values()).filter(t => t.groupId === groupId)
+  }
+
+  getTournamentById(id: string): Tournament | undefined {
+    return this.tournaments.get(id)
+  }
+
+  resolveTournamentMatch(
+    tournamentId: string,
+    matchId: string,
+    winnerTeamId: string,
+    referenceMatchId?: string,
+  ): void {
+    const t = this.tournaments.get(tournamentId)
+    if (!t) throw new Error(`Tournament ${tournamentId} not found`)
+
+    let resolvedRoundId  = -1
+    let resolvedMatchNum = -1
+
+    // Step 1 — mark the target match completed
+    const updatedRounds = t.rounds.map(round => ({
+      ...round,
+      matches: round.matches.map(match => {
+        if (match.id !== matchId) return match
+        resolvedRoundId  = round.id
+        resolvedMatchNum = match.matchNumber
+        return {
+          ...match,
+          status: 'completed' as const,
+          winnerTeamId,
+          ...(referenceMatchId ? { referenceMatchId } : {}),
+        }
+      }),
+    }))
+
+    // Step 2 — auto-advance winner into the next round (bracket only)
+    // Winner of match N in round R → round R+1, match ceil(N/2), slot A if N is odd, B if even
+    let finalRounds = updatedRounds
+    if (t.format === 'bracket' && resolvedRoundId >= 0) {
+      const nextRoundId  = resolvedRoundId + 1
+      const nextMatchNum = Math.ceil(resolvedMatchNum / 2)
+      const slot: 'A' | 'B' = resolvedMatchNum % 2 === 1 ? 'A' : 'B'
+
+      finalRounds = updatedRounds.map(round => {
+        if (round.id !== nextRoundId) return round
+        return {
+          ...round,
+          matches: round.matches.map(match => {
+            if (match.matchNumber !== nextMatchNum) return match
+            return {
+              ...match,
+              teamAId: slot === 'A' ? winnerTeamId : match.teamAId,
+              teamBId: slot === 'B' ? winnerTeamId : match.teamBId,
+            }
+          }),
+        }
+      })
+    }
+
+    this.tournaments.set(tournamentId, { ...t, rounds: finalRounds })
+
+    // Auto-generate a standard Match for ranking history
+    const resolvedMatch = finalRounds.flatMap(r => r.matches).find(m => m.id === matchId)
+    if (resolvedMatch) {
+      const loserTeamId = resolvedMatch.teamAId === winnerTeamId
+        ? resolvedMatch.teamBId
+        : resolvedMatch.teamAId
+
+      const winnerTeam = t.teams.find(team => team.id === winnerTeamId)
+      const loserTeam  = loserTeamId ? t.teams.find(team => team.id === loserTeamId) : undefined
+
+      const participants: MatchParticipant[] = [
+        ...(winnerTeam?.playerIds ?? []).map(id => ({ userId: String(id), placement: 1, score: 0 })),
+        ...(loserTeam?.playerIds  ?? []).map(id => ({ userId: String(id), placement: 2, score: 0 })),
+      ]
+
+      const stdMatchId = `tm_std_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
+      this.matches.set(stdMatchId, {
+        id: stdMatchId,
+        group_id: t.groupId,
+        game_id: t.gameId,
+        participants,
+        date: new Date(),
+        tournamentId,
+      })
+
+      const total = participants.length
+      for (const p of participants) {
+        const user = this.users.get(p.userId)
+        if (!user) continue
+        const delta    = computePointsDelta(p.placement, total)
+        const s        = user.profile.stats
+        const isWinner = p.placement === 1
+        s.totalMatches++
+        if (isWinner) {
+          s.wins++
+          s.currentStreak++
+          s.bestStreak = Math.max(s.bestStreak, s.currentStreak)
+        } else {
+          s.losses++
+          s.currentStreak = 0
+        }
+        s.winRate = s.wins / s.totalMatches
+        s.rankingPoints = Math.max(0, s.rankingPoints + delta)
+        this.users.set(user.id, user)
+      }
+    }
+  }
+
+  finalizeTournament(tournamentId: string): void {
+    const t = this.tournaments.get(tournamentId)
+    if (!t) throw new Error(`Tournament ${tournamentId} not found`)
+
+    const { bonusPoints, teams, rounds, format } = t
+
+    let firstPlayerIds:  string[] = []
+    let secondPlayerIds: string[] = []
+    let thirdPlayerIds:  string[] = []
+
+    if (format === 'bracket') {
+      const sortedRounds = [...rounds].sort((a, b) => b.id - a.id)
+      const finalRound   = sortedRounds[0]
+      const finalMatch   = finalRound?.matches.find(m => m.matchNumber === 1 && m.status === 'completed')
+
+      if (finalMatch?.winnerTeamId) {
+        const firstTeam    = teams.find(team => team.id === finalMatch.winnerTeamId)
+        const secondTeamId = finalMatch.teamAId === finalMatch.winnerTeamId
+          ? finalMatch.teamBId
+          : finalMatch.teamAId
+        const secondTeam = secondTeamId ? teams.find(team => team.id === secondTeamId) : undefined
+
+        firstPlayerIds  = firstTeam?.playerIds  ?? []
+        secondPlayerIds = secondTeam?.playerIds ?? []
+
+        // Semifinal losers → 3rd place
+        const semiFinalRound = sortedRounds[1]
+        if (semiFinalRound) {
+          for (const match of semiFinalRound.matches) {
+            if (match.status === 'completed' && match.winnerTeamId) {
+              const loserTeamId = match.teamAId === match.winnerTeamId ? match.teamBId : match.teamAId
+              const loserTeam   = loserTeamId ? teams.find(team => team.id === loserTeamId) : undefined
+              thirdPlayerIds.push(...(loserTeam?.playerIds ?? []))
+            }
+          }
+        }
+      }
+    } else {
+      // Round Robin: rank by wins
+      const wins = new Map<string, number>()
+      for (const team of teams) wins.set(team.id, 0)
+      for (const round of rounds) {
+        for (const match of round.matches) {
+          if (match.status === 'completed' && match.winnerTeamId) {
+            wins.set(match.winnerTeamId, (wins.get(match.winnerTeamId) ?? 0) + 1)
+          }
+        }
+      }
+      const sorted = [...teams].sort((a, b) => (wins.get(b.id) ?? 0) - (wins.get(a.id) ?? 0))
+      firstPlayerIds  = sorted[0]?.playerIds ?? []
+      secondPlayerIds = sorted[1]?.playerIds ?? []
+      thirdPlayerIds  = sorted[2]?.playerIds ?? []
+    }
+
+    const awardBonus = (playerIds: string[], points: number) => {
+      for (const userId of playerIds) {
+        const user = this.users.get(userId)
+        if (!user) continue
+        user.profile.stats.rankingPoints = Math.max(0, user.profile.stats.rankingPoints + points)
+        this.users.set(userId, user)
+      }
+    }
+
+    awardBonus(firstPlayerIds,  bonusPoints.first)
+    awardBonus(secondPlayerIds, bonusPoints.second)
+    awardBonus(thirdPlayerIds,  bonusPoints.third)
+
+    this.tournaments.set(tournamentId, {
+      ...t,
+      status: 'completed',
+      completedAt: new Date().toISOString(),
+    })
+  }
+
+  deleteTournament(id: string): void {
+    this.tournaments.delete(id)
+  }
+
+  updateTournamentStatus(id: string, status: TournamentStatus): void {
+    const tournament = this.tournaments.get(id)
+    if (!tournament) throw new Error(`Tournament ${id} not found`)
+    const updated: Tournament = {
+      ...tournament,
+      status,
+      completedAt: status === 'completed' ? new Date().toISOString() : tournament.completedAt,
+    }
+    this.tournaments.set(id, updated)
   }
 }
 

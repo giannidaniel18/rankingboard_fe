@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMatches } from '@/hooks/domain/useMatches'
 import type { MatchDetail, MatchParticipantDetail } from '@/types'
 
 type PlacementTier = 1 | 2 | 3 | 'other'
+type TypeFilter = 'all' | 'tournament' | 'casual'
 
 function getTier(placement: number): PlacementTier {
   if (placement <= 3) return placement as PlacementTier
@@ -64,15 +65,24 @@ function formatMatchDate(date: Date): string {
 
 function MatchCard({ match }: { match: MatchDetail }) {
   const sorted = [...match.participants].sort((a, b) => a.placement - b.placement)
-  const hasScores = sorted.some(p => p.score !== undefined)
+  const isTournament = Boolean(match.tournamentId)
+  const allScoresZero = sorted.every(p => p.score === 0)
+  const hasScores = !isTournament && !allScoresZero && sorted.some(p => p.score !== undefined)
 
   return (
-    <div className="border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-black/[0.015] dark:hover:bg-white/[0.015] transition-colors">
+    <div className={`border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-black/[0.015] dark:hover:bg-white/[0.015] transition-colors ${isTournament ? 'border-l-2 border-l-amber-500/50' : ''}`}>
       {/* Match meta row */}
       <div className="flex items-center justify-between mb-2.5">
-        <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-amber-500 dark:text-amber-400">
-          {match.gameName}
-        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-amber-500 dark:text-amber-400">
+            {match.gameName}
+          </span>
+          {isTournament && (
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[8px] font-bold tracking-[0.1em] uppercase bg-amber-500/10 text-amber-400 border-amber-500/20">
+              🏆 Torneo
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 hidden sm:inline">
             {formatMatchDate(match.date)}
@@ -140,12 +150,12 @@ function FeedSkeleton() {
   )
 }
 
-function EmptyState() {
+function EmptyState({ message = 'Aún no hay partidas' }: { message?: string }) {
   return (
     <div className="px-5 py-10 flex flex-col items-center gap-2 text-center">
       <span className="font-mono text-2xl text-neutral-300 dark:text-neutral-700">◇</span>
       <p className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-400 dark:text-neutral-500">
-        No matches yet
+        {message}
       </p>
     </div>
   )
@@ -154,30 +164,107 @@ function EmptyState() {
 export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
   const { matchesByGroup, isLoadingMatches, loadGroupMatches } = useMatches()
   const matches = matchesByGroup[groupId]
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [gameFilter, setGameFilter] = useState<string>('all')
 
   useEffect(() => {
     void loadGroupMatches(groupId)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId])
 
+  const availableGames = useMemo(() => {
+    if (!matches) return []
+    const seen = new Set<string>()
+    const games: { id: string; name: string }[] = []
+    for (const m of matches) {
+      if (!seen.has(m.game_id)) {
+        seen.add(m.game_id)
+        games.push({ id: m.game_id, name: m.gameName })
+      }
+    }
+    return games.sort((a, b) => a.name.localeCompare(b.name))
+  }, [matches])
+
+  const filteredMatches = useMemo(() => {
+    if (!matches) return []
+    return matches.filter(m => {
+      if (typeFilter === 'tournament' && !m.tournamentId) return false
+      if (typeFilter === 'casual' && m.tournamentId) return false
+      if (gameFilter !== 'all' && m.game_id !== gameFilter) return false
+      return true
+    })
+  }, [matches, typeFilter, gameFilter])
+
   if (isLoadingMatches && !matches) return <FeedSkeleton />
+
+  const hasMatches = Boolean(matches && matches.length > 0)
 
   return (
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
       {/* Header */}
       <div className="flex items-baseline justify-between px-5 py-3.5 border-b border-black/[0.08] dark:border-white/[0.07]">
         <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
-          Match History
+          Historial
         </h2>
         <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-          {matches?.length ?? 0} matches
+          {matches?.length ?? 0} partidas
         </span>
       </div>
 
-      {!matches || matches.length === 0 ? (
+      {/* Filters — only shown when there are matches to filter */}
+      {hasMatches && (
+        <div className="px-5 py-3 border-b border-black/[0.08] dark:border-white/[0.07] space-y-3">
+          {/* Type pills */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5">
+            {([
+              { value: 'all'        as TypeFilter, label: 'Todas'    },
+              { value: 'tournament' as TypeFilter, label: 'Torneos'  },
+              { value: 'casual'     as TypeFilter, label: 'Casuales' },
+            ]).map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setTypeFilter(value)}
+                className={`shrink-0 px-4 py-2 rounded-full border text-[10px] font-bold tracking-[0.12em] uppercase transition-all min-h-[36px] ${
+                  typeFilter === value
+                    ? 'bg-amber-500 border-amber-500 text-white'
+                    : 'border-black/[0.08] dark:border-white/[0.08] text-neutral-500 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-600 hover:text-neutral-700 dark:hover:text-neutral-200'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Game dropdown — only when more than one game exists */}
+          {availableGames.length > 1 && (
+            <div className="relative">
+              <select
+                value={gameFilter}
+                onChange={e => setGameFilter(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-surface text-[11px] font-mono text-neutral-700 dark:text-neutral-300 focus:outline-none focus:border-amber-500/50 transition-colors appearance-none cursor-pointer min-h-[36px]"
+              >
+                <option value="all">Todos los juegos</option>
+                {availableGames.map(g => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                  <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!hasMatches ? (
         <EmptyState />
+      ) : filteredMatches.length === 0 ? (
+        <EmptyState message="No hay partidas que coincidan con estos filtros" />
       ) : (
-        matches.map(match => <MatchCard key={match.id} match={match} />)
+        filteredMatches.map(match => <MatchCard key={match.id} match={match} />)
       )}
     </div>
   )

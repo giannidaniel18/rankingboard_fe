@@ -100,6 +100,7 @@ export interface Match {
   participants: MatchParticipant[]
   date: Date
   comments?: string
+  tournamentId?: string
 }
 
 export interface MemberStats {
@@ -149,4 +150,61 @@ export interface MatchDetail {
   participants: MatchParticipantDetail[]
   date: Date
   comments?: string
+  tournamentId?: string
+}
+
+export type TournamentFormat = 'bracket' | 'round_robin'
+export type TournamentStatus = 'draft' | 'in_progress' | 'completed'
+export type TournamentMatchStatus = 'pending' | 'completed'
+
+export interface TournamentTeam {
+  id: string
+  name: string
+  playerIds: string[]
+}
+
+export interface TournamentMatch {
+  id: string
+  roundId: number
+  matchNumber: number
+  teamAId: string | null
+  teamBId: string | null
+  status: TournamentMatchStatus
+  winnerTeamId?: string
+  referenceMatchId?: string
+}
+
+export interface TournamentRound {
+  id: number
+  name: string
+  matches: TournamentMatch[]
+}
+
+export interface TournamentPrizePool {
+  total: number
+  currency: string
+  distribution: {
+    first: number
+    second: number
+    third: number
+  }
+}
+
+export interface Tournament {
+  id: string
+  groupId: string
+  gameId: string
+  name: string
+  format: TournamentFormat
+  status: TournamentStatus
+  teams: TournamentTeam[]
+  rounds: TournamentRound[]
+  bonusPoints: {
+    first: number
+    second: number
+    third: number
+  }
+  prizePool?: TournamentPrizePool
+  createdAt: string
+  completedAt?: string
 }

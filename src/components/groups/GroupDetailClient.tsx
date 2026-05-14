@@ -1,28 +1,36 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Settings } from 'lucide-react'
+import { Settings, Trophy } from 'lucide-react'
 import GroupDetails from '@/components/groups/GroupDetails'
 import GroupSettingsModal from '@/components/groups/GroupSettingsModal'
 import MemberRankings from '@/components/groups/MemberRankings'
 import MatchHistoryFeed from '@/components/groups/MatchHistoryFeed'
+import TournamentSection from '@/components/groups/tournaments/TournamentSection'
+import CreateTournamentModal from '@/components/groups/tournaments/CreateTournamentModal'
 import { useGroups } from '@/hooks/domain/useGroups'
 import type { GroupRole } from '@/types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/en'
+
+type GroupTab = 'rankings' | 'torneos'
 
 interface Props {
   id: string
   userId?: string
   dict: Dictionary
+  initialTab?: 'rankings' | 'torneos'
 }
 
-export default function GroupDetailClient({ id, userId, dict }: Props) {
+export default function GroupDetailClient({ id, userId, dict, initialTab }: Props) {
   const {
     currentGroup, memberUsers, isLoading, error, loadGroupById,
     updateGroupDetails, updateMemberRole, removeMember,
   } = useGroups()
 
-  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen]       = useState(false)
+  const [activeTab, setActiveTab]             = useState<GroupTab>(initialTab ?? 'rankings')
+  const [createTourneyOpen, setCreateTourneyOpen] = useState(false)
+  const [tournamentKey, setTournamentKey]     = useState(0)
 
   useEffect(() => {
     loadGroupById(id)
@@ -44,6 +52,10 @@ export default function GroupDetailClient({ id, userId, dict }: Props) {
 
   const isAdmin = !!userId && currentGroup.members.some(
     m => m.userId === userId && m.role === 'admin'
+  )
+
+  const activeMembers = memberUsers.filter(u =>
+    currentGroup.members.some(m => m.userId === u.id && m.isActive)
   )
 
   const handleUpdateDetails = async (name: string, avatarUrl?: string) => {
@@ -97,18 +109,55 @@ export default function GroupDetailClient({ id, userId, dict }: Props) {
             )}
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 min-w-0 space-y-6">
-              <GroupDetails
-                group={currentGroup}
-                memberUsers={memberUsers}
-                currentUserId={userId}
-                dict={dict}
-              />
-              <MemberRankings groupId={currentGroup.id} />
-              <MatchHistoryFeed groupId={currentGroup.id} />
-            </div>
+          {/* Tab bar */}
+          <div className="flex border-b border-black/[0.08] dark:border-white/[0.07]">
+            {([
+              { key: 'rankings' as const, label: 'Rankings' },
+              { key: 'torneos'  as const, label: 'Torneos', Icon: Trophy },
+            ]).map(({ key, label, Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`relative flex items-center gap-1.5 pb-3 mr-6 text-[11px] font-bold tracking-[0.15em] uppercase transition-colors ${
+                  activeTab === key
+                    ? 'text-amber-500'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                }`}
+              >
+                {Icon && <Icon className="w-3 h-3" />}
+                {label}
+                {activeTab === key && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full" />
+                )}
+              </button>
+            ))}
           </div>
+
+          {/* Tab content */}
+          {activeTab === 'rankings' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 min-w-0 space-y-6">
+                <GroupDetails
+                  group={currentGroup}
+                  memberUsers={memberUsers}
+                  currentUserId={userId}
+                  dict={dict}
+                />
+                <MemberRankings groupId={currentGroup.id} />
+                <MatchHistoryFeed groupId={currentGroup.id} />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'torneos' && (
+            <TournamentSection
+              key={tournamentKey}
+              groupId={currentGroup.id}
+              isAdmin={isAdmin}
+              refreshKey={tournamentKey}
+              onCreateClick={() => setCreateTourneyOpen(true)}
+            />
+          )}
         </main>
       </div>
 
@@ -121,6 +170,19 @@ export default function GroupDetailClient({ id, userId, dict }: Props) {
           onUpdateDetails={handleUpdateDetails}
           onUpdateRole={handleUpdateRole}
           onRemoveMember={handleRemoveMember}
+        />
+      )}
+
+      {createTourneyOpen && (
+        <CreateTournamentModal
+          groupId={currentGroup.id}
+          groupGameIds={currentGroup.game_ids}
+          activeMembers={activeMembers}
+          onClose={() => setCreateTourneyOpen(false)}
+          onCreated={() => {
+            setTournamentKey(k => k + 1)
+            setCreateTourneyOpen(false)
+          }}
         />
       )}
     </div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
@@ -15,35 +15,35 @@ function getRankTier(rank: number): RankTier {
 }
 
 const RANK_NUM_CLASS: Record<RankTier, string> = {
-  1:     'text-amber-500 dark:text-amber-400',
+  1:     'text-primary dark:text-primary',
   2:     'text-neutral-400 dark:text-neutral-300',
-  3:     'text-amber-700 dark:text-amber-600',
+  3:     'text-amber-700 dark:text-primary',
   other: 'text-neutral-400 dark:text-neutral-400',
 }
 
 const RANK_ACCENT: Record<RankTier, string> = {
-  1:     'border-l-2 border-amber-500/70',
+  1:     'border-l-2 border-primary/70',
   2:     'border-l-2 border-neutral-400/30',
   3:     'border-l-2 border-amber-700/30',
   other: 'border-l-2 border-transparent',
 }
 
 const AVATAR_CLASS: Record<RankTier, string> = {
-  1:     'bg-amber-500 text-black',
+  1:     'bg-primary text-secondary',
   2:     'bg-neutral-300 dark:bg-neutral-600 text-black dark:text-neutral-100',
   3:     'bg-amber-800/60 text-amber-200',
   other: 'bg-black/10 dark:bg-white/10 text-neutral-600 dark:text-neutral-300',
 }
 
 // Explicit hex values ensure fully opaque sticky backgrounds regardless of CSS variable resolution
-const STICKY_BG = 'bg-white dark:bg-[#0E1520]'
+const STICKY_BG = 'bg-white dark:bg-surface'
 
 function WinRateBar({ rate }: { rate: number }) {
   const pct = Math.round(rate * 100)
   return (
     <div className="flex items-center gap-2">
       <div className="w-16 h-px bg-neutral-200 dark:bg-neutral-800 overflow-hidden shrink-0">
-        <div className="h-full bg-amber-500 dark:bg-amber-400 transition-[width]" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-primary dark:bg-custom-light-orange transition-[width]" style={{ width: `${pct}%` }} />
       </div>
       <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400 w-8 text-right shrink-0 tabular-nums">
         {pct}%
@@ -117,7 +117,7 @@ function DetailedTable({ members, dict }: DetailedTableProps) {
             const { stats } = member
             const isInactive = !member.isActive
             const rowAccent  = RANK_ACCENT[tier]
-            const rowBg      = tier === 1 ? 'bg-amber-500/[0.04]' : ''
+            const rowBg      = tier === 1 ? 'bg-primary/[0.04]' : ''
 
             return (
               <tr
@@ -157,7 +157,7 @@ function DetailedTable({ members, dict }: DetailedTableProps) {
 
                 {/* Points */}
                 <td className="px-3 py-3.5 text-right">
-                  <span className={`font-mono font-bold text-sm tabular-nums ${tier === 1 ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-600 dark:text-neutral-300'}`}>
+                  <span className={`font-mono font-bold text-sm tabular-nums ${tier === 1 ? 'text-primary dark:text-primary' : 'text-neutral-600 dark:text-neutral-300'}`}>
                     {stats.points}
                   </span>
                 </td>
@@ -191,7 +191,7 @@ function DetailedTable({ members, dict }: DetailedTableProps) {
                 {/* Streak */}
                 <td className="px-3 py-3.5 text-center">
                   {stats.streak > 0 ? (
-                    <span className="font-mono text-[11px] font-semibold text-amber-500 tabular-nums">
+                    <span className="font-mono text-[11px] font-semibold text-primary tabular-nums">
                       🔥{stats.streak}
                     </span>
                   ) : (

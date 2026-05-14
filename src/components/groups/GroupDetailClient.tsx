@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { Settings, Trophy } from 'lucide-react'
@@ -83,12 +83,12 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
                   className="w-11 h-11 rounded-full object-cover shrink-0 border border-black/[0.08] dark:border-white/[0.08]"
                 />
               ) : (
-                <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-base text-amber-500 dark:text-amber-400 shrink-0">
+                <div className="w-11 h-11 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-base text-primary dark:text-primary shrink-0">
                   {currentGroup.name[0]?.toUpperCase() ?? '#'}
                 </div>
               )}
               <div>
-                <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-neutral-900 dark:text-neutral-100">
+                <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-accent">
                   {currentGroup.name}
                 </h1>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 font-mono">
@@ -100,7 +100,7 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
             {isAdmin && (
               <button
                 onClick={() => setSettingsOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/[0.08] dark:border-white/[0.07] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:border-black/[0.15] dark:hover:border-white/[0.15] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-all text-[10px] font-bold tracking-[0.12em] uppercase shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-secondary font-bold hover:bg-custom-light-orange transition-all text-[10px] tracking-[0.12em] uppercase shrink-0"
                 aria-label="Group settings"
               >
                 <Settings className="w-3.5 h-3.5" />
@@ -120,14 +120,14 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
                 onClick={() => setActiveTab(key)}
                 className={`relative flex items-center gap-1.5 pb-3 mr-6 text-[11px] font-bold tracking-[0.15em] uppercase transition-colors ${
                   activeTab === key
-                    ? 'text-amber-500'
+                    ? 'text-primary'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
                 }`}
               >
                 {Icon && <Icon className="w-3 h-3" />}
                 {label}
                 {activeTab === key && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full" />
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
                 )}
               </button>
             ))}

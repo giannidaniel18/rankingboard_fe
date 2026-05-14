@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { UserPlus, Users, X, Search, Check } from 'lucide-react'
@@ -117,11 +117,11 @@ export default function InviteMemberModal({
               onChange={e => handleSearch(e.target.value)}
               onKeyDown={e => e.key === 'Escape' && onClose()}
               placeholder={t.searchByAlias}
-              className="w-full pl-8 pr-8 py-2 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 font-mono focus:outline-none focus:border-amber-500/60 transition-colors"
+              className="w-full pl-8 pr-8 py-2 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 font-mono focus:outline-none focus:border-primary/60 transition-colors"
             />
             {isSearching && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <div className="w-3 h-3 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                <div className="w-3 h-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
               </div>
             )}
           </div>
@@ -155,7 +155,7 @@ export default function InviteMemberModal({
                         {user.name}
                       </p>
                       <div className="flex items-center gap-1.5">
-                        <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate leading-tight">
+                        <p className="font-mono text-[11px] text-primary dark:text-primary truncate leading-tight">
                           {user.alias}
                         </p>
                         {!isFriend && (
@@ -170,7 +170,7 @@ export default function InviteMemberModal({
                       disabled={isAdding}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-bold tracking-[0.1em] uppercase transition-colors disabled:opacity-40 shrink-0 ${
                         isFriend
-                          ? 'bg-amber-500 hover:bg-amber-400 text-black'
+                          ? 'bg-primary hover:bg-custom-light-orange text-black'
                           : 'bg-neutral-200 hover:bg-neutral-300 dark:bg-white/10 dark:hover:bg-white/[0.15] text-neutral-800 dark:text-neutral-100'
                       }`}
                     >

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -30,7 +30,7 @@ export default function SideNavBar({ onOpenModal, canRecordMatch = true }: SideN
         <div className="p-3 border-b border-black/[0.08] dark:border-white/[0.07]">
           <button
             onClick={onOpenModal}
-            className="group w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-heading text-[11px] font-bold tracking-[0.15em] uppercase transition-all shadow-md shadow-amber-500/20"
+            className="group w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange text-black font-heading text-[11px] font-bold tracking-[0.15em] uppercase transition-all shadow-md shadow-primary/20"
           >
             <Plus className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90" strokeWidth={3} />
             {dict.nav.newMatch}
@@ -47,14 +47,14 @@ export default function SideNavBar({ onOpenModal, canRecordMatch = true }: SideN
               href={href}
               className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 active
-                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                  ? 'bg-primary/10 text-primary dark:text-primary'
                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/[0.06] hover:text-neutral-900 dark:hover:text-white'
               }`}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-amber-500' : ''}`} />
+              <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-primary' : ''}`} />
               <span>{label}</span>
               {active && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               )}
             </Link>
           )

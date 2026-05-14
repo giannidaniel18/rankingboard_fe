@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { UserPlus, Users, Shield, Wrench } from 'lucide-react'
@@ -66,7 +66,7 @@ export default function GroupDetails({ group, memberUsers, currentUserId, dict }
           {canInvite && (
             <button
               onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-primary hover:bg-custom-light-orange text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-colors"
             >
               <UserPlus className="w-3 h-3" />
               {t.inviteFriends}
@@ -87,12 +87,12 @@ export default function GroupDetails({ group, memberUsers, currentUserId, dict }
                 <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate leading-tight">
                   {member.name}
                 </p>
-                <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate leading-tight">
+                <p className="font-mono text-[11px] text-primary dark:text-primary truncate leading-tight">
                   {member.alias}
                 </p>
               </div>
               {member.role === 'admin' && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[9px] font-bold tracking-[0.1em] uppercase shrink-0">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-primary/10 text-primary dark:text-primary text-[9px] font-bold tracking-[0.1em] uppercase shrink-0">
                   <Shield className="w-2.5 h-2.5" />
                   {t.admin}
                 </span>

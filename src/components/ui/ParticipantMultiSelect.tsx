@@ -63,7 +63,7 @@ export default function ParticipantMultiSelect({
           canOpen ? 'cursor-pointer' : 'cursor-default'
         } ${disabled ? 'opacity-40' : ''} ${
           open
-            ? 'border-amber-500/40 ring-1 ring-amber-500/20'
+            ? 'border-primary/40 ring-1 ring-primary/20'
             : 'border-white/[0.07] hover:border-white/[0.13]'
         }`}
       >
@@ -76,7 +76,7 @@ export default function ParticipantMultiSelect({
             selected.map(p => (
               <span
                 key={p.id}
-                className="flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-300 text-xs font-semibold shrink-0"
+                className="flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-primary/15 border border-primary/25 text-amber-300 text-xs font-semibold shrink-0"
               >
                 {p.name}
                 <button

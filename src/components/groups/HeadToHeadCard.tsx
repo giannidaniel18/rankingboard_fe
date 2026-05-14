@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { X } from 'lucide-react'
 import { useAnalytics } from '@/hooks/domain/useAnalytics'
@@ -61,7 +61,7 @@ export default function HeadToHeadCard({ playerA, playerB, onClose }: HeadToHead
       {/* Card */}
       <div className="relative w-full max-w-xs bg-surface border border-black/[0.08] dark:border-white/[0.07] rounded shadow-2xl shadow-black/70 overflow-hidden">
         {/* Amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-amber-500/50" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-primary/50" />
 
         {/* Close */}
         <button
@@ -87,7 +87,7 @@ export default function HeadToHeadCard({ playerA, playerB, onClose }: HeadToHead
             <div className="flex-1 flex flex-col items-center gap-1.5 min-w-0">
               <Avatar
                 name={playerA.name}
-                colorClass="bg-amber-500 text-black"
+                colorClass="bg-primary text-secondary"
               />
               <p className="font-medium text-xs text-neutral-900 dark:text-neutral-100 truncate w-full text-center leading-tight">
                 {playerA.name}
@@ -121,7 +121,7 @@ export default function HeadToHeadCard({ playerA, playerB, onClose }: HeadToHead
 
           {/* Win counts */}
           <div className="flex items-end justify-between">
-            <span className="font-mono text-xl font-bold text-amber-500 dark:text-amber-400 tabular-nums leading-none">
+            <span className="font-mono text-xl font-bold text-primary dark:text-primary tabular-nums leading-none">
               {stats.winsA}
             </span>
             {stats.ties > 0 && (
@@ -139,7 +139,7 @@ export default function HeadToHeadCard({ playerA, playerB, onClose }: HeadToHead
             {stats.totalMatches > 0 ? (
               <>
                 <div
-                  className="absolute left-0 top-0 bottom-0 bg-amber-500"
+                  className="absolute left-0 top-0 bottom-0 bg-primary"
                   style={{ width: `${barA}%` }}
                 />
                 <div
@@ -154,7 +154,7 @@ export default function HeadToHeadCard({ playerA, playerB, onClose }: HeadToHead
 
           {/* Win rate labels */}
           <div className="flex justify-between -mt-2">
-            <span className="font-mono text-[10px] text-amber-500/80 dark:text-amber-400/70 tabular-nums">
+            <span className="font-mono text-[10px] text-primary/80 dark:text-primary/70 tabular-nums">
               {Math.round(stats.winRateA * 100)}%
             </span>
             <span className="font-mono text-[10px] text-sky-500/80 dark:text-sky-400/70 tabular-nums">

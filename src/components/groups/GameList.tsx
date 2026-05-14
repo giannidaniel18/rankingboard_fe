@@ -2,7 +2,7 @@
 import type { Game } from '@/types'
 
 const TYPE_STYLES: Record<Game['type'], string> = {
-  Board:  'text-amber-600  dark:text-amber-500  bg-amber-500/10  border-amber-500/20',
+  Board:  'text-primary  dark:text-primary  bg-primary/10  border-primary/20',
   eSport: 'text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20',
   Sports: 'text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
 }

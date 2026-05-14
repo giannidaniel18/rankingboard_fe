@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import type { TournamentMatch, TournamentTeam } from '@/types'
 import useGroupsStore from '@/store/useGroupsStore'
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const AVATAR_PALETTE = [
-  'bg-amber-500 text-black',
+  'bg-primary text-secondary',
   'bg-sky-500 text-white',
   'bg-emerald-500 text-white',
   'bg-rose-500 text-white',
@@ -55,7 +55,7 @@ function TeamSlot({
   return (
     <div className={`flex items-center gap-3 px-4 py-3 transition-all ${
       isWinner
-        ? 'bg-amber-500/[0.07] dark:bg-amber-500/[0.09]'
+        ? 'bg-primary/[0.07] dark:bg-primary/[0.09]'
         : isLoser
           ? 'opacity-40'
           : ''
@@ -68,7 +68,7 @@ function TeamSlot({
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-medium truncate ${
           isWinner
-            ? 'text-amber-500 dark:text-amber-400 font-semibold'
+            ? 'text-primary dark:text-primary font-semibold'
             : 'text-neutral-800 dark:text-neutral-200'
         }`}>
           {team.name}
@@ -80,7 +80,7 @@ function TeamSlot({
         )}
       </div>
       {isWinner && (
-        <span className="text-amber-400 text-[13px] shrink-0">🏆</span>
+        <span className="text-primary text-[13px] shrink-0">🏆</span>
       )}
     </div>
   )
@@ -102,7 +102,7 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
       isDone
         ? 'border-black/[0.06] dark:border-white/[0.06]'
         : isBye
-          ? 'border-dashed border-amber-500/30 dark:border-amber-500/20'
+          ? 'border-dashed border-primary/30 dark:border-primary/20'
           : bothKnown
             ? 'border-black/[0.10] dark:border-white/[0.09] shadow-sm shadow-black/5'
             : 'border-dashed border-black/[0.08] dark:border-white/[0.07]'
@@ -124,7 +124,7 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
           <button
             type="button"
             onClick={onResolve}
-            className="w-full py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="w-full py-2.5 rounded-lg bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             Cargar Resultado
           </button>
@@ -132,11 +132,11 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
       )}
 
       {showBye && (
-        <div className="px-4 py-3 border-t border-amber-500/10 dark:border-amber-500/10 bg-amber-500/[0.03]">
+        <div className="px-4 py-3 border-t border-primary/10 dark:border-primary/10 bg-primary/[0.03]">
           <button
             type="button"
             onClick={onResolve}
-            className="w-full py-2.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="w-full py-2.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/30 text-primary dark:text-primary text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             Avanzar (Pase Libre)
           </button>

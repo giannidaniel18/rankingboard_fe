@@ -5,30 +5,23 @@
 
 /* ─── Surface tokens ─────────────────────────────────────────────────────── */
 :root {
-  --rb-canvas:   #F0F4F8;
-  --rb-surface:  #FFFFFF;
-  --rb-elevated: #F8FAFC;
+  --rb-canvas:   #ffffff;
+  --rb-surface:  #f5f7fa;
+  --rb-elevated: #eef1f5;
 
   /* Light-mode text scale */
-  --rb-text-primary:   #0F172A;   /* ~18:1 on white */
-  --rb-text-secondary: #334155;   /* ~9:1  on white */
-  --rb-text-caption:   #64748B;   /* ~4.6:1 on white — AA */
+  --rb-text-primary:   #232f3e;   /* secondary navy — AA on white */
+  --rb-text-secondary: #3d5166;
+  --rb-text-caption:   #64748B;
 }
 
 .dark {
-  --rb-canvas:   #080C12;
-  --rb-surface:  #0E1520;
-  --rb-elevated: #141E2E;
+  --rb-canvas:   #232f3e;   /* secondary — AWS dark navy */
+  --rb-surface:  #2a3a4f;
+  --rb-elevated: #304558;
 
-  /*
-   * Dark-mode text scale — all ratios against #080C12
-   * neutral-100 #F1F5F9 → ~18:1  AAA  primary content
-   * neutral-300 #CBD5E1 → ~12:1  AAA  secondary / nav links
-   * neutral-400 #94A3B8 →  ~8:1  AAA  captions / metadata / labels
-   * neutral-600 #475569 →  ~2.8:1      structural-only (decorators, "—")
-   */
-  --rb-text-primary:   #F1F5F9;
-  --rb-text-secondary: #CBD5E1;
+  --rb-text-primary:   #ffffff;   /* accent */
+  --rb-text-secondary: #e0e8f0;
   --rb-text-caption:   #94A3B8;
 }
 
@@ -45,6 +38,13 @@
   --color-tx-primary:   var(--rb-text-primary);
   --color-tx-secondary: var(--rb-text-secondary);
   --color-tx-caption:   var(--rb-text-caption);
+
+  /* Brand palette — POC */
+  --color-primary:             #ff9900;
+  --color-secondary:           #232f3e;
+  --color-accent:              #ffffff;
+  --color-custom-blue:         #146eb4;
+  --color-custom-light-orange: #febd69;
 
   /* Accent palette (static) */
   --color-gold:  #F59E0B;

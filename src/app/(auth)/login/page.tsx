@@ -1,4 +1,4 @@
-import LoginForm from '@/components/auth/LoginForm'
+﻿import LoginForm from '@/components/auth/LoginForm'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 
 export const metadata = { title: 'Sign In — RankingBoard' }
@@ -14,11 +14,11 @@ export default function LoginPage() {
             RankingBoard
           </h1>
           <div className="flex items-center justify-center gap-2">
-            <div className="h-px w-8 bg-amber-500/50" />
+            <div className="h-px w-8 bg-primary/50" />
             <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400">
               Track your rankings
             </span>
-            <div className="h-px w-8 bg-amber-500/50" />
+            <div className="h-px w-8 bg-primary/50" />
           </div>
         </div>
 

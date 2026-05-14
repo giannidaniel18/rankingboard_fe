@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -103,7 +103,7 @@ function PrizeSummaryCard({
       emoji: '🥇',
       slot: first,
       amount: pool.distribution.first,
-      colorCls: 'text-amber-400',
+      colorCls: 'text-primary',
       amountCls: 'text-emerald-300',
     },
     {
@@ -117,7 +117,7 @@ function PrizeSummaryCard({
       emoji: '🥉',
       slot: third,
       amount: pool.distribution.third,
-      colorCls: 'text-amber-700 dark:text-amber-600',
+      colorCls: 'text-amber-700 dark:text-primary',
       amountCls: 'text-emerald-400/60',
     },
   ].filter(r => r.amount > 0 || r.slot !== null)
@@ -187,7 +187,7 @@ interface Props {
 
 const STATUS_CONFIG: Record<Tournament['status'], { label: string; cls: string }> = {
   draft:       { label: 'Borrador',    cls: 'bg-neutral-500/15 text-neutral-400 border-neutral-500/25' },
-  in_progress: { label: 'En curso',   cls: 'bg-amber-500/15 text-amber-400 border-amber-500/25'       },
+  in_progress: { label: 'En curso',   cls: 'bg-primary/15 text-primary border-primary/25'       },
   completed:   { label: 'Completado', cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' },
 }
 
@@ -267,7 +267,7 @@ export default function TournamentDetailClient({
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-canvas items-center justify-center">
-        <Loader2 className="w-6 h-6 text-amber-400 animate-spin" />
+        <Loader2 className="w-6 h-6 text-primary animate-spin" />
       </div>
     )
   }
@@ -276,13 +276,13 @@ export default function TournamentDetailClient({
     return (
       <div className="flex min-h-screen bg-canvas items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto">
-            <Trophy className="w-6 h-6 text-amber-400/60" />
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto">
+            <Trophy className="w-6 h-6 text-primary/60" />
           </div>
           <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Torneo no encontrado</p>
           <Link
             href={`/groups/${groupId}`}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-amber-500 hover:text-amber-400 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-primary hover:text-primary transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Volver al grupo
@@ -315,8 +315,8 @@ export default function TournamentDetailClient({
           {/* Tournament header */}
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 mt-1">
-                <Trophy className="w-5 h-5 text-amber-400" />
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-1">
+                <Trophy className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="font-heading text-2xl font-bold text-neutral-900 dark:text-neutral-100 break-words leading-tight">
@@ -391,12 +391,12 @@ export default function TournamentDetailClient({
 
           {tournament.status === 'in_progress' && (
             <div className="space-y-2">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/[0.05] border border-amber-500/15">
-                <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/[0.05] border border-primary/15">
+                <Trophy className="w-4 h-4 text-primary shrink-0" />
                 <div className="flex items-center gap-3 flex-wrap font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
-                  <span>🥇 <strong className="text-amber-400">+{tournament.bonusPoints.first}</strong></span>
+                  <span>🥇 <strong className="text-primary">+{tournament.bonusPoints.first}</strong></span>
                   <span>🥈 <strong className="text-neutral-400">+{tournament.bonusPoints.second}</strong></span>
-                  <span>🥉 <strong className="text-amber-700 dark:text-amber-600">+{tournament.bonusPoints.third}</strong></span>
+                  <span>🥉 <strong className="text-amber-700 dark:text-primary">+{tournament.bonusPoints.third}</strong></span>
                 </div>
               </div>
 

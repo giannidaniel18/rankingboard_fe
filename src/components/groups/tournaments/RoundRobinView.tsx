@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
@@ -62,11 +62,11 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
               .filter((a): a is string => Boolean(a))
               .join(', ')
             return (
-              <div key={team.id} className={`flex items-center gap-3 px-4 py-2.5 ${i === 0 && w > 0 ? 'bg-amber-500/[0.05]' : ''}`}>
+              <div key={team.id} className={`flex items-center gap-3 px-4 py-2.5 ${i === 0 && w > 0 ? 'bg-primary/[0.05]' : ''}`}>
                 <span className={`font-mono text-[11px] font-bold w-4 shrink-0 ${
-                  i === 0 ? 'text-amber-500' :
+                  i === 0 ? 'text-primary' :
                   i === 1 ? 'text-neutral-400' :
-                  i === 2 ? 'text-amber-700 dark:text-amber-600' :
+                  i === 2 ? 'text-amber-700 dark:text-primary' :
                             'text-neutral-300 dark:text-neutral-600'
                 }`}>
                   {i + 1}
@@ -110,7 +110,7 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${
                   roundDone   ? 'bg-emerald-500' :
-                  hasPending  ? 'bg-amber-500 animate-pulse' :
+                  hasPending  ? 'bg-primary animate-pulse' :
                                 'bg-neutral-300 dark:bg-neutral-600'
                 }`} />
                 <p className="flex-1 font-heading text-[11px] font-bold tracking-[0.15em] uppercase text-neutral-900 dark:text-neutral-100">

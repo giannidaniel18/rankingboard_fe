@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { Plus, ChevronDown, ChevronUp } from 'lucide-react'
@@ -18,21 +18,21 @@ function getRankTier(rank: number): RankTier {
 }
 
 const RANK_NUM_CLASS: Record<RankTier, string> = {
-  1:     'text-amber-500 dark:text-amber-400',
+  1:     'text-primary dark:text-primary',
   2:     'text-neutral-400 dark:text-neutral-300',
-  3:     'text-amber-700 dark:text-amber-600',
+  3:     'text-amber-700 dark:text-primary',
   other: 'text-neutral-400 dark:text-neutral-400',
 }
 
 const RANK_ACCENT: Record<RankTier, string> = {
-  1:     'border-l-2 border-amber-500/70',
+  1:     'border-l-2 border-primary/70',
   2:     'border-l-2 border-neutral-400/30',
   3:     'border-l-2 border-amber-700/30',
   other: 'border-l-2 border-transparent',
 }
 
 const AVATAR_CLASS: Record<RankTier, string> = {
-  1:     'bg-amber-500 text-black',
+  1:     'bg-primary text-secondary',
   2:     'bg-neutral-300 dark:bg-neutral-600 text-black dark:text-neutral-100',
   3:     'bg-amber-800/60 text-amber-200',
   other: 'bg-black/10 dark:bg-white/10 text-neutral-600 dark:text-neutral-300',
@@ -91,14 +91,14 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
           const isInactive = !member.isActive
           const pct        = Math.round(stats.winRate * 100)
           const rowAccent  = RANK_ACCENT[tier]
-          const rowBg      = tier === 1 ? 'bg-amber-500/[0.04]' : ''
+          const rowBg      = tier === 1 ? 'bg-primary/[0.04]' : ''
           const isSelected = compareA?.userId === member.userId
 
           return (
             <tr
               key={member.userId}
               onClick={() => onCompare(member)}
-              className={`${rowAccent} ${isSelected ? 'bg-amber-500/[0.08]' : rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 cursor-pointer hover:bg-white/[0.05] active:bg-zinc-800/50 transition-colors ${isInactive ? 'opacity-50' : ''}`}
+              className={`${rowAccent} ${isSelected ? 'bg-primary/[0.08]' : rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 cursor-pointer hover:bg-white/[0.05] active:bg-elevated/50 transition-colors ${isInactive ? 'opacity-50' : ''}`}
             >
               <td className="pl-5 pr-2 py-3">
                 <span className={`font-mono font-bold text-xs ${RANK_NUM_CLASS[tier]}`}>
@@ -125,7 +125,7 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
               </td>
 
               <td className="px-2 py-3 text-right">
-                <span className={`font-mono font-bold text-xs tabular-nums ${tier === 1 ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-600 dark:text-neutral-300'}`}>
+                <span className={`font-mono font-bold text-xs tabular-nums ${tier === 1 ? 'text-primary dark:text-primary' : 'text-neutral-600 dark:text-neutral-300'}`}>
                   {stats.points}
                 </span>
               </td>

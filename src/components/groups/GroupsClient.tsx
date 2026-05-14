@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useTransition, useRef, useEffect } from 'react'
 import Link from 'next/link'
@@ -58,7 +58,7 @@ export default function GroupsClient({ dict }: Props) {
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="shrink-0 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm transition-colors"
+          className="shrink-0 px-4 py-2 bg-primary hover:bg-custom-light-orange text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm transition-colors"
         >
           + {t.createGroup}
         </button>
@@ -104,7 +104,7 @@ export default function GroupsClient({ dict }: Props) {
                 onKeyDown={handleKeyDown}
                 placeholder={t.namePlaceholder}
                 maxLength={48}
-                className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-amber-500/60 transition-colors"
+                className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-primary/60 transition-colors"
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function GroupsClient({ dict }: Props) {
               <button
                 onClick={handleCreate}
                 disabled={!name.trim() || isPending}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-primary hover:bg-custom-light-orange text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {isPending ? t.creating : t.create}
               </button>
@@ -148,7 +148,7 @@ function EmptyState({ t, onCreateClick }: { t: Dictionary['groups']; onCreateCli
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
       <div className="w-14 h-14 rounded-sm border border-black/[0.08] dark:border-white/[0.07] bg-surface flex items-center justify-center">
-        <span className="font-mono text-amber-500 dark:text-amber-400 text-xl font-bold">#</span>
+        <span className="font-mono text-primary dark:text-primary text-xl font-bold">#</span>
       </div>
       <div className="space-y-1">
         <p className="font-heading text-sm font-bold tracking-[0.1em] uppercase text-neutral-700 dark:text-neutral-300">
@@ -160,7 +160,7 @@ function EmptyState({ t, onCreateClick }: { t: Dictionary['groups']; onCreateCli
       </div>
       <button
         onClick={onCreateClick}
-        className="mt-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm transition-colors"
+        className="mt-2 px-5 py-2.5 bg-primary hover:bg-custom-light-orange text-black text-[11px] font-bold tracking-[0.15em] uppercase rounded-sm transition-colors"
       >
         {t.createFirst}
       </button>
@@ -185,10 +185,10 @@ function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
   return (
     <Link
       href={`/groups/${group.id}`}
-      className="group block bg-surface border border-black/[0.08] dark:border-white/[0.07] rounded-sm hover:border-amber-500/40 transition-all duration-200"
+      className="group block bg-surface border border-black/[0.08] dark:border-white/[0.07] rounded-sm hover:border-primary/40 transition-all duration-200"
     >
       {/* Amber top accent */}
-      <div className="h-0.5 bg-amber-500/0 group-hover:bg-amber-500/60 transition-all duration-200 rounded-t-sm" />
+      <div className="h-0.5 bg-primary/0 group-hover:bg-primary/60 transition-all duration-200 rounded-t-sm" />
 
       <div className="p-5">
         {/* Avatar + Name */}
@@ -200,7 +200,7 @@ function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
               className="w-9 h-9 rounded-full object-cover shrink-0 border border-black/[0.08] dark:border-white/[0.08]"
             />
           ) : (
-            <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-sm text-amber-500 dark:text-amber-400 shrink-0">
+            <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-sm text-primary dark:text-primary shrink-0">
               {initial}
             </div>
           )}
@@ -208,7 +208,7 @@ function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
             <h2 className="font-heading text-sm font-bold tracking-[0.05em] text-neutral-900 dark:text-neutral-100 truncate">
               {group.name}
             </h2>
-            <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate">
+            <p className="font-mono text-[11px] text-primary dark:text-primary truncate">
               {group.groupTag}
             </p>
           </div>
@@ -219,7 +219,7 @@ function GroupCard({ group, t }: { group: Group; t: Dictionary['groups'] }) {
           <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500 tabular-nums">
             {activeMemberCount} {t.members}
           </span>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-amber-500 dark:text-amber-400 group-hover:translate-x-0.5 transition-transform duration-150">
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-primary dark:text-primary group-hover:translate-x-0.5 transition-transform duration-150">
             {t.viewGroup} →
           </span>
         </div>

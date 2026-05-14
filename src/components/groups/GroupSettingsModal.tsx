@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { X, Settings, Save, Trash2, Loader2, ChevronDown, UserX } from 'lucide-react'
@@ -63,7 +63,7 @@ function RoleDropdown({ value, onChange, loading = false }: RoleDropdownProps) {
   if (loading) {
     return (
       <div className="w-[112px] h-7 flex items-center justify-center">
-        <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+        <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
       </div>
     )
   }
@@ -74,7 +74,7 @@ function RoleDropdown({ value, onChange, loading = false }: RoleDropdownProps) {
       <button
         type="button"
         onClick={() => setOpen(p => !p)}
-        className="flex items-center gap-1.5 w-[112px] px-2.5 py-1.5 rounded-lg bg-black/[0.04] dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.08] hover:border-amber-500/50 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="flex items-center gap-1.5 w-[112px] px-2.5 py-1.5 rounded-lg bg-black/[0.04] dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.08] hover:border-primary/50 focus:outline-none focus:border-primary/60 transition-colors"
       >
         <span className="flex-1 text-left text-[10px] font-bold tracking-[0.07em] uppercase text-neutral-700 dark:text-neutral-200 truncate">
           {ROLE_LABEL[value]}
@@ -86,7 +86,7 @@ function RoleDropdown({ value, onChange, loading = false }: RoleDropdownProps) {
 
       {/* Popover */}
       {open && (
-        <div className="absolute right-0 top-[calc(100%+4px)] w-[148px] bg-white dark:bg-[#161b27] border border-black/[0.10] dark:border-white/[0.10] rounded-xl shadow-2xl shadow-black/40 z-[70] overflow-hidden py-1">
+        <div className="absolute right-0 top-[calc(100%+4px)] w-[148px] bg-white dark:bg-elevated border border-black/[0.10] dark:border-white/[0.10] rounded-xl shadow-2xl shadow-black/40 z-[70] overflow-hidden py-1">
           {ROLES.map(r => (
             <button
               key={r.value}
@@ -94,13 +94,13 @@ function RoleDropdown({ value, onChange, loading = false }: RoleDropdownProps) {
               onClick={() => { onChange(r.value); setOpen(false) }}
               className={`w-full text-left px-3 py-2 transition-colors ${
                 value === r.value
-                  ? 'bg-amber-500/10 dark:bg-amber-500/10'
+                  ? 'bg-primary/10 dark:bg-primary/10'
                   : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'
               }`}
             >
               <p className={`text-[10px] font-bold tracking-[0.07em] uppercase leading-none ${
                 value === r.value
-                  ? 'text-amber-600 dark:text-amber-400'
+                  ? 'text-primary dark:text-primary'
                   : 'text-neutral-800 dark:text-neutral-200'
               }`}>
                 {r.label}
@@ -181,13 +181,13 @@ export default function GroupSettingsModal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full max-w-sm bg-surface border border-black/[0.10] dark:border-white/[0.07] rounded-2xl shadow-2xl shadow-black/70 overflow-hidden flex flex-col max-h-[88dvh]">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-              <Settings className="w-4 h-4 text-amber-400" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+              <Settings className="w-4 h-4 text-primary" />
             </div>
             <div>
               <h2 className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100 leading-none">
@@ -215,13 +215,13 @@ export default function GroupSettingsModal({
               onClick={() => setTab(t.key)}
               className={`relative pb-3 mr-6 text-[11px] font-bold tracking-[0.15em] uppercase transition-colors ${
                 tab === t.key
-                  ? 'text-amber-500'
+                  ? 'text-primary'
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
               {t.label}
               {tab === t.key && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
               )}
             </button>
           ))}
@@ -242,7 +242,7 @@ export default function GroupSettingsModal({
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="Group name"
-                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-black/[0.20] dark:hover:border-white/[0.13] focus:border-amber-500/70 dark:focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 font-medium transition-all outline-none"
+                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-black/[0.20] dark:hover:border-white/[0.13] focus:border-primary/70 dark:focus:border-primary/40 focus:ring-1 focus:ring-primary/20 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 font-medium transition-all outline-none"
                 />
               </div>
 
@@ -255,7 +255,7 @@ export default function GroupSettingsModal({
                   value={avatarUrl}
                   onChange={e => setAvatarUrl(e.target.value)}
                   placeholder="https://…"
-                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-black/[0.20] dark:hover:border-white/[0.13] focus:border-amber-500/70 dark:focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 font-medium transition-all outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
+                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-black/[0.20] dark:hover:border-white/[0.13] focus:border-primary/70 dark:focus:border-primary/40 focus:ring-1 focus:ring-primary/20 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 font-medium transition-all outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
                 />
                 <p className="mt-1.5 text-[10px] font-mono text-neutral-400 dark:text-neutral-500">
                   Avatar upload coming soon.
@@ -293,7 +293,7 @@ export default function GroupSettingsModal({
                         {member.name}
                       </p>
                       {member.isCurrentUser && (
-                        <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-amber-500/70">you</span>
+                        <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-primary/70">you</span>
                       )}
                       {!member.isActive && (
                         <span className="flex items-center gap-0.5 text-[9px] font-mono text-neutral-400 dark:text-neutral-500">
@@ -302,7 +302,7 @@ export default function GroupSettingsModal({
                         </span>
                       )}
                     </div>
-                    <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate leading-tight">
+                    <p className="font-mono text-[11px] text-primary dark:text-primary truncate leading-tight">
                       {member.alias}
                     </p>
                   </div>
@@ -343,7 +343,7 @@ export default function GroupSettingsModal({
           <button
             onClick={() => { void handleSave() }}
             disabled={isSaving || !name.trim()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
             {isSaving ? 'Saving…' : 'Save Changes'}

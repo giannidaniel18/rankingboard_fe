@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Copy, Check } from 'lucide-react'
@@ -51,16 +51,16 @@ export default function SocialManager({ userId, dict }: Props) {
   return (
     <div>
       {userAlias && (
-        <div className="flex items-center justify-between px-4 py-3 mb-6 rounded-sm border border-black/[0.08] dark:border-neutral-800 bg-white dark:bg-neutral-900">
+        <div className="flex items-center justify-between px-4 py-3 mb-6 rounded-sm border border-black/[0.08] dark:border-white/[0.10] bg-surface">
           <div>
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-400 dark:text-neutral-500 mb-0.5">
               {dict.myAlias}
             </p>
-            <p className="text-sm font-mono font-semibold text-amber-500 dark:text-amber-400">{userAlias}</p>
+            <p className="text-sm font-mono font-semibold text-primary dark:text-primary">{userAlias}</p>
           </div>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold border border-black/[0.10] dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors min-w-[4.5rem] justify-center"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold border border-primary/30 text-primary/70 hover:bg-primary/10 transition-colors min-w-[4.5rem] justify-center"
           >
             {copied ? (
               <>
@@ -77,14 +77,14 @@ export default function SocialManager({ userId, dict }: Props) {
         </div>
       )}
 
-      <div className="flex border-b border-neutral-200 dark:border-neutral-800 mb-6">
+      <div className="flex border-b border-black/[0.08] dark:border-white/[0.07] mb-6">
         {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`relative flex items-center gap-1.5 px-4 py-2.5 text-[11px] font-bold tracking-[0.15em] uppercase transition-colors ${
               tab === t.id
-                ? 'text-amber-500 dark:text-amber-400'
+                ? 'text-primary dark:text-primary'
                 : 'text-neutral-500 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
             }`}
           >
@@ -94,14 +94,14 @@ export default function SocialManager({ userId, dict }: Props) {
                 className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
                   t.id === 'pending'
                     ? 'bg-red-500/15 text-red-400'
-                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+                    : 'bg-primary/10 text-primary'
                 }`}
               >
                 {t.count}
               </span>
             )}
             {tab === t.id && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 dark:bg-amber-400 rounded-t-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary dark:bg-custom-light-orange rounded-t-full" />
             )}
           </button>
         ))}

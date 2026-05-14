@@ -1,4 +1,4 @@
-import RegisterForm from '@/components/auth/RegisterForm'
+﻿import RegisterForm from '@/components/auth/RegisterForm'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 
 export const metadata = { title: 'Create Account — RankingBoard' }
@@ -14,11 +14,11 @@ export default function RegisterPage() {
             RankingBoard
           </h1>
           <div className="flex items-center justify-center gap-2">
-            <div className="h-px w-8 bg-amber-500/50" />
+            <div className="h-px w-8 bg-primary/50" />
             <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400">
               Create your account
             </span>
-            <div className="h-px w-8 bg-amber-500/50" />
+            <div className="h-px w-8 bg-primary/50" />
           </div>
         </div>
 

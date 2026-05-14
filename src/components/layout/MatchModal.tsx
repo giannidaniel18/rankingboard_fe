@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import { X, Swords, ChevronDown, Check, Loader2, Trophy, Hash, Target, Lock } from 'lucide-react'
@@ -44,7 +44,7 @@ function SelectField({
           value={value}
           onChange={e => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full appearance-none bg-elevated border border-white/[0.07] hover:border-white/[0.13] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 pr-9 text-sm text-tx-primary font-medium transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full appearance-none bg-elevated border border-white/[0.07] hover:border-white/[0.13] focus:border-primary/40 focus:ring-1 focus:ring-primary/20 rounded-xl px-4 py-2.5 pr-9 text-sm text-tx-primary font-medium transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {children}
         </select>
@@ -236,7 +236,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
       {/* Panel */}
       <div className="relative w-full sm:max-w-sm bg-surface border border-white/[0.07] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/70 overflow-hidden">
         {/* Amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
         {/* Close */}
         <button
@@ -263,10 +263,10 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
           <div className="px-6 pt-6 pb-7 sm:px-7 sm:pt-7 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                 {isBusy
-                  ? <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
-                  : <Swords  className="w-5 h-5 text-amber-400" />
+                  ? <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  : <Swords  className="w-5 h-5 text-primary" />
                 }
               </div>
               <div>
@@ -352,7 +352,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                         onClick={() => handleResultModeChange(mode.key)}
                         className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-bold tracking-[0.07em] uppercase rounded-lg transition-all duration-200 ${
                           resultMode === mode.key
-                            ? 'bg-amber-500 text-black shadow-sm'
+                            ? 'bg-primary text-secondary shadow-sm'
                             : 'text-tx-caption hover:text-tx-primary'
                         }`}
                       >
@@ -377,13 +377,13 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                             isTied
                               ? 'border-sky-500/25 bg-sky-500/[0.04]'
                               : done
-                              ? 'border-amber-500/25 bg-amber-500/[0.04]'
+                              ? 'border-primary/25 bg-primary/[0.04]'
                               : 'border-white/[0.07] bg-elevated'
                           }`}
                         >
                           {/* Avatar */}
-                          <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-[9px] font-bold text-amber-400 uppercase leading-none">
+                          <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                            <span className="text-[9px] font-bold text-primary uppercase leading-none">
                               {player.name.slice(0, 2)}
                             </span>
                           </div>
@@ -393,7 +393,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                             <p className="text-xs font-semibold text-tx-primary truncate">
                               {player.name}
                               {isMe && (
-                                <span className="ml-1.5 text-[9px] font-bold tracking-[0.1em] uppercase text-amber-500/60">
+                                <span className="ml-1.5 text-[9px] font-bold tracking-[0.1em] uppercase text-primary/60">
                                   you
                                 </span>
                               )}
@@ -451,7 +451,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                                 if (!isNaN(val) && val > 0) setPlayerResult(player.id, { placement: val })
                                 else setPlayerResult(player.id, {})
                               }}
-                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
+                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
                             />
                           )}
 
@@ -459,7 +459,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                           {resultMode === 'score' && (
                             <div className="flex items-center gap-1.5 shrink-0">
                               {rankPreview[player.id] !== undefined && (
-                                <span className="text-[9px] font-bold font-mono text-amber-400/70 w-5 text-right leading-none">
+                                <span className="text-[9px] font-bold font-mono text-primary/70 w-5 text-right leading-none">
                                   #{rankPreview[player.id]}
                                 </span>
                               )}
@@ -473,7 +473,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                                   if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
                                   else setPlayerResult(player.id, {})
                                 }}
-                                className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40"
+                                className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40"
                               />
                             </div>
                           )}
@@ -499,7 +499,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                   <div
                     key={i}
                     className={`h-0.5 flex-1 rounded-full transition-colors duration-300 ${
-                      done ? 'bg-amber-500' : 'bg-white/[0.08]'
+                      done ? 'bg-primary' : 'bg-white/[0.08]'
                     }`}
                   />
                 ))}
@@ -511,7 +511,7 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
-                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
+                className="w-full py-3 rounded-xl bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary/15 hover:shadow-primary/25 disabled:shadow-none"
               >
                 {isSubmitting ? (
                   <>

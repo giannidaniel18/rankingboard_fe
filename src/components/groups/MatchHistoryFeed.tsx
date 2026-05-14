@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useMatches } from '@/hooks/domain/useMatches'
@@ -26,14 +26,14 @@ const PLACEMENT_LABEL: Record<PlacementTier, string> = {
 }
 
 const PLACEMENT_CLASS: Record<PlacementTier, string> = {
-  1: 'text-amber-400 dark:text-amber-400 font-bold',
+  1: 'text-primary dark:text-primary font-bold',
   2: 'text-neutral-400 dark:text-neutral-300 font-semibold',
-  3: 'text-amber-700 dark:text-amber-600 font-semibold',
+  3: 'text-amber-700 dark:text-primary font-semibold',
   other: 'text-neutral-400 font-normal',
 }
 
 const ROW_ACCENT: Record<PlacementTier, string> = {
-  1: 'border-l-2 border-amber-500/60 pl-2',
+  1: 'border-l-2 border-primary/60 pl-2',
   2: 'border-l-2 border-neutral-400/25 pl-2',
   3: 'border-l-2 border-amber-700/25 pl-2',
   other: 'pl-[10px]',
@@ -70,15 +70,15 @@ function MatchCard({ match }: { match: MatchDetail }) {
   const hasScores = !isTournament && !allScoresZero && sorted.some(p => p.score !== undefined)
 
   return (
-    <div className={`border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-black/[0.015] dark:hover:bg-white/[0.015] transition-colors ${isTournament ? 'border-l-2 border-l-amber-500/50' : ''}`}>
+    <div className={`border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-black/[0.015] dark:hover:bg-white/[0.015] transition-colors ${isTournament ? 'border-l-2 border-l-primary/50' : ''}`}>
       {/* Match meta row */}
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-amber-500 dark:text-amber-400">
+          <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-primary dark:text-primary">
             {match.gameName}
           </span>
           {isTournament && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[8px] font-bold tracking-[0.1em] uppercase bg-amber-500/10 text-amber-400 border-amber-500/20">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[8px] font-bold tracking-[0.1em] uppercase bg-primary/10 text-primary border-primary/20">
               🏆 Torneo
             </span>
           )}
@@ -227,7 +227,7 @@ export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
                 onClick={() => setTypeFilter(value)}
                 className={`shrink-0 px-4 py-2 rounded-full border text-[10px] font-bold tracking-[0.12em] uppercase transition-all min-h-[36px] ${
                   typeFilter === value
-                    ? 'bg-amber-500 border-amber-500 text-white'
+                    ? 'bg-primary border-primary text-white'
                     : 'border-black/[0.08] dark:border-white/[0.08] text-neutral-500 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-600 hover:text-neutral-700 dark:hover:text-neutral-200'
                 }`}
               >
@@ -242,7 +242,7 @@ export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
               <select
                 value={gameFilter}
                 onChange={e => setGameFilter(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-surface text-[11px] font-mono text-neutral-700 dark:text-neutral-300 focus:outline-none focus:border-amber-500/50 transition-colors appearance-none cursor-pointer min-h-[36px]"
+                className="w-full px-3 py-2 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-surface text-[11px] font-mono text-neutral-700 dark:text-neutral-300 focus:outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer min-h-[36px]"
               >
                 <option value="all">Todos los juegos</option>
                 {availableGames.map(g => (

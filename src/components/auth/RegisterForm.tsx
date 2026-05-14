@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -37,7 +37,7 @@ export default function RegisterForm() {
         required
         autoComplete="name"
         placeholder="Your name"
-        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-primary/60 transition-colors"
       />
       <input
         type="email"
@@ -45,7 +45,7 @@ export default function RegisterForm() {
         required
         autoComplete="email"
         placeholder="you@example.com"
-        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-primary/60 transition-colors"
       />
       <input
         type="password"
@@ -54,18 +54,18 @@ export default function RegisterForm() {
         minLength={6}
         autoComplete="new-password"
         placeholder="Password (min. 6 characters)"
-        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-primary/60 transition-colors"
       />
       <button
         type="submit"
         disabled={isPending}
-        className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black rounded-sm text-[11px] font-bold tracking-[0.15em] uppercase disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 bg-primary hover:bg-custom-light-orange text-black rounded-sm text-[11px] font-bold tracking-[0.15em] uppercase disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed transition-colors"
       >
         {isPending ? 'Creating account…' : 'Create Account'}
       </button>
       <p className="text-center text-[11px] text-neutral-500 dark:text-neutral-400 pt-1">
         Already have an account?{' '}
-        <Link href="/login" className="text-amber-500 hover:text-amber-400 font-semibold transition-colors">
+        <Link href="/login" className="text-primary hover:text-primary font-semibold transition-colors">
           Sign in
         </Link>
       </p>

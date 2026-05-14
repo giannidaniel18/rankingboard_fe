@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const AVATAR_COLORS = [
-  'bg-amber-500 text-black',
+  'bg-primary text-secondary',
   'bg-sky-500 text-white',
   'bg-emerald-500 text-white',
   'bg-violet-500 text-white',
@@ -67,12 +67,12 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
               </p>
               <p className="font-mono text-xs text-neutral-500 dark:text-neutral-400">
                 No player with ID{' '}
-                <span className="text-amber-500 dark:text-amber-400">{profileId}</span> exists.
+                <span className="text-primary dark:text-primary">{profileId}</span> exists.
               </p>
             </div>
             <Link
               href="/social"
-              className="mt-2 px-4 py-2 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600 dark:text-neutral-300 hover:border-amber-500/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+              className="mt-2 px-4 py-2 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600 dark:text-neutral-300 hover:border-primary/40 hover:text-primary dark:hover:text-primary transition-colors"
             >
               ← Back to Social
             </Link>
@@ -115,13 +115,13 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
 
             {/* Own-profile banner */}
             {isOwnProfile && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded-sm border border-amber-500/20 bg-amber-500/[0.05]">
-                <span className="font-mono text-[10px] text-amber-600 dark:text-amber-400 flex-1">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-sm border border-primary/20 bg-primary/[0.05]">
+                <span className="font-mono text-[10px] text-primary dark:text-primary flex-1">
                   You are viewing your own profile.
                 </span>
                 <Link
                   href="/profile"
-                  className="shrink-0 px-3 py-1 rounded-sm border border-amber-500/30 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors"
+                  className="shrink-0 px-3 py-1 rounded-sm border border-primary/30 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary dark:text-primary hover:bg-primary/10 transition-colors"
                 >
                   Edit
                 </Link>
@@ -130,7 +130,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
 
             {/* Identity card */}
             <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
-              <div className="h-px bg-amber-500/30" />
+              <div className="h-px bg-primary/30" />
 
               <div className="px-6 py-5">
                 <div className="flex items-start gap-5">
@@ -146,7 +146,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
                     <h2 className="font-heading font-bold text-lg tracking-[0.06em] uppercase text-neutral-900 dark:text-neutral-100 truncate">
                       {profileUser.name}
                     </h2>
-                    <p className="font-mono text-[11px] text-amber-500/80 dark:text-amber-500/70">
+                    <p className="font-mono text-[11px] text-primary/80 dark:text-primary/70">
                       {profileUser.alias}
                     </p>
                     {profileUser.bio && (
@@ -177,7 +177,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
                   <div className="px-5 pb-3 pt-1 border-t border-black/[0.04] dark:border-white/[0.04]">
                     <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
                       Best streak:{' '}
-                      <span className="text-amber-500 font-semibold tabular-nums">
+                      <span className="text-primary font-semibold tabular-nums">
                         🔥 {stats.bestStreak}
                       </span>
                     </span>
@@ -221,7 +221,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
                       </div>
                       <p className="font-medium text-xs text-neutral-900 dark:text-neutral-100 truncate w-full text-center leading-tight">
                         {currentUser.name}{' '}
-                        <span className="font-mono text-[9px] text-amber-500 dark:text-amber-400">
+                        <span className="font-mono text-[9px] text-primary dark:text-primary">
                           (You)
                         </span>
                       </p>
@@ -230,7 +230,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
 
                   {/* Win counts */}
                   <div className="flex items-end justify-between">
-                    <span className="font-mono text-xl font-bold text-amber-500 dark:text-amber-400 tabular-nums leading-none">
+                    <span className="font-mono text-xl font-bold text-primary dark:text-primary tabular-nums leading-none">
                       {h2h.winsA}
                     </span>
                     {h2h.ties > 0 && (
@@ -248,7 +248,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
                     {h2h.totalMatches > 0 ? (
                       <>
                         <div
-                          className="absolute left-0 top-0 bottom-0 bg-amber-500"
+                          className="absolute left-0 top-0 bottom-0 bg-primary"
                           style={{ width: `${barA}%` }}
                         />
                         <div
@@ -263,7 +263,7 @@ export default function ProfilePageClient({ profileId, sessionUserId }: Props) {
 
                   {/* Win rate labels */}
                   <div className="flex justify-between -mt-2">
-                    <span className="font-mono text-[10px] text-amber-500/80 dark:text-amber-400/70 tabular-nums">
+                    <span className="font-mono text-[10px] text-primary/80 dark:text-primary/70 tabular-nums">
                       {Math.round(h2h.winRateA * 100)}%
                     </span>
                     <span className="font-mono text-[10px] text-sky-500/80 dark:text-sky-400/70 tabular-nums">

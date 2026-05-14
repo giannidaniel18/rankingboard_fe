@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import { useMatches } from '@/hooks/domain/useMatches'
@@ -7,7 +7,7 @@ import { useI18n } from '@/components/providers/I18nProvider'
 import type { GameType, MatchDetail } from '@/types'
 
 const GAME_TYPE_STYLES: Record<GameType, string> = {
-  Board:  'text-amber-600  dark:text-amber-500  bg-amber-500/10  border-amber-500/20',
+  Board:  'text-primary  dark:text-primary  bg-primary/10  border-primary/20',
   eSport: 'text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20',
   Sports: 'text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
 }
@@ -48,14 +48,14 @@ function MatchCard({ match }: { match: MatchDetail }) {
           return (
             <li
               key={mp.userId}
-              className={`flex items-center gap-3 text-sm px-2 py-1.5 rounded-sm ${isWinner ? 'bg-amber-500/[0.08]' : ''}`}
+              className={`flex items-center gap-3 text-sm px-2 py-1.5 rounded-sm ${isWinner ? 'bg-primary/[0.08]' : ''}`}
             >
               <span className="w-4 font-mono text-[11px] text-neutral-400 dark:text-neutral-400 text-center shrink-0">
                 {mp.placement}
               </span>
               <span className={`flex-1 truncate ${
                 isWinner
-                  ? 'font-semibold text-amber-600 dark:text-amber-400'
+                  ? 'font-semibold text-primary dark:text-primary'
                   : 'text-neutral-700 dark:text-neutral-300'
               }`}>
                 {mp.name}

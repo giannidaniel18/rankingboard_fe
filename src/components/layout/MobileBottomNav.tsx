@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -29,7 +29,7 @@ export default function MobileBottomNav({ onOpenModal, canRecordMatch = true }: 
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40">
-      <div className="absolute inset-0 bg-white/85 dark:bg-[#080C12]/90 backdrop-blur-xl border-t border-black/[0.06] dark:border-white/[0.07]" />
+      <div className="absolute inset-0 bg-white/85 dark:bg-secondary/90 backdrop-blur-xl border-t border-black/[0.06] dark:border-white/[0.07]" />
 
       <div className="relative flex items-center justify-around h-16 px-2">
         {leftItems.map(({ href, icon: Icon, label }) => {
@@ -39,7 +39,7 @@ export default function MobileBottomNav({ onOpenModal, canRecordMatch = true }: 
               key={href}
               href={href}
               className={`flex flex-col items-center gap-1 min-w-[60px] py-1 transition-colors ${
-                active ? 'text-amber-500' : 'text-neutral-500 dark:text-neutral-500'
+                active ? 'text-primary' : 'text-neutral-500 dark:text-neutral-500'
               }`}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 1.75} />
@@ -55,12 +55,12 @@ export default function MobileBottomNav({ onOpenModal, canRecordMatch = true }: 
           <div className="relative -top-4 flex flex-col items-center gap-1">
             <button
               onClick={onOpenModal}
-              className="w-14 h-14 rounded-full bg-amber-500 hover:bg-amber-400 active:bg-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/40 transition-all active:scale-95 border-4 border-white dark:border-[#080C12]"
+              className="w-14 h-14 rounded-full bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange flex items-center justify-center shadow-xl shadow-primary/40 transition-all active:scale-95 border-4 border-white dark:border-secondary"
               aria-label={dict.nav.newMatch}
             >
               <Plus className="w-6 h-6 text-black" strokeWidth={2.5} />
             </button>
-            <span className="text-[8px] font-semibold tracking-wide uppercase leading-none text-amber-500 dark:text-amber-400 whitespace-nowrap">
+            <span className="text-[8px] font-semibold tracking-wide uppercase leading-none text-primary dark:text-primary whitespace-nowrap">
               {dict.nav.newMatch}
             </span>
           </div>
@@ -73,7 +73,7 @@ export default function MobileBottomNav({ onOpenModal, canRecordMatch = true }: 
               key={href}
               href={href}
               className={`flex flex-col items-center gap-1 min-w-[60px] py-1 transition-colors ${
-                active ? 'text-amber-500' : 'text-neutral-500 dark:text-neutral-500'
+                active ? 'text-primary' : 'text-neutral-500 dark:text-neutral-500'
               }`}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 1.75} />

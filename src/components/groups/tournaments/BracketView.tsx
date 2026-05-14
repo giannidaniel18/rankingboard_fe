@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import type { Tournament, TournamentMatch } from '@/types'
@@ -46,7 +46,7 @@ export default function BracketView({ tournament, isPrivileged, onResolveMatch, 
               <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
                 done    ? 'bg-emerald-500' :
                 hasTbd  ? 'bg-neutral-300 dark:bg-neutral-600' :
-                          'bg-amber-500 animate-pulse'
+                          'bg-primary animate-pulse'
               }`} />
             </button>
           )

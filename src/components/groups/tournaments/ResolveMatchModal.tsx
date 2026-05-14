@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { X, Trophy, Loader2, Check } from 'lucide-react'
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const AVATAR_PALETTE = [
-  'bg-amber-500 text-black',
+  'bg-primary text-secondary',
   'bg-sky-500 text-white',
   'bg-emerald-500 text-white',
   'bg-rose-500 text-white',
@@ -51,18 +51,18 @@ export default function ResolveMatchModal({ match, teams, onResolve, onClose }: 
         onClick={() => setSelected(team.id)}
         className={`flex flex-col items-center justify-center gap-3 p-5 rounded-xl border-2 transition-all w-full min-h-[110px] ${
           isSelected
-            ? 'border-amber-500 bg-amber-500/10 shadow-lg shadow-amber-500/20'
+            ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20'
             : 'border-black/[0.09] dark:border-white/[0.09] hover:border-black/20 dark:hover:border-white/20 bg-black/[0.02] dark:bg-white/[0.02]'
         }`}
       >
         <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-base shrink-0 ${
-          isSelected ? 'bg-amber-500 text-black' : avatarCls
+          isSelected ? 'bg-primary text-secondary' : avatarCls
         }`}>
           {team.name[0]?.toUpperCase()}
         </div>
         <div className="text-center">
           <p className={`text-sm font-bold tracking-[0.04em] transition-colors ${
-            isSelected ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-800 dark:text-neutral-200'
+            isSelected ? 'text-primary dark:text-primary' : 'text-neutral-800 dark:text-neutral-200'
           }`}>
             {team.name}
           </p>
@@ -73,7 +73,7 @@ export default function ResolveMatchModal({ match, teams, onResolve, onClose }: 
           )}
         </div>
         {isSelected && (
-          <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
             <Check className="w-3 h-3 text-black" />
           </div>
         )}
@@ -86,13 +86,13 @@ export default function ResolveMatchModal({ match, teams, onResolve, onClose }: 
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full sm:max-w-sm bg-surface border border-black/[0.10] dark:border-white/[0.08] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/80 overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-black/[0.07] dark:border-white/[0.06]">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-              <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <Trophy className="w-3.5 h-3.5 text-primary" />
             </div>
             <div>
               <h2 className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100 leading-none">
@@ -134,7 +134,7 @@ export default function ResolveMatchModal({ match, teams, onResolve, onClose }: 
             type="button"
             onClick={() => { void handleConfirm() }}
             disabled={!selected || isLoading}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary hover:bg-custom-light-orange active:bg-custom-light-orange disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             {isLoading
               ? <Loader2 className="w-3.5 h-3.5 animate-spin" />

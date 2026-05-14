@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { X } from 'lucide-react'
 import type { RankedMember } from '@/types'
@@ -15,14 +15,14 @@ export default function ComparisonBar({ playerA, onCancel }: ComparisonBarProps)
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       {/* Amber top border */}
-      <div className="h-px bg-amber-500/50" />
+      <div className="h-px bg-primary/50" />
 
-      <div className="bg-zinc-900/95 backdrop-blur-md">
+      <div className="bg-secondary/95 backdrop-blur-md">
         <div className="flex items-center gap-3 px-4 h-16">
 
           {/* Player A — selected */}
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <div className="w-9 h-9 rounded-sm bg-amber-500 text-black flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-9 h-9 rounded-sm bg-primary text-secondary flex items-center justify-center font-bold text-sm shrink-0">
               {playerA.name[0].toUpperCase()}
             </div>
             <div className="min-w-0">
@@ -36,7 +36,7 @@ export default function ComparisonBar({ playerA, onCancel }: ComparisonBarProps)
           </div>
 
           {/* VS label */}
-          <span className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-amber-500/80 shrink-0">
+          <span className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-primary/80 shrink-0">
             vs
           </span>
 

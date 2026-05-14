@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useTransition, useEffect } from 'react'
 import { useAuth } from '@/hooks/domain/useAuth'
@@ -80,15 +80,15 @@ export default function ProfileCard() {
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
       <div
         className={`h-0.5 w-full transition-colors duration-200 ${
-          editing ? 'bg-amber-500' : 'bg-transparent'
+          editing ? 'bg-primary' : 'bg-transparent'
         }`}
       />
 
       {/* Identity */}
       <div className="px-6 py-5">
         <div className="flex items-start gap-5">
-          <div className="shrink-0 w-14 h-14 rounded-sm bg-amber-500 flex items-center justify-center select-none">
-            <span className="font-heading font-bold text-2xl text-black">
+          <div className="shrink-0 w-14 h-14 rounded-sm bg-primary flex items-center justify-center select-none">
+            <span className="font-heading font-bold text-2xl text-secondary">
               {(editing ? name : currentUser.name)[0]?.toUpperCase() ?? '?'}
             </span>
           </div>
@@ -103,7 +103,7 @@ export default function ProfileCard() {
                     onChange={e => setName(e.target.value)}
                     placeholder={p.namePlaceholder}
                     autoFocus
-                    className="w-full font-heading font-bold text-lg tracking-wide bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-100 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1 focus:outline-none focus:border-amber-500/50 transition-colors"
+                    className="w-full font-heading font-bold text-lg tracking-wide bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-100 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1 focus:outline-none focus:border-primary/50 transition-colors"
                   />
                 ) : (
                   <h2 className="font-heading font-bold text-lg tracking-[0.06em] uppercase text-neutral-900 dark:text-neutral-100 truncate">
@@ -121,7 +121,7 @@ export default function ProfileCard() {
                     onChange={e => setBio(e.target.value)}
                     placeholder={p.bioPlaceholder}
                     rows={2}
-                    className="w-full text-sm bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-200 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1.5 focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                    className="w-full text-sm bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-200 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1.5 focus:outline-none focus:border-primary/50 transition-colors resize-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
                   />
                 ) : (
                   <p className="text-sm text-neutral-600 dark:text-neutral-300 italic leading-relaxed">
@@ -143,7 +143,7 @@ export default function ProfileCard() {
                     <button
                       onClick={handleSave}
                       disabled={isPending || !name.trim()}
-                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 transition-colors"
+                      className="px-3 py-1.5 bg-primary hover:bg-custom-light-orange text-secondary text-[10px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 transition-colors"
                     >
                       {isPending ? p.saving : p.saveBtn}
                     </button>
@@ -151,7 +151,7 @@ export default function ProfileCard() {
                 ) : (
                   <button
                     onClick={() => setEditing(true)}
-                    className="px-3 py-1.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600 dark:text-neutral-400 hover:border-amber-500/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                    className="px-3 py-1.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600 dark:text-neutral-400 hover:border-primary/40 hover:text-primary dark:hover:text-primary transition-colors"
                   >
                     {p.editBtn}
                   </button>
@@ -181,7 +181,7 @@ export default function ProfileCard() {
           <div className="px-5 pb-3 pt-1 border-t border-black/[0.04] dark:border-white/[0.04]">
             <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
               {p.bestStreak}:{' '}
-              <span className="text-amber-500 font-semibold tabular-nums">
+              <span className="text-primary font-semibold tabular-nums">
                 🔥 {stats.bestStreak}
               </span>
             </span>
@@ -210,10 +210,10 @@ export default function ProfileCard() {
                   <div
                     key={ach.id}
                     title={ach.description}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-amber-500/20 bg-amber-500/[0.07]"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-primary/20 bg-primary/[0.07]"
                   >
                     <span className="text-sm leading-none">{meta?.emoji ?? '⭐'}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary dark:text-primary">
                       {meta?.label ?? ach.name}
                     </span>
                   </div>

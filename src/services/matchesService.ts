@@ -82,6 +82,7 @@ const matchesService = {
               })),
               date: m.date,
               comments: m.comments,
+              tournamentId: m.tournamentId,
             }
           })
         resolve(matches)
@@ -114,6 +115,7 @@ const matchesService = {
               })),
               date: m.date,
               comments: m.comments,
+              tournamentId: m.tournamentId,
             }
           })
         resolve(matches)

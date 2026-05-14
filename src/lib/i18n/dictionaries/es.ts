@@ -45,6 +45,14 @@ const es: Dictionary = {
     winRate: 'Victorias',
     points: 'Puntos',
     streak: 'Racha',
+    matchesPlayed: 'Partidas',
+  },
+  rankings: {
+    compact: 'Ranking',
+    members: 'Miembros',
+    detailedTitle: 'Ranking Detallado',
+    back: 'Volver al grupo',
+    colWinrate: 'Winrate (%)',
   },
   user: {
     profile: 'Perfil',

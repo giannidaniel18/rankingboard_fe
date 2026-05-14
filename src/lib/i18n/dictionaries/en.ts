@@ -43,6 +43,14 @@ const en = {
     winRate: 'Win Rate',
     points: 'Points',
     streak: 'Streak',
+    matchesPlayed: 'Matches Played',
+  },
+  rankings: {
+    compact: 'Ranking',
+    members: 'Members',
+    detailedTitle: 'Detailed Rankings',
+    back: 'Back to group',
+    colWinrate: 'Winrate (%)',
   },
   user: {
     profile: 'Profile',

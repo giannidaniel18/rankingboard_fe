@@ -48,10 +48,10 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
       {/* Standings mini-table */}
       <div className="bg-surface border border-black/[0.08] dark:border-white/[0.07] rounded-xl overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-black/[0.06] dark:border-white/[0.05]">
-          <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
+          <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-primary">
             Tabla de Posiciones
           </h3>
-          <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500">
+          <span className="font-mono text-[10px] text-tx-caption">
             {doneMatches}/{totalMatches} partidos
           </span>
         </div>
@@ -62,30 +62,30 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
               .filter((a): a is string => Boolean(a))
               .join(', ')
             return (
-              <div key={team.id} className={`flex items-center gap-3 px-4 py-2.5 ${i === 0 && w > 0 ? 'bg-amber-500/[0.05]' : ''}`}>
+              <div key={team.id} className={`flex items-center gap-3 px-4 py-2.5 ${i === 0 && w > 0 ? 'bg-brand/[0.05]' : ''}`}>
                 <span className={`font-mono text-[11px] font-bold w-4 shrink-0 ${
-                  i === 0 ? 'text-amber-500' :
-                  i === 1 ? 'text-neutral-400' :
-                  i === 2 ? 'text-amber-700 dark:text-amber-600' :
-                            'text-neutral-300 dark:text-neutral-600'
+                  i === 0 ? 'text-brand' :
+                  i === 1 ? 'text-tx-caption' :
+                  i === 2 ? 'text-bronze' :
+                            'text-tx-caption/60'
                 }`}>
                   {i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
+                  <p className="text-sm font-medium text-tx-primary truncate">
                     {team.name}
                   </p>
                   {playerNames && (
-                    <p className="text-[10px] text-neutral-500 dark:text-neutral-500 font-normal mt-0.5 truncate">
+                    <p className="text-[10px] text-tx-caption font-normal mt-0.5 truncate">
                       {playerNames}
                     </p>
                   )}
                 </div>
-                <div className="flex items-center gap-3 font-mono text-[11px] text-neutral-500 dark:text-neutral-400 shrink-0">
+                <div className="flex items-center gap-3 font-mono text-[11px] text-tx-caption shrink-0">
                   <span className="tabular-nums">
-                    <span className="text-emerald-600 dark:text-emerald-500">{w}W</span>
-                    <span className="text-neutral-300 dark:text-neutral-600 mx-0.5">/</span>
-                    <span className="text-rose-500">{p - w}L</span>
+                    <span className="text-win">{w}W</span>
+                    <span className="text-tx-caption/40 mx-0.5">/</span>
+                    <span className="text-loss">{p - w}L</span>
                   </span>
                 </div>
               </div>
@@ -109,17 +109,17 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
                 className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${
-                  roundDone   ? 'bg-emerald-500' :
-                  hasPending  ? 'bg-amber-500 animate-pulse' :
-                                'bg-neutral-300 dark:bg-neutral-600'
+                  roundDone   ? 'bg-win' :
+                  hasPending  ? 'bg-brand animate-pulse' :
+                                'bg-black/[0.15] dark:bg-white/[0.20]'
                 }`} />
-                <p className="flex-1 font-heading text-[11px] font-bold tracking-[0.15em] uppercase text-neutral-900 dark:text-neutral-100">
+                <p className="flex-1 font-heading text-[11px] font-bold tracking-[0.15em] uppercase text-tx-primary">
                   {round.name}
                 </p>
-                <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 mr-2">
+                <span className="font-mono text-[10px] text-tx-caption mr-2">
                   {round.matches.filter(m => m.status === 'completed').length}/{round.matches.length}
                 </span>
-                <ChevronDown className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-tx-caption transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isOpen && (
@@ -132,7 +132,7 @@ export default function RoundRobinView({ tournament, isPrivileged, onResolveMatc
                       : undefined
                     return (
                       <div key={match.id}>
-                        <p className="font-mono text-[9px] text-neutral-400 dark:text-neutral-500 mb-1.5 tracking-[0.1em] uppercase">
+                        <p className="font-mono text-[9px] text-tx-caption mb-1.5 tracking-[0.1em] uppercase">
                           Partido {match.matchNumber}
                         </p>
                         <TournamentMatchCard

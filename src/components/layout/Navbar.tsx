@@ -9,10 +9,10 @@ export default async function Navbar() {
   const dict = await getDictionary(locale)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-5 border-b border-black/[0.08] dark:border-white/[0.07] bg-white/95 dark:bg-[#080C12]/95 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-5 border-b border-black/[0.08] dark:border-white/[0.06] bg-white/95 dark:bg-canvas/95 backdrop-blur-md">
       <Link
         href="/dashboard"
-        className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+        className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-tx-primary hover:text-brand-text dark:hover:text-brand transition-colors"
       >
         {dict.app.name}
       </Link>

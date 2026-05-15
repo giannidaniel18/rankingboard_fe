@@ -15,10 +15,10 @@ const ACHIEVEMENT_META: Record<AchievementId, { emoji: string; label: string }> 
 function StatCell({ value, label }: { value: string | number; label: string }) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-5 gap-1.5">
-      <span className="font-mono font-bold text-2xl text-neutral-900 dark:text-neutral-100 tabular-nums leading-none">
+      <span className="font-mono font-bold text-2xl text-tx-primary tabular-nums leading-none">
         {value}
       </span>
-      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-tx-caption">
         {label}
       </span>
     </div>
@@ -80,14 +80,14 @@ export default function ProfileCard() {
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
       <div
         className={`h-0.5 w-full transition-colors duration-200 ${
-          editing ? 'bg-amber-500' : 'bg-transparent'
+          editing ? 'bg-brand' : 'bg-transparent'
         }`}
       />
 
       {/* Identity */}
       <div className="px-6 py-5">
         <div className="flex items-start gap-5">
-          <div className="shrink-0 w-14 h-14 rounded-sm bg-amber-500 flex items-center justify-center select-none">
+          <div className="shrink-0 w-14 h-14 rounded-sm bg-brand flex items-center justify-center select-none">
             <span className="font-heading font-bold text-2xl text-black">
               {(editing ? name : currentUser.name)[0]?.toUpperCase() ?? '?'}
             </span>
@@ -103,15 +103,15 @@ export default function ProfileCard() {
                     onChange={e => setName(e.target.value)}
                     placeholder={p.namePlaceholder}
                     autoFocus
-                    className="w-full font-heading font-bold text-lg tracking-wide bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-100 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1 focus:outline-none focus:border-amber-500/50 transition-colors"
+                    className="w-full font-heading font-bold text-lg tracking-wide bg-black/[0.04] dark:bg-black/20 text-tx-primary rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1 focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/15 transition-all"
                   />
                 ) : (
-                  <h2 className="font-heading font-bold text-lg tracking-[0.06em] uppercase text-neutral-900 dark:text-neutral-100 truncate">
+                  <h2 className="font-heading font-bold text-lg tracking-[0.06em] uppercase text-tx-primary truncate">
                     {currentUser.name}
                   </h2>
                 )}
 
-                <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+                <p className="font-mono text-[11px] text-tx-caption">
                   {currentUser.email}
                 </p>
 
@@ -121,10 +121,10 @@ export default function ProfileCard() {
                     onChange={e => setBio(e.target.value)}
                     placeholder={p.bioPlaceholder}
                     rows={2}
-                    className="w-full text-sm bg-black/[0.04] dark:bg-black/20 text-neutral-900 dark:text-neutral-200 rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1.5 focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                    className="w-full text-sm bg-black/[0.04] dark:bg-black/20 text-tx-primary rounded-sm border border-black/[0.10] dark:border-white/[0.10] px-2.5 py-1.5 focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/15 transition-all resize-none placeholder:text-tx-caption"
                   />
                 ) : (
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300 italic leading-relaxed">
+                  <p className="text-sm text-tx-secondary italic leading-relaxed">
                     {currentUser.bio || p.bioEmpty}
                   </p>
                 )}
@@ -136,14 +136,14 @@ export default function ProfileCard() {
                     <button
                       onClick={handleCancel}
                       disabled={isPending}
-                      className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors disabled:opacity-40"
+                      className="text-[10px] font-semibold uppercase tracking-widest text-tx-caption hover:text-tx-secondary transition-colors disabled:opacity-40"
                     >
                       {p.cancelBtn}
                     </button>
                     <button
                       onClick={handleSave}
                       disabled={isPending || !name.trim()}
-                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 transition-colors"
+                      className="px-3 py-1.5 bg-brand hover:bg-brand-hover active:bg-brand-active text-black text-[10px] font-bold tracking-[0.15em] uppercase rounded-sm disabled:opacity-40 transition-all"
                     >
                       {isPending ? p.saving : p.saveBtn}
                     </button>
@@ -151,7 +151,7 @@ export default function ProfileCard() {
                 ) : (
                   <button
                     onClick={() => setEditing(true)}
-                    className="px-3 py-1.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-600 dark:text-neutral-400 hover:border-amber-500/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                    className="px-3 py-1.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] text-[10px] font-semibold uppercase tracking-[0.15em] text-tx-secondary hover:border-brand/40 hover:text-brand transition-colors"
                   >
                     {p.editBtn}
                   </button>
@@ -165,7 +165,7 @@ export default function ProfileCard() {
       {/* Career Stats */}
       <div className="border-t border-black/[0.06] dark:border-white/[0.05]">
         <div className="px-5 py-2 border-b border-black/[0.04] dark:border-white/[0.04]">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-tx-caption">
             {p.statsTitle}
           </span>
         </div>
@@ -179,9 +179,9 @@ export default function ProfileCard() {
 
         {stats.bestStreak > 0 && (
           <div className="px-5 pb-3 pt-1 border-t border-black/[0.04] dark:border-white/[0.04]">
-            <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+            <span className="font-mono text-[11px] text-tx-caption">
               {p.bestStreak}:{' '}
-              <span className="text-amber-500 font-semibold tabular-nums">
+              <span className="text-brand font-semibold tabular-nums">
                 🔥 {stats.bestStreak}
               </span>
             </span>
@@ -192,14 +192,14 @@ export default function ProfileCard() {
       {/* Achievements */}
       <div className="border-t border-black/[0.06] dark:border-white/[0.05]">
         <div className="px-5 py-2 border-b border-black/[0.04] dark:border-white/[0.04]">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-tx-caption">
             {p.achievementsTitle}
           </span>
         </div>
 
         <div className="px-5 py-4">
           {achievements.length === 0 ? (
-            <p className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+            <p className="font-mono text-[11px] text-tx-caption">
               {p.noAchievements}
             </p>
           ) : (
@@ -210,10 +210,10 @@ export default function ProfileCard() {
                   <div
                     key={ach.id}
                     title={ach.description}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-amber-500/20 bg-amber-500/[0.07]"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-brand/20 bg-brand/[0.07]"
                   >
                     <span className="text-sm leading-none">{meta?.emoji ?? '⭐'}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text dark:text-brand">
                       {meta?.label ?? ach.name}
                     </span>
                   </div>

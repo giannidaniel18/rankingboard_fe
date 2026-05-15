@@ -10,15 +10,15 @@ export default function RegisterPage() {
 
         {/* Brand lockup */}
         <div className="mb-8 text-center">
-          <h1 className="font-heading text-2xl font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-white mb-2">
+          <h1 className="font-heading text-2xl font-bold tracking-[0.2em] uppercase text-tx-primary mb-2">
             RankingBoard
           </h1>
           <div className="flex items-center justify-center gap-2">
-            <div className="h-px w-8 bg-amber-500/50" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-400">
+            <div className="h-px w-8 bg-brand/50" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-tx-caption">
               Create your account
             </span>
-            <div className="h-px w-8 bg-amber-500/50" />
+            <div className="h-px w-8 bg-brand/50" />
           </div>
         </div>
 
@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
           <div className="my-5 flex items-center gap-3">
             <div className="flex-1 h-px bg-black/[0.08] dark:bg-white/[0.06]" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">or</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-tx-caption">or</span>
             <div className="flex-1 h-px bg-black/[0.08] dark:bg-white/[0.06]" />
           </div>
 

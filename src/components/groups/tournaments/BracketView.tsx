@@ -38,15 +38,15 @@ export default function BracketView({ tournament, isPrivileged, onResolveMatch, 
               onClick={() => setActiveId(round.id)}
               className={`relative flex-1 shrink-0 px-3 py-2 rounded-lg text-[10px] font-bold tracking-[0.12em] uppercase transition-all whitespace-nowrap ${
                 isActive
-                  ? 'bg-surface text-neutral-900 dark:text-neutral-100 shadow-sm shadow-black/10'
-                  : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'
+                  ? 'bg-surface text-tx-primary shadow-sm shadow-black/10'
+                  : 'text-tx-caption hover:text-tx-secondary'
               }`}
             >
               {round.name}
               <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
-                done    ? 'bg-emerald-500' :
-                hasTbd  ? 'bg-neutral-300 dark:bg-neutral-600' :
-                          'bg-amber-500 animate-pulse'
+                done    ? 'bg-win' :
+                hasTbd  ? 'bg-black/[0.15] dark:bg-white/[0.20]' :
+                          'bg-brand animate-pulse'
               }`} />
             </button>
           )
@@ -56,10 +56,10 @@ export default function BracketView({ tournament, isPrivileged, onResolveMatch, 
       {activeRound && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400">
+            <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-caption">
               {activeRound.name}
             </h3>
-            <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500">
+            <span className="font-mono text-[10px] text-tx-caption">
               {activeRound.matches.filter(m => m.status === 'completed').length}/{activeRound.matches.length} completados
             </span>
           </div>
@@ -78,7 +78,7 @@ export default function BracketView({ tournament, isPrivileged, onResolveMatch, 
 
             return (
               <div key={match.id}>
-                <p className="font-mono text-[9px] text-neutral-400 dark:text-neutral-500 mb-1.5 px-0.5 tracking-[0.1em] uppercase">
+                <p className="font-mono text-[9px] text-tx-caption mb-1.5 px-0.5 tracking-[0.1em] uppercase">
                   Partido {match.matchNumber}
                 </p>
                 <TournamentMatchCard

@@ -13,7 +13,7 @@ export default async function ProfilePage() {
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-xl w-full">
             <div className="mb-6">
-              <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-neutral-900 dark:text-neutral-100">
+              <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-tx-primary">
                 {dict.profile.title}
               </h1>
             </div>

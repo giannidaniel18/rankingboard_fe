@@ -3,80 +3,121 @@
 /* Class-based dark mode for next-themes */
 @variant dark (&:where(.dark, .dark *));
 
-/* ─── Surface tokens ─────────────────────────────────────────────────────── */
-:root {
-  --rb-canvas:   #F0F4F8;
-  --rb-surface:  #FFFFFF;
-  --rb-elevated: #F8FAFC;
+/* ─── Raw brand values ───────────────────────────────────────────────────────
+ * AWS-inspired: Orange #ff9900 · Deep Navy #232f3e · White #ffffff
+ * ─────────────────────────────────────────────────────────────────────────── */
 
-  /* Light-mode text scale */
-  --rb-text-primary:   #0F172A;   /* ~18:1 on white */
-  --rb-text-secondary: #334155;   /* ~9:1  on white */
-  --rb-text-caption:   #64748B;   /* ~4.6:1 on white — AA */
+:root {
+  /* Surfaces — Light */
+  --rb-canvas:   #eef2f7;
+  --rb-surface:  #ffffff;
+  --rb-elevated: #f5f8fc;
+
+  /* Text — Light (navy hierarchy) */
+  --rb-text-primary:   #0f1f38;   /* deep navy  ~18:1 on white */
+  --rb-text-secondary: #2d4469;   /* mid navy   ~9:1  on white */
+  --rb-text-caption:   #546d8e;   /* muted navy ~4.7:1 on white — AA */
+
+  /* Brand — Light (orange, dark-text variant for text-on-white) */
+  --rb-brand:        #ff9900;
+  --rb-brand-hover:  #ffad33;
+  --rb-brand-active: #e8870a;
+  --rb-brand-text:   #a86300;   /* 4.5:1 on white — AA compliant */
+
+  /* Semantic */
+  --rb-win:    #16a34a;
+  --rb-loss:   #dc2626;
+  --rb-live:   #0891b2;
+  --rb-bronze: #b87333;
 }
 
 .dark {
-  --rb-canvas:   #080C12;
-  --rb-surface:  #0E1520;
-  --rb-elevated: #141E2E;
+  /* Surfaces — Dark (AWS Deep Navy system) */
+  --rb-canvas:   #1a2332;   /* page background */
+  --rb-surface:  #232f3e;   /* cards, sidebar — AWS primary dark */
+  --rb-elevated: #2c3a4e;   /* modals, popovers, dropdowns */
 
-  /*
-   * Dark-mode text scale — all ratios against #080C12
-   * neutral-100 #F1F5F9 → ~18:1  AAA  primary content
-   * neutral-300 #CBD5E1 → ~12:1  AAA  secondary / nav links
-   * neutral-400 #94A3B8 →  ~8:1  AAA  captions / metadata / labels
-   * neutral-600 #475569 →  ~2.8:1      structural-only (decorators, "—")
-   */
-  --rb-text-primary:   #F1F5F9;
-  --rb-text-secondary: #CBD5E1;
-  --rb-text-caption:   #94A3B8;
+  /* Text — Dark */
+  --rb-text-primary:   #f0f4f8;   /* ~16:1 on canvas */
+  --rb-text-secondary: #b8c5d4;   /* ~9:1  on canvas */
+  --rb-text-caption:   #7a8fa8;   /* ~5:1  on canvas */
+
+  /* Brand — Dark (full orange on navy) */
+  --rb-brand:        #ff9900;
+  --rb-brand-hover:  #ffad33;
+  --rb-brand-active: #e8870a;
+  --rb-brand-text:   #ff9900;   /* 7.25:1 on #1a2332 — AAA */
+
+  /* Semantic */
+  --rb-win:    #34d399;
+  --rb-loss:   #f87171;
+  --rb-live:   #22d3ee;
+  --rb-bronze: #cd7f32;
 }
 
 /* ─── Tailwind v4 theme tokens ───────────────────────────────────────────── */
 @theme inline {
-  /* Surfaces (theme-aware) */
+  /* Surfaces */
   --color-background: var(--rb-canvas);
   --color-foreground: var(--rb-text-primary);
   --color-canvas:     var(--rb-canvas);
   --color-surface:    var(--rb-surface);
   --color-elevated:   var(--rb-elevated);
 
-  /* Typography scale tokens — use as text-tx-primary, text-tx-secondary, etc. */
+  /* Text scale */
   --color-tx-primary:   var(--rb-text-primary);
   --color-tx-secondary: var(--rb-text-secondary);
   --color-tx-caption:   var(--rb-text-caption);
 
-  /* Accent palette (static) */
-  --color-gold:  #F59E0B;
-  --color-live:  #22D3EE;
-  --color-win:   #34D399;
-  --color-loss:  #F87171;
+  /* Brand (orange) — full palette */
+  --color-brand:        var(--rb-brand);
+  --color-brand-hover:  var(--rb-brand-hover);
+  --color-brand-active: var(--rb-brand-active);
+  --color-brand-text:   var(--rb-brand-text);
+
+  /* Semantic indicators */
+  --color-gold:   var(--rb-brand);    /* rank 1 = brand orange */
+  --color-bronze: var(--rb-bronze);   /* rank 3 */
+  --color-live:   var(--rb-live);
+  --color-win:    var(--rb-win);
+  --color-loss:   var(--rb-loss);
 
   /* Fonts */
   --font-sans:    var(--font-dm-sans);
   --font-mono:    var(--font-jetbrains);
   --font-heading: var(--font-syne);
 
-  /* Toast animations */
+  /* Animations */
   --animate-toast-enter: toast-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-toast-exit:  toast-exit  0.25s ease-in both;
-
-  /* Comparison bar entrance */
-  --animate-bar-enter: bar-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-bar-enter:   bar-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in:     fade-in 0.18s ease-out both;
+  --animate-scale-in:    scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-up:    slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes toast-enter {
   from { opacity: 0; transform: translateY(10px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
-
 @keyframes toast-exit {
   from { opacity: 1; transform: translateY(0)    scale(1);    }
   to   { opacity: 0; transform: translateY(10px) scale(0.97); }
 }
-
 @keyframes bar-enter {
   from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -87,7 +128,7 @@ body {
   font-family: var(--font-dm-sans, system-ui, sans-serif);
 }
 
-/* Hide scrollbar on mobile group tabs */
+/* Hide scrollbar */
 .scrollbar-none {
   scrollbar-width: none;
 }

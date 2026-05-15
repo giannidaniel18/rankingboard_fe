@@ -44,7 +44,7 @@ function SelectField({
           value={value}
           onChange={e => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full appearance-none bg-elevated border border-white/[0.07] hover:border-white/[0.13] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 pr-9 text-sm text-tx-primary font-medium transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full appearance-none bg-elevated border border-white/[0.07] hover:border-brand/30 focus:border-brand/50 focus:ring-1 focus:ring-brand/15 rounded-xl px-4 py-2.5 pr-9 text-sm text-tx-primary font-medium transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {children}
         </select>
@@ -75,7 +75,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
 
   const isBusy = groupsLoading || gamesLoading || isMembersLoading || isSubmitting
 
-  // RBAC: only admin/maintainer can record matches
   const selectedGroup = groups.find(g => g.id === selectedGroupId)
   const currentUserRole = selectedGroup?.members.find(m => m.userId === userId)?.role
   const canRecordMatch = !selectedGroupId || currentUserRole === 'admin' || currentUserRole === 'maintainer'
@@ -127,7 +126,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     setParticipantResults(prev => ({ ...prev, [playerId]: result }))
   }
 
-  // Win/Loss: clicking Win or Loss clears tied state from all players, then sets the individual result
   const handleWinLossSelect = (playerId: string, placement: number) => {
     setParticipantResults(prev => {
       const updated: Record<string, PlayerResult> = { ...prev }
@@ -142,7 +140,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     })
   }
 
-  // EMPATE: sets ALL participants to tied (placement: 1, tied: true)
   const handleSetAllTied = () => {
     const tied: Record<string, PlayerResult> = {}
     allPlayers.forEach(p => { tied[p.id] = { placement: 1, tied: true } })
@@ -165,7 +162,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     allResultsComplete &&
     !isBusy
 
-  // Live rank preview for score mode using the 1224 rule
   const rankPreview = useMemo<Record<string, number>>(() => {
     if (resultMode !== 'score') return {}
     const withScores = allPlayers.filter(p => participantResults[p.id]?.score !== undefined)
@@ -189,7 +185,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
     let finalParticipants: { userId: string; placement: number; score?: number }[]
 
     if (resultMode === 'score') {
-      // 1224 ranking rule: tied scores share placement, next rank skips
       const sorted = [...allPlayers].sort(
         (a, b) => (participantResults[b.id]?.score ?? 0) - (participantResults[a.id]?.score ?? 0)
       )
@@ -203,7 +198,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
         }
       })
     } else {
-      // win_loss and podium: placement is stored directly (tied players already have placement: 1)
       finalParticipants = allPlayers.map(p => ({
         userId: p.id,
         placement: participantResults[p.id]?.placement ?? 0,
@@ -234,14 +228,14 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       {/* Panel */}
-      <div className="relative w-full sm:max-w-sm bg-surface border border-white/[0.07] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/70 overflow-hidden">
-        {/* Amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+      <div className="relative w-full sm:max-w-sm bg-surface border border-white/[0.08] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/70 overflow-hidden animate-scale-in">
+        {/* Brand accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand/60 to-transparent" />
 
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-neutral-500 hover:text-tx-primary hover:bg-white/[0.06] transition-colors z-10"
+          className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-tx-caption hover:text-tx-primary hover:bg-white/[0.06] transition-colors z-10"
           aria-label="Close"
         >
           <X className="w-3.5 h-3.5" />
@@ -263,10 +257,10 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
           <div className="px-6 pt-6 pb-7 sm:px-7 sm:pt-7 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center shrink-0">
                 {isBusy
-                  ? <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
-                  : <Swords  className="w-5 h-5 text-amber-400" />
+                  ? <Loader2 className="w-5 h-5 text-brand animate-spin" />
+                  : <Swords  className="w-5 h-5 text-brand" />
                 }
               </div>
               <div>
@@ -279,7 +273,6 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
 
             {/* Fields */}
             <div className="space-y-3 mb-5">
-              {/* Step 1 — Group */}
               <SelectField
                 label={t.selectGroup}
                 value={selectedGroupId}
@@ -300,20 +293,19 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
               {selectedGroupId && !canRecordMatch && (
                 <div className="flex flex-col items-center text-center gap-3 py-8 px-4">
                   <div className="w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center">
-                    <Lock className="w-5 h-5 text-neutral-500" />
+                    <Lock className="w-5 h-5 text-tx-caption" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-neutral-400 dark:text-neutral-300">
+                    <p className="text-sm font-semibold text-tx-secondary">
                       View Only
                     </p>
-                    <p className="text-[11px] text-neutral-500 dark:text-neutral-500 font-mono mt-1 leading-relaxed">
+                    <p className="text-[11px] text-tx-caption font-mono mt-1 leading-relaxed">
                       Only Admins and Maintainers<br />can record matches.
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Steps 2-4 — hidden for members */}
               {canRecordMatch && (
                 <>
                   <ParticipantMultiSelect
@@ -340,154 +332,151 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                     searchPlaceholder="Search game…"
                   />
 
-                  {/* Step 4 — Result mode + player rows */}
                   {showResults && (
                     <div className="space-y-2">
                       {/* Mode toggle */}
                       <div className="flex gap-1 p-1 bg-elevated rounded-xl border border-white/[0.07]">
-                    {modes.map(mode => (
-                      <button
-                        key={mode.key}
-                        type="button"
-                        onClick={() => handleResultModeChange(mode.key)}
-                        className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-bold tracking-[0.07em] uppercase rounded-lg transition-all duration-200 ${
-                          resultMode === mode.key
-                            ? 'bg-amber-500 text-black shadow-sm'
-                            : 'text-tx-caption hover:text-tx-primary'
-                        }`}
-                      >
-                        {mode.icon}
-                        <span className="hidden xs:inline">{mode.label}</span>
-                      </button>
-                    ))}
-                  </div>
+                        {modes.map(mode => (
+                          <button
+                            key={mode.key}
+                            type="button"
+                            onClick={() => handleResultModeChange(mode.key)}
+                            className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-bold tracking-[0.07em] uppercase rounded-lg transition-all duration-200 ${
+                              resultMode === mode.key
+                                ? 'bg-brand text-black shadow-sm'
+                                : 'text-tx-caption hover:text-tx-primary'
+                            }`}
+                          >
+                            {mode.icon}
+                            <span className="hidden xs:inline">{mode.label}</span>
+                          </button>
+                        ))}
+                      </div>
 
-                  {/* Player rows */}
-                  <div className="space-y-1.5">
-                    {allPlayers.map(player => {
-                      const result = participantResults[player.id]
-                      const done   = isResultComplete(result)
-                      const isTied = result?.tied === true
-                      const isMe   = player.id === userId
+                      {/* Player rows */}
+                      <div className="space-y-1.5">
+                        {allPlayers.map(player => {
+                          const result = participantResults[player.id]
+                          const done   = isResultComplete(result)
+                          const isTied = result?.tied === true
+                          const isMe   = player.id === userId
 
-                      return (
-                        <div
-                          key={player.id}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 ${
-                            isTied
-                              ? 'border-sky-500/25 bg-sky-500/[0.04]'
-                              : done
-                              ? 'border-amber-500/25 bg-amber-500/[0.04]'
-                              : 'border-white/[0.07] bg-elevated'
-                          }`}
-                        >
-                          {/* Avatar */}
-                          <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-[9px] font-bold text-amber-400 uppercase leading-none">
-                              {player.name.slice(0, 2)}
-                            </span>
-                          </div>
-
-                          {/* Name */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-tx-primary truncate">
-                              {player.name}
-                              {isMe && (
-                                <span className="ml-1.5 text-[9px] font-bold tracking-[0.1em] uppercase text-amber-500/60">
-                                  you
+                          return (
+                            <div
+                              key={player.id}
+                              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 ${
+                                isTied
+                                  ? 'border-live/25 bg-live/[0.04]'
+                                  : done
+                                  ? 'border-brand/25 bg-brand/[0.04]'
+                                  : 'border-white/[0.07] bg-elevated'
+                              }`}
+                            >
+                              {/* Avatar */}
+                              <div className="w-7 h-7 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center shrink-0">
+                                <span className="text-[9px] font-bold text-brand uppercase leading-none">
+                                  {player.name.slice(0, 2)}
                                 </span>
+                              </div>
+
+                              {/* Name */}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold text-tx-primary truncate">
+                                  {player.name}
+                                  {isMe && (
+                                    <span className="ml-1.5 text-[9px] font-bold tracking-[0.1em] uppercase text-brand/60">
+                                      you
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+
+                              {/* Win / Loss / Tie buttons */}
+                              {resultMode === 'win_loss' && (
+                                <div className="flex gap-1 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleWinLossSelect(player.id, 1)}
+                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                      result?.placement === 1 && !isTied
+                                        ? 'bg-win text-black'
+                                        : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                    }`}
+                                  >
+                                    {t.winner}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleWinLossSelect(player.id, 2)}
+                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                      result?.placement === 2
+                                        ? 'bg-loss/80 text-white'
+                                        : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                    }`}
+                                  >
+                                    {t.loser}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={handleSetAllTied}
+                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
+                                      isTied
+                                        ? 'bg-live/70 text-white'
+                                        : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
+                                    }`}
+                                  >
+                                    {t.tie}
+                                  </button>
+                                </div>
                               )}
-                            </p>
-                          </div>
 
-                          {/* Win / Loss / Tie buttons */}
-                          {resultMode === 'win_loss' && (
-                            <div className="flex gap-1 shrink-0">
-                              <button
-                                type="button"
-                                onClick={() => handleWinLossSelect(player.id, 1)}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
-                                  result?.placement === 1 && !isTied
-                                    ? 'bg-emerald-500 text-black'
-                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
-                                }`}
-                              >
-                                {t.winner}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleWinLossSelect(player.id, 2)}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
-                                  result?.placement === 2
-                                    ? 'bg-rose-500/80 text-white'
-                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
-                                }`}
-                              >
-                                {t.loser}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleSetAllTied}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all duration-150 ${
-                                  isTied
-                                    ? 'bg-sky-500/70 text-white'
-                                    : 'bg-white/[0.05] text-tx-caption hover:text-tx-primary hover:bg-white/[0.09]'
-                                }`}
-                              >
-                                {t.tie}
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Podium position input */}
-                          {resultMode === 'podium' && (
-                            <input
-                              type="number"
-                              min={1}
-                              placeholder={t.position.slice(0, 3)}
-                              value={result?.placement ?? ''}
-                              onChange={e => {
-                                const val = parseInt(e.target.value)
-                                if (!isNaN(val) && val > 0) setPlayerResult(player.id, { placement: val })
-                                else setPlayerResult(player.id, {})
-                              }}
-                              className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
-                            />
-                          )}
-
-                          {/* Score input + live rank preview */}
-                          {resultMode === 'score' && (
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              {rankPreview[player.id] !== undefined && (
-                                <span className="text-[9px] font-bold font-mono text-amber-400/70 w-5 text-right leading-none">
-                                  #{rankPreview[player.id]}
-                                </span>
+                              {resultMode === 'podium' && (
+                                <input
+                                  type="number"
+                                  min={1}
+                                  placeholder={t.position.slice(0, 3)}
+                                  value={result?.placement ?? ''}
+                                  onChange={e => {
+                                    const val = parseInt(e.target.value)
+                                    if (!isNaN(val) && val > 0) setPlayerResult(player.id, { placement: val })
+                                    else setPlayerResult(player.id, {})
+                                  }}
+                                  className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-brand/40 focus:ring-1 focus:ring-brand/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40 shrink-0"
+                                />
                               )}
-                              <input
-                                type="number"
-                                min={0}
-                                placeholder={t.points.slice(0, 3)}
-                                value={result?.score ?? ''}
-                                onChange={e => {
-                                  const val = parseFloat(e.target.value)
-                                  if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
-                                  else setPlayerResult(player.id, {})
-                                }}
-                                className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40"
-                              />
+
+                              {resultMode === 'score' && (
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  {rankPreview[player.id] !== undefined && (
+                                    <span className="text-[9px] font-bold font-mono text-brand/70 w-5 text-right leading-none">
+                                      #{rankPreview[player.id]}
+                                    </span>
+                                  )}
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    placeholder={t.points.slice(0, 3)}
+                                    value={result?.score ?? ''}
+                                    onChange={e => {
+                                      const val = parseFloat(e.target.value)
+                                      if (!isNaN(val) && val >= 0) setPlayerResult(player.id, { score: val })
+                                      else setPlayerResult(player.id, {})
+                                    }}
+                                    className="w-16 bg-white/[0.04] border border-white/[0.08] focus:border-brand/40 focus:ring-1 focus:ring-brand/15 rounded-lg px-2 py-1 text-xs text-tx-primary text-center font-mono outline-none transition-all placeholder:text-tx-caption/40"
+                                  />
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                 </>
               )}
             </div>
 
-            {/* Progress pills — hidden for members */}
+            {/* Progress pills */}
             {canRecordMatch && (
               <div className="flex gap-1.5 mb-5">
                 {[
@@ -499,19 +488,19 @@ export default function MatchModal({ isOpen, onClose, userId, userName }: MatchM
                   <div
                     key={i}
                     className={`h-0.5 flex-1 rounded-full transition-colors duration-300 ${
-                      done ? 'bg-amber-500' : 'bg-white/[0.08]'
+                      done ? 'bg-brand' : 'bg-white/[0.08]'
                     }`}
                   />
                 ))}
               </div>
             )}
 
-            {/* Submit — hidden for members */}
+            {/* Submit */}
             {canRecordMatch && (
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
-                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 disabled:shadow-none"
+                className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active disabled:opacity-35 disabled:cursor-not-allowed text-black text-sm font-bold tracking-[0.07em] uppercase font-heading transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-brand/15 hover:shadow-brand/25 disabled:shadow-none"
               >
                 {isSubmitting ? (
                   <>

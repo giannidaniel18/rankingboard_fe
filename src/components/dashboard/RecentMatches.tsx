@@ -7,9 +7,9 @@ import { useI18n } from '@/components/providers/I18nProvider'
 import type { GameType, MatchDetail } from '@/types'
 
 const GAME_TYPE_STYLES: Record<GameType, string> = {
-  Board:  'text-amber-600  dark:text-amber-500  bg-amber-500/10  border-amber-500/20',
+  Board:  'text-brand-text dark:text-brand bg-brand/10 border-brand/20',
   eSport: 'text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20',
-  Sports: 'text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
+  Sports: 'text-win bg-win/10 border-win/20',
 }
 
 function MatchCard({ match }: { match: MatchDetail }) {
@@ -20,11 +20,11 @@ function MatchCard({ match }: { match: MatchDetail }) {
       {/* Card header */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-black/[0.06] dark:border-white/[0.05]">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate">
+          <span className="font-medium text-sm text-tx-primary truncate">
             {match.gameName}
           </span>
           {match.groupName && (
-            <span className="text-[11px] text-neutral-400 dark:text-neutral-400 font-mono shrink-0">
+            <span className="text-[11px] text-tx-caption font-mono shrink-0">
               {match.groupName}
             </span>
           )}
@@ -35,7 +35,7 @@ function MatchCard({ match }: { match: MatchDetail }) {
               {match.gameType}
             </span>
           )}
-          <span className="text-[11px] font-mono text-neutral-400 dark:text-neutral-400">
+          <span className="text-[11px] font-mono text-tx-caption">
             {new Date(match.date).toLocaleDateString()}
           </span>
         </div>
@@ -48,19 +48,19 @@ function MatchCard({ match }: { match: MatchDetail }) {
           return (
             <li
               key={mp.userId}
-              className={`flex items-center gap-3 text-sm px-2 py-1.5 rounded-sm ${isWinner ? 'bg-amber-500/[0.08]' : ''}`}
+              className={`flex items-center gap-3 text-sm px-2 py-1.5 rounded-sm ${isWinner ? 'bg-brand/[0.08]' : ''}`}
             >
-              <span className="w-4 font-mono text-[11px] text-neutral-400 dark:text-neutral-400 text-center shrink-0">
+              <span className="w-4 font-mono text-[11px] text-tx-caption text-center shrink-0">
                 {mp.placement}
               </span>
               <span className={`flex-1 truncate ${
                 isWinner
-                  ? 'font-semibold text-amber-600 dark:text-amber-400'
-                  : 'text-neutral-700 dark:text-neutral-300'
+                  ? 'font-semibold text-brand'
+                  : 'text-tx-secondary'
               }`}>
                 {mp.name}
               </span>
-              <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-400 shrink-0 tabular-nums">
+              <span className="font-mono text-[11px] text-tx-caption shrink-0 tabular-nums">
                 {mp.score != null ? `${mp.score} pts` : '—'}
               </span>
             </li>
@@ -69,7 +69,7 @@ function MatchCard({ match }: { match: MatchDetail }) {
       </ol>
 
       {match.comments && (
-        <p className="px-4 pb-3 text-[11px] text-neutral-400 dark:text-neutral-400 italic">
+        <p className="px-4 pb-3 text-[11px] text-tx-caption italic">
           &ldquo;{match.comments}&rdquo;
         </p>
       )}
@@ -112,7 +112,7 @@ export default function RecentMatches() {
 
   if (recentMatches.length === 0) {
     return (
-      <div className="text-center py-16 text-neutral-400 dark:text-neutral-400 text-sm">
+      <div className="text-center py-16 text-tx-caption text-sm">
         {dict.dashboard.noMatches}
       </div>
     )

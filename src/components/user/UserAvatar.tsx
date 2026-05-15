@@ -37,14 +37,14 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
   }, [open])
 
   if (status === 'loading') {
-    return <div className="w-7 h-7 rounded-sm bg-amber-500/30 animate-pulse" />
+    return <div className="w-7 h-7 rounded-sm bg-brand/30 animate-pulse" />
   }
 
   if (status === 'unauthenticated') {
     return (
       <Link
         href="/login"
-        className="px-3 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-neutral-600 dark:text-neutral-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+        className="px-3 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-tx-caption hover:text-brand transition-colors"
       >
         Sign In
       </Link>
@@ -60,7 +60,7 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
         onClick={() => setOpen(prev => !prev)}
         aria-label="User menu"
         aria-expanded={open}
-        className="w-7 h-7 rounded-sm overflow-hidden flex items-center justify-center bg-amber-500 text-black text-[10px] font-bold shrink-0 hover:bg-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-500/60 transition-all"
+        className="w-7 h-7 rounded-sm overflow-hidden flex items-center justify-center bg-brand text-black text-[10px] font-bold shrink-0 hover:bg-brand-hover focus:outline-none focus:ring-1 focus:ring-brand/60 transition-all"
       >
         {image ? (
           <Image src={image} alt={name} width={28} height={28} className="object-cover w-full h-full" />
@@ -74,7 +74,7 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
           className={`absolute ${dropUp ? 'bottom-full mb-2' : 'top-full mt-2'} right-0 w-44 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-elevated shadow-lg py-1 z-50`}
         >
           <div className="px-3 py-2 border-b border-black/[0.08] dark:border-white/[0.07]">
-            <p className="font-heading text-[10px] font-bold tracking-[0.15em] uppercase text-neutral-900 dark:text-neutral-100 truncate">
+            <p className="font-heading text-[10px] font-bold tracking-[0.15em] uppercase text-tx-primary truncate">
               {name}
             </p>
           </div>
@@ -82,24 +82,24 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
           <Link
             href="/profile"
             onClick={() => setOpen(false)}
-            className="flex items-center px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            className="flex items-center px-3 py-2 text-sm text-tx-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-tx-primary transition-colors"
           >
             {dict.user.profile}
           </Link>
           <Link
             href="/social"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-between px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            className="flex items-center justify-between px-3 py-2 text-sm text-tx-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-tx-primary transition-colors"
           >
             {dict.user.social}
             {pendingCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-loss shrink-0" />
             )}
           </Link>
           <Link
             href="/settings"
             onClick={() => setOpen(false)}
-            className="flex items-center px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            className="flex items-center px-3 py-2 text-sm text-tx-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-tx-primary transition-colors"
           >
             {dict.user.settings}
           </Link>
@@ -108,7 +108,7 @@ export default function UserAvatar({ dropUp = false, pendingCount = 0 }: Props) 
             <button
               type="button"
               onClick={() => { setOpen(false); void logout() }}
-              className="w-full text-left px-3 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="w-full text-left px-3 py-2 text-sm text-loss hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             >
               {dict.user.logout}
             </button>

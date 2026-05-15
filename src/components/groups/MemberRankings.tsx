@@ -18,30 +18,30 @@ function getRankTier(rank: number): RankTier {
 }
 
 const RANK_NUM_CLASS: Record<RankTier, string> = {
-  1:     'text-amber-500 dark:text-amber-400',
-  2:     'text-neutral-400 dark:text-neutral-300',
-  3:     'text-amber-700 dark:text-amber-600',
-  other: 'text-neutral-400 dark:text-neutral-400',
+  1:     'text-brand',
+  2:     'text-tx-secondary',
+  3:     'text-bronze',
+  other: 'text-tx-caption',
 }
 
 const RANK_ACCENT: Record<RankTier, string> = {
-  1:     'border-l-2 border-amber-500/70',
-  2:     'border-l-2 border-neutral-400/30',
-  3:     'border-l-2 border-amber-700/30',
+  1:     'border-l-2 border-brand/60',
+  2:     'border-l-2 border-tx-caption/25',
+  3:     'border-l-2 border-bronze/30',
   other: 'border-l-2 border-transparent',
 }
 
 const AVATAR_CLASS: Record<RankTier, string> = {
-  1:     'bg-amber-500 text-black',
-  2:     'bg-neutral-300 dark:bg-neutral-600 text-black dark:text-neutral-100',
-  3:     'bg-amber-800/60 text-amber-200',
-  other: 'bg-black/10 dark:bg-white/10 text-neutral-600 dark:text-neutral-300',
+  1:     'bg-brand text-black',
+  2:     'bg-black/[0.12] dark:bg-white/[0.15] text-tx-primary',
+  3:     'bg-bronze/60 text-white',
+  other: 'bg-black/10 dark:bg-white/10 text-tx-secondary',
 }
 
 function RankingsSkeleton() {
   return (
-    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden animate-pulse">
-      <div className="h-11 border-b border-black/[0.08] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.02]" />
+    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.06] overflow-hidden animate-pulse">
+      <div className="h-11 border-b border-black/[0.08] dark:border-white/[0.06] bg-black/[0.02] dark:bg-white/[0.02]" />
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="h-12 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 bg-black/[0.01] dark:bg-white/[0.01]" />
       ))}
@@ -62,22 +62,22 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
       <thead>
         <tr className="border-b border-black/[0.06] dark:border-white/[0.05]">
           <th className="pl-5 pr-2 py-2.5 w-10 text-left">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-tx-caption">
               #
             </span>
           </th>
           <th className="px-2 py-2.5 text-left">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-tx-caption">
               {dict.table.player}
             </span>
           </th>
           <th className="px-2 py-2.5 w-12 text-right">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-tx-caption">
               Pts
             </span>
           </th>
           <th className="pl-2 pr-4 py-2.5 w-12 text-right">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-tx-caption">
               %
             </span>
           </th>
@@ -91,14 +91,14 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
           const isInactive = !member.isActive
           const pct        = Math.round(stats.winRate * 100)
           const rowAccent  = RANK_ACCENT[tier]
-          const rowBg      = tier === 1 ? 'bg-amber-500/[0.04]' : ''
+          const rowBg      = tier === 1 ? 'bg-brand/[0.04]' : ''
           const isSelected = compareA?.userId === member.userId
 
           return (
             <tr
               key={member.userId}
               onClick={() => onCompare(member)}
-              className={`${rowAccent} ${isSelected ? 'bg-amber-500/[0.08]' : rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 cursor-pointer hover:bg-white/[0.05] active:bg-zinc-800/50 transition-colors ${isInactive ? 'opacity-50' : ''}`}
+              className={`${rowAccent} ${isSelected ? 'bg-brand/[0.08]' : rowBg} border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 cursor-pointer hover:bg-brand/[0.03] dark:hover:bg-white/[0.03] active:bg-brand/[0.06] transition-colors ${isInactive ? 'opacity-50' : ''}`}
             >
               <td className="pl-5 pr-2 py-3">
                 <span className={`font-mono font-bold text-xs ${RANK_NUM_CLASS[tier]}`}>
@@ -108,15 +108,15 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
 
               <td className="px-2 py-3 min-w-0">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 ${isInactive ? 'grayscale bg-black/10 dark:bg-white/10 text-neutral-500' : AVATAR_CLASS[tier]}`}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 ${isInactive ? 'grayscale bg-black/10 dark:bg-white/10 text-tx-caption' : AVATAR_CLASS[tier]}`}>
                     {member.name[0].toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                    <p className="font-medium text-[13px] text-neutral-900 dark:text-neutral-100 leading-tight truncate">
+                    <p className="font-medium text-[13px] text-tx-primary leading-tight truncate">
                       {member.name}
                     </p>
                     {isInactive && (
-                      <span className="px-1 py-0.5 rounded text-[8px] font-bold tracking-[0.08em] uppercase bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 leading-none shrink-0">
+                      <span className="px-1 py-0.5 rounded text-[8px] font-bold tracking-[0.08em] uppercase bg-black/[0.06] dark:bg-white/[0.08] text-tx-caption leading-none shrink-0">
                         Inactivo
                       </span>
                     )}
@@ -125,13 +125,13 @@ function CompactTable({ members, dict, onCompare, compareA }: CompactTableProps)
               </td>
 
               <td className="px-2 py-3 text-right">
-                <span className={`font-mono font-bold text-xs tabular-nums ${tier === 1 ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-600 dark:text-neutral-300'}`}>
+                <span className={`font-mono font-bold text-xs tabular-nums ${tier === 1 ? 'text-brand' : 'text-tx-secondary'}`}>
                   {stats.points}
                 </span>
               </td>
 
               <td className="pl-2 pr-4 py-3 text-right">
-                <span className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400 tabular-nums">
+                <span className="font-mono text-[11px] text-tx-caption tabular-nums">
                   {pct}%
                 </span>
               </td>
@@ -183,36 +183,35 @@ export default function MemberRankings({ groupId }: { groupId: string }) {
         <ComparisonBar playerA={compareA} onCancel={() => setCompareA(null)} />
       )}
 
-      <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
-
-        {/* ── Header — strict single flex row, never wraps ── */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-black/[0.08] dark:border-white/[0.07]">
-          <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100 shrink-0">
+      <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.06] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-black/[0.08] dark:border-white/[0.06]">
+          <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-primary shrink-0">
             {dict.rankings.compact}
           </h2>
-          <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 flex-1 tabular-nums">
+          <span className="font-mono text-[10px] text-tx-caption flex-1 tabular-nums">
             {members.length} {dict.rankings.members}
           </span>
           <button
             onClick={() => router.push(`/groups/${groupId}/rankings`)}
-            className="w-6 h-6 flex items-center justify-center rounded text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-black/[0.05] dark:hover:bg-white/[0.05] transition-colors shrink-0"
+            className="w-6 h-6 flex items-center justify-center rounded text-tx-caption hover:text-tx-primary hover:bg-brand/[0.06] dark:hover:bg-brand/[0.08] transition-colors shrink-0"
             aria-label={dict.rankings.detailedTitle}
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* ── Compact table — 4 columns, zero overflow ── */}
+        {/* Table */}
         <div className="w-full max-w-full overflow-hidden">
           <CompactTable members={visibleMembers} dict={dict} onCompare={handleCompare} compareA={compareA} />
         </div>
 
-        {/* ── Show more / less ── */}
+        {/* Show more / less */}
         {members.length > 10 && (
           <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] flex justify-center">
             <button
               onClick={() => setShowAll(v => !v)}
-              className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors py-1 px-2"
+              className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-tx-caption hover:text-brand-text dark:hover:text-brand transition-colors py-1 px-2"
             >
               {showAll ? (
                 <><ChevronUp className="w-3 h-3" />Ver menos</>

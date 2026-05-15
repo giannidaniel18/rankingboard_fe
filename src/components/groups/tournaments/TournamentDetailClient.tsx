@@ -103,47 +103,47 @@ function PrizeSummaryCard({
       emoji: '🥇',
       slot: first,
       amount: pool.distribution.first,
-      colorCls: 'text-amber-400',
-      amountCls: 'text-emerald-300',
+      colorCls: 'text-brand',
+      amountCls: 'text-win',
     },
     {
       emoji: '🥈',
       slot: second,
       amount: pool.distribution.second,
-      colorCls: 'text-neutral-300',
-      amountCls: 'text-emerald-400/80',
+      colorCls: 'text-tx-secondary',
+      amountCls: 'text-win/80',
     },
     {
       emoji: '🥉',
       slot: third,
       amount: pool.distribution.third,
-      colorCls: 'text-amber-700 dark:text-amber-600',
-      amountCls: 'text-emerald-400/60',
+      colorCls: 'text-bronze',
+      amountCls: 'text-win/60',
     },
   ].filter(r => r.amount > 0 || r.slot !== null)
 
   return (
-    <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.04] overflow-hidden">
+    <div className="rounded-2xl border border-win/25 bg-win/[0.04] overflow-hidden">
       {/* Card header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-emerald-500/15">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-win/15">
         <div className="flex items-center gap-2.5">
           <span className="text-xl">💰</span>
           <div>
-            <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-emerald-500/70 leading-none mb-0.5">
+            <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-win/70 leading-none mb-0.5">
               Premios Distribuidos
             </p>
-            <p className="font-mono font-bold text-lg text-emerald-400 tabular-nums leading-none">
+            <p className="font-mono font-bold text-lg text-win tabular-nums leading-none">
               {fmt(pool.total)}
             </p>
           </div>
         </div>
-        <span className="text-[10px] font-bold tracking-[0.12em] uppercase px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+        <span className="text-[10px] font-bold tracking-[0.12em] uppercase px-2.5 py-1 rounded-full bg-win/10 border border-win/20 text-win">
           {pool.currency}
         </span>
       </div>
 
       {/* Winner rows */}
-      <div className="divide-y divide-emerald-500/10">
+      <div className="divide-y divide-win/10">
         {rows.map(({ emoji, slot, amount, colorCls, amountCls }) => (
           <div
             key={emoji}
@@ -157,13 +157,13 @@ function PrizeSummaryCard({
                     {slot.teamName}
                   </p>
                   {slot.playerNames.length > 0 && slot.playerNames.join(', ') !== slot.teamName && (
-                    <p className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+                    <p className="font-mono text-[10px] text-tx-caption truncate mt-0.5">
                       {slot.playerNames.join(', ')}
                     </p>
                   )}
                 </>
               ) : (
-                <p className="text-sm font-medium text-neutral-500 dark:text-neutral-600 italic">
+                <p className="text-sm font-medium text-tx-caption italic">
                   —
                 </p>
               )}
@@ -186,9 +186,9 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<Tournament['status'], { label: string; cls: string }> = {
-  draft:       { label: 'Borrador',    cls: 'bg-neutral-500/15 text-neutral-400 border-neutral-500/25' },
-  in_progress: { label: 'En curso',   cls: 'bg-amber-500/15 text-amber-400 border-amber-500/25'       },
-  completed:   { label: 'Completado', cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' },
+  draft:       { label: 'Borrador',    cls: 'bg-black/[0.06] dark:bg-white/[0.06] text-tx-caption border-black/[0.10] dark:border-white/[0.10]' },
+  in_progress: { label: 'En curso',   cls: 'bg-brand/15 text-brand border-brand/25'                   },
+  completed:   { label: 'Completado', cls: 'bg-win/15 text-win border-win/25'                         },
 }
 
 export default function TournamentDetailClient({
@@ -267,7 +267,7 @@ export default function TournamentDetailClient({
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-canvas items-center justify-center">
-        <Loader2 className="w-6 h-6 text-amber-400 animate-spin" />
+        <Loader2 className="w-6 h-6 text-brand animate-spin" />
       </div>
     )
   }
@@ -276,13 +276,13 @@ export default function TournamentDetailClient({
     return (
       <div className="flex min-h-screen bg-canvas items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto">
-            <Trophy className="w-6 h-6 text-amber-400/60" />
+          <div className="w-12 h-12 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center mx-auto">
+            <Trophy className="w-6 h-6 text-brand/60" />
           </div>
-          <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Torneo no encontrado</p>
+          <p className="text-sm font-medium text-tx-secondary">Torneo no encontrado</p>
           <Link
             href={`/groups/${groupId}`}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-amber-500 hover:text-amber-400 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-brand-text dark:text-brand hover:text-brand transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Volver al grupo
@@ -306,7 +306,7 @@ export default function TournamentDetailClient({
 
           <Link
             href={`/groups/${groupId}`}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] uppercase text-tx-caption hover:text-tx-secondary transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Volver al grupo
@@ -315,22 +315,22 @@ export default function TournamentDetailClient({
           {/* Tournament header */}
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 mt-1">
-                <Trophy className="w-5 h-5 text-amber-400" />
+              <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center shrink-0 mt-1">
+                <Trophy className="w-5 h-5 text-brand" />
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="font-heading text-2xl font-bold text-neutral-900 dark:text-neutral-100 break-words leading-tight">
+                <h1 className="font-heading text-2xl font-bold text-tx-primary break-words leading-tight">
                   {tournament.name}
                 </h1>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full border text-[10px] font-bold tracking-[0.12em] uppercase ${status.cls}`}>
                     {status.label}
                   </span>
-                  <span className="flex items-center gap-1 font-mono text-[11px] text-neutral-400 dark:text-neutral-500">
+                  <span className="flex items-center gap-1 font-mono text-[11px] text-tx-caption">
                     <FormatIcon className="w-3 h-3" />
                     {formatLabel}
                   </span>
-                  <span className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500">
+                  <span className="font-mono text-[11px] text-tx-caption">
                     {tournament.teams.length} equipos
                   </span>
                 </div>
@@ -343,7 +343,7 @@ export default function TournamentDetailClient({
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(true)}
-                    className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-rose-500/20 text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
+                    className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-loss/20 text-loss hover:bg-loss/10 text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Eliminar
@@ -356,7 +356,7 @@ export default function TournamentDetailClient({
                       type="button"
                       onClick={() => { void handleDelete() }}
                       disabled={isDeleting}
-                      className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 disabled:opacity-40 text-white text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
+                      className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-loss hover:bg-loss/80 disabled:opacity-40 text-white text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
                     >
                       {isDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
                       Confirmar
@@ -364,7 +364,7 @@ export default function TournamentDetailClient({
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
-                      className="flex flex-1 items-center justify-center px-3 py-2.5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
+                      className="flex flex-1 items-center justify-center px-3 py-2.5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] text-tx-caption hover:text-tx-primary text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
                     >
                       Cancelar
                     </button>
@@ -376,7 +376,7 @@ export default function TournamentDetailClient({
                     type="button"
                     onClick={() => { void handleFinalize() }}
                     disabled={isFinishing}
-                    className="flex flex-1 items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-white text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
+                    className="flex flex-1 items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-win hover:bg-win/80 disabled:opacity-40 text-white text-[10px] font-bold tracking-[0.12em] uppercase transition-all"
                   >
                     {isFinishing
                       ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -391,24 +391,24 @@ export default function TournamentDetailClient({
 
           {tournament.status === 'in_progress' && (
             <div className="space-y-2">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/[0.05] border border-amber-500/15">
-                <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
-                <div className="flex items-center gap-3 flex-wrap font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
-                  <span>🥇 <strong className="text-amber-400">+{tournament.bonusPoints.first}</strong></span>
-                  <span>🥈 <strong className="text-neutral-400">+{tournament.bonusPoints.second}</strong></span>
-                  <span>🥉 <strong className="text-amber-700 dark:text-amber-600">+{tournament.bonusPoints.third}</strong></span>
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/[0.05] border border-brand/15">
+                <Trophy className="w-4 h-4 text-brand shrink-0" />
+                <div className="flex items-center gap-3 flex-wrap font-mono text-[11px] text-tx-caption">
+                  <span>🥇 <strong className="text-brand">+{tournament.bonusPoints.first}</strong></span>
+                  <span>🥈 <strong className="text-tx-caption">+{tournament.bonusPoints.second}</strong></span>
+                  <span>🥉 <strong className="text-bronze">+{tournament.bonusPoints.third}</strong></span>
                 </div>
               </div>
 
               {tournament.prizePool && tournament.prizePool.total > 0 && (
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] overflow-hidden">
+                <div className="rounded-xl border border-win/20 bg-win/[0.06] overflow-hidden">
                   <div className="flex items-center gap-2.5 px-4 py-2.5">
                     <span className="text-base shrink-0">💰</span>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-emerald-500/70 block leading-none mb-0.5">
+                      <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-win/70 block leading-none mb-0.5">
                         Pozo
                       </span>
-                      <span className="font-mono font-bold text-sm text-emerald-400 tabular-nums">
+                      <span className="font-mono font-bold text-sm text-win tabular-nums">
                         {new Intl.NumberFormat('es-AR', {
                           style: 'currency',
                           currency: tournament.prizePool.currency,
@@ -416,7 +416,7 @@ export default function TournamentDetailClient({
                         }).format(tournament.prizePool.total)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 font-mono text-[11px] text-emerald-400/80 tabular-nums shrink-0 flex-wrap justify-end">
+                    <div className="flex items-center gap-3 font-mono text-[11px] text-win/80 tabular-nums shrink-0 flex-wrap justify-end">
                       {tournament.prizePool.distribution.first > 0 && (
                         <span>🥇 {new Intl.NumberFormat('es-AR', { style: 'currency', currency: tournament.prizePool.currency, maximumFractionDigits: 0 }).format(tournament.prizePool.distribution.first)}</span>
                       )}

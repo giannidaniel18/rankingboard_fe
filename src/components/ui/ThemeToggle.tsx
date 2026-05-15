@@ -18,7 +18,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       title={dict.theme.toggle}
-      className="w-8 h-8 flex items-center justify-center rounded-sm text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+      className="w-8 h-8 flex items-center justify-center rounded-sm text-tx-caption hover:text-tx-secondary hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
     >
       {isDark ? (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">

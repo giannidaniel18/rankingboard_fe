@@ -27,10 +27,10 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
     updateGroupDetails, updateMemberRole, removeMember,
   } = useGroups()
 
-  const [settingsOpen, setSettingsOpen]       = useState(false)
-  const [activeTab, setActiveTab]             = useState<GroupTab>(initialTab ?? 'rankings')
+  const [settingsOpen, setSettingsOpen]           = useState(false)
+  const [activeTab, setActiveTab]                 = useState<GroupTab>(initialTab ?? 'rankings')
   const [createTourneyOpen, setCreateTourneyOpen] = useState(false)
-  const [tournamentKey, setTournamentKey]     = useState(0)
+  const [tournamentKey, setTournamentKey]         = useState(0)
 
   useEffect(() => {
     loadGroupById(id)
@@ -42,8 +42,8 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
   if (!currentGroup) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-3 text-center">
-        <span className="font-mono text-3xl text-neutral-300 dark:text-neutral-700">#</span>
-        <p className="font-heading text-sm font-bold tracking-[0.1em] uppercase text-neutral-600 dark:text-neutral-400">
+        <span className="font-mono text-3xl text-tx-caption">#</span>
+        <p className="font-heading text-sm font-bold tracking-[0.1em] uppercase text-tx-caption">
           {error === 'Group not found' ? 'Group not found' : (error ?? 'Group not found')}
         </p>
       </div>
@@ -83,15 +83,15 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
                   className="w-11 h-11 rounded-full object-cover shrink-0 border border-black/[0.08] dark:border-white/[0.08]"
                 />
               ) : (
-                <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-base text-amber-500 dark:text-amber-400 shrink-0">
+                <div className="w-11 h-11 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center font-bold text-base text-brand shrink-0">
                   {currentGroup.name[0]?.toUpperCase() ?? '#'}
                 </div>
               )}
               <div>
-                <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-neutral-900 dark:text-neutral-100">
+                <h1 className="font-heading text-lg font-bold tracking-[0.1em] uppercase text-tx-primary">
                   {currentGroup.name}
                 </h1>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 font-mono">
+                <p className="text-sm text-tx-caption mt-0.5 font-mono">
                   {currentGroup.members.filter(m => m.isActive).length} {dict.group.members}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
             {isAdmin && (
               <button
                 onClick={() => setSettingsOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/[0.08] dark:border-white/[0.07] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:border-black/[0.15] dark:hover:border-white/[0.15] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-all text-[10px] font-bold tracking-[0.12em] uppercase shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/[0.08] dark:border-white/[0.07] text-tx-caption hover:text-tx-primary hover:border-brand/30 hover:bg-brand/[0.04] transition-all text-[10px] font-bold tracking-[0.12em] uppercase shrink-0"
                 aria-label="Group settings"
               >
                 <Settings className="w-3.5 h-3.5" />
@@ -120,14 +120,14 @@ export default function GroupDetailClient({ id, userId, dict, initialTab }: Prop
                 onClick={() => setActiveTab(key)}
                 className={`relative flex items-center gap-1.5 pb-3 mr-6 text-[11px] font-bold tracking-[0.15em] uppercase transition-colors ${
                   activeTab === key
-                    ? 'text-amber-500'
-                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                    ? 'text-brand-text dark:text-brand'
+                    : 'text-tx-caption hover:text-tx-secondary'
                 }`}
               >
                 {Icon && <Icon className="w-3 h-3" />}
                 {label}
                 {activeTab === key && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full" />
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand rounded-full" />
                 )}
               </button>
             ))}
@@ -203,8 +203,8 @@ function LoadingSkeleton() {
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="w-full lg:w-60 shrink-0" />
             <div className="flex-1 min-w-0 space-y-4">
-              <div className="h-48 rounded-sm border border-black/[0.08] dark:border-white/[0.07] bg-black/[0.03] dark:bg-white/[0.03]" />
-              <div className="h-64 rounded-sm border border-black/[0.08] dark:border-white/[0.07] bg-black/[0.03] dark:bg-white/[0.03]" />
+              <div className="h-48 rounded-sm border border-black/[0.08] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.03]" />
+              <div className="h-64 rounded-sm border border-black/[0.08] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.03]" />
             </div>
           </div>
         </main>

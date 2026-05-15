@@ -28,7 +28,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-2.5">
       {error && (
-        <p className="text-[11px] font-mono text-red-500 dark:text-red-400 px-0.5">{error}</p>
+        <p className="text-[11px] font-mono text-loss px-0.5">{error}</p>
       )}
       <input
         type="email"
@@ -36,7 +36,7 @@ export default function LoginForm() {
         required
         autoComplete="email"
         placeholder="you@example.com"
-        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-tx-primary text-sm placeholder:text-tx-caption focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/15 transition-all"
       />
       <input
         type="password"
@@ -44,18 +44,18 @@ export default function LoginForm() {
         required
         autoComplete="current-password"
         placeholder="Password"
-        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-neutral-900 dark:text-neutral-100 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-amber-500/60 transition-colors"
+        className="w-full px-3 py-2.5 rounded-sm border border-black/[0.10] dark:border-white/[0.10] bg-white dark:bg-white/5 text-tx-primary text-sm placeholder:text-tx-caption focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/15 transition-all"
       />
       <button
         type="submit"
         disabled={isPending}
-        className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black rounded-sm text-[11px] font-bold tracking-[0.15em] uppercase disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 bg-brand hover:bg-brand-hover active:bg-brand-active text-black rounded-sm text-[11px] font-bold tracking-[0.15em] uppercase disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed transition-all"
       >
         {isPending ? 'Signing in…' : 'Sign In'}
       </button>
-      <p className="text-center text-[11px] text-neutral-500 dark:text-neutral-400 pt-1">
+      <p className="text-center text-[11px] text-tx-caption pt-1">
         No account?{' '}
-        <Link href="/register" className="text-amber-500 hover:text-amber-400 font-semibold transition-colors">
+        <Link href="/register" className="text-brand-text dark:text-brand hover:text-brand font-semibold transition-colors">
           Register
         </Link>
       </p>

@@ -11,13 +11,13 @@ interface Props {
 }
 
 const AVATAR_PALETTE = [
-  'bg-amber-500 text-black',
-  'bg-sky-500 text-white',
-  'bg-emerald-500 text-white',
-  'bg-rose-500 text-white',
+  'bg-brand text-black',
+  'bg-live text-white',
+  'bg-win text-white',
+  'bg-loss text-white',
   'bg-violet-500 text-white',
   'bg-orange-500 text-black',
-  'bg-cyan-500 text-black',
+  'bg-bronze text-white',
   'bg-pink-500 text-white',
 ]
 
@@ -39,13 +39,13 @@ function TeamSlot({
   if (!team) {
     return (
       <div className="flex items-center gap-3 px-4 py-3">
-        <div className="w-5 h-5 rounded-full border border-dashed border-neutral-300 dark:border-neutral-700 shrink-0" />
-        <p className="text-sm font-mono text-neutral-400 dark:text-neutral-500 italic">TBD</p>
+        <div className="w-5 h-5 rounded-full border border-dashed border-tx-caption/40 shrink-0" />
+        <p className="text-sm font-mono text-tx-caption italic">TBD</p>
       </div>
     )
   }
 
-  const avatarCls = AVATAR_PALETTE[idx % AVATAR_PALETTE.length] ?? 'bg-neutral-400 text-white'
+  const avatarCls = AVATAR_PALETTE[idx % AVATAR_PALETTE.length] ?? 'bg-black/20 text-white'
 
   const playerNames = team.playerIds
     .map(id => memberUsers.find(u => u.id === id)?.alias)
@@ -55,7 +55,7 @@ function TeamSlot({
   return (
     <div className={`flex items-center gap-3 px-4 py-3 transition-all ${
       isWinner
-        ? 'bg-amber-500/[0.07] dark:bg-amber-500/[0.09]'
+        ? 'bg-brand/[0.07] dark:bg-brand/[0.09]'
         : isLoser
           ? 'opacity-40'
           : ''
@@ -68,19 +68,19 @@ function TeamSlot({
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-medium truncate ${
           isWinner
-            ? 'text-amber-500 dark:text-amber-400 font-semibold'
-            : 'text-neutral-800 dark:text-neutral-200'
+            ? 'text-brand font-semibold'
+            : 'text-tx-primary'
         }`}>
           {team.name}
         </p>
         {playerNames && (
-          <p className="text-[10px] text-neutral-500 dark:text-neutral-500 font-normal mt-0.5 truncate">
+          <p className="text-[10px] text-tx-caption font-normal mt-0.5 truncate">
             {playerNames}
           </p>
         )}
       </div>
       {isWinner && (
-        <span className="text-amber-400 text-[13px] shrink-0">🏆</span>
+        <span className="text-brand text-[13px] shrink-0">🏆</span>
       )}
     </div>
   )
@@ -102,7 +102,7 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
       isDone
         ? 'border-black/[0.06] dark:border-white/[0.06]'
         : isBye
-          ? 'border-dashed border-amber-500/30 dark:border-amber-500/20'
+          ? 'border-dashed border-brand/30 dark:border-brand/20'
           : bothKnown
             ? 'border-black/[0.10] dark:border-white/[0.09] shadow-sm shadow-black/5'
             : 'border-dashed border-black/[0.08] dark:border-white/[0.07]'
@@ -111,7 +111,7 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
 
       <div className="flex items-center bg-black/[0.02] dark:bg-white/[0.02] border-y border-black/[0.04] dark:border-white/[0.04]">
         <div className="flex-1 h-px bg-black/[0.05] dark:bg-white/[0.04]" />
-        <span className="px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
+        <span className="px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.2em] text-tx-caption">
           {isBye ? 'BYE' : 'VS'}
         </span>
         <div className="flex-1 h-px bg-black/[0.05] dark:bg-white/[0.04]" />
@@ -124,7 +124,7 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
           <button
             type="button"
             onClick={onResolve}
-            className="w-full py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="w-full py-2.5 rounded-lg bg-brand hover:bg-brand-hover active:bg-brand-active text-black text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             Cargar Resultado
           </button>
@@ -132,11 +132,11 @@ export default function TournamentMatchCard({ match, teams, isPrivileged, onReso
       )}
 
       {showBye && (
-        <div className="px-4 py-3 border-t border-amber-500/10 dark:border-amber-500/10 bg-amber-500/[0.03]">
+        <div className="px-4 py-3 border-t border-brand/10 bg-brand/[0.03]">
           <button
             type="button"
             onClick={onResolve}
-            className="w-full py-2.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
+            className="w-full py-2.5 rounded-lg bg-brand/20 hover:bg-brand/30 border border-brand/30 text-brand-text dark:text-brand text-[10px] font-bold tracking-[0.15em] uppercase transition-all"
           >
             Avanzar (Pase Libre)
           </button>

@@ -63,7 +63,7 @@ export default function ParticipantMultiSelect({
           canOpen ? 'cursor-pointer' : 'cursor-default'
         } ${disabled ? 'opacity-40' : ''} ${
           open
-            ? 'border-amber-500/40 ring-1 ring-amber-500/20'
+            ? 'border-brand/50 ring-1 ring-brand/15'
             : 'border-white/[0.07] hover:border-white/[0.13]'
         }`}
       >
@@ -76,7 +76,7 @@ export default function ParticipantMultiSelect({
             selected.map(p => (
               <span
                 key={p.id}
-                className="flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-300 text-xs font-semibold shrink-0"
+                className="flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-brand/15 border border-brand/25 text-brand text-xs font-semibold shrink-0"
               >
                 {p.name}
                 <button
@@ -84,7 +84,7 @@ export default function ParticipantMultiSelect({
                   onClick={e => { e.stopPropagation(); handleRemove(p.id) }}
                   disabled={disabled}
                   aria-label={`Remove ${p.name}`}
-                  className="hover:text-amber-100 transition-colors disabled:opacity-40"
+                  className="hover:text-brand/60 transition-colors disabled:opacity-40"
                 >
                   <X className="w-3 h-3" />
                 </button>

@@ -19,7 +19,7 @@ export default function LanguageToggle() {
     <button
       onClick={toggle}
       disabled={isPending}
-      className="w-8 h-8 flex items-center justify-center rounded-sm font-mono text-[10px] font-bold tracking-wider text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-40"
+      className="w-8 h-8 flex items-center justify-center rounded-sm font-mono text-[10px] font-bold tracking-wider text-tx-caption hover:text-tx-secondary hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-40"
     >
       {locale === 'en' ? dict.lang.es : dict.lang.en}
     </button>

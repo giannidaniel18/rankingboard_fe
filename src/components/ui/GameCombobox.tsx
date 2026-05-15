@@ -84,7 +84,7 @@ export default function GameCombobox({
         disabled={disabled}
         className={`w-full flex items-center gap-2 bg-elevated border rounded-xl px-4 py-2.5 text-sm transition-all outline-none disabled:opacity-40 disabled:cursor-not-allowed text-left ${
           open
-            ? 'border-amber-500/40 ring-1 ring-amber-500/20'
+            ? 'border-brand/50 ring-1 ring-brand/15'
             : 'border-white/[0.07] hover:border-white/[0.13]'
         }`}
       >
@@ -123,7 +123,7 @@ export default function GameCombobox({
             ) : (
               Object.entries(grouped).map(([type, items]) => (
                 <div key={type}>
-                  <p className="px-3 pt-2.5 pb-1 text-[9px] font-bold tracking-[0.2em] uppercase text-amber-500/60">
+                  <p className="px-3 pt-2.5 pb-1 text-[9px] font-bold tracking-[0.2em] uppercase text-brand/60">
                     {type}
                   </p>
                   {items.map(g => (
@@ -133,7 +133,7 @@ export default function GameCombobox({
                       onClick={() => handleSelect(g.id)}
                       className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors ${
                         g.id === value
-                          ? 'text-amber-400 bg-amber-500/10'
+                          ? 'text-brand bg-brand/10'
                           : 'text-tx-primary hover:bg-white/[0.04]'
                       }`}
                     >

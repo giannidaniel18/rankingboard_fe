@@ -25,10 +25,10 @@ interface Props {
 const TEAM_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 const TEAM_PALETTE = [
-  { border: 'border-amber-500/40',   bg: 'bg-amber-500/10',   text: 'text-amber-400',   badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40'   },
-  { border: 'border-sky-500/40',     bg: 'bg-sky-500/10',     text: 'text-sky-400',     badge: 'bg-sky-500/20 text-sky-300 border-sky-500/40'         },
-  { border: 'border-emerald-500/40', bg: 'bg-emerald-500/10', text: 'text-emerald-400', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-  { border: 'border-rose-500/40',    bg: 'bg-rose-500/10',    text: 'text-rose-400',    badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40'       },
+  { border: 'border-brand/40',    bg: 'bg-brand/10',    text: 'text-brand',    badge: 'bg-brand/20 text-brand border-brand/40'       },
+  { border: 'border-live/40',  bg: 'bg-live/10',  text: 'text-live',  badge: 'bg-live/20 text-live border-live/40'    },
+  { border: 'border-win/40',   bg: 'bg-win/10',   text: 'text-win',   badge: 'bg-win/20 text-win border-win/40'       },
+  { border: 'border-loss/40',  bg: 'bg-loss/10',  text: 'text-loss',  badge: 'bg-loss/20 text-loss border-loss/40'    },
   { border: 'border-violet-500/40',  bg: 'bg-violet-500/10',  text: 'text-violet-400',  badge: 'bg-violet-500/20 text-violet-300 border-violet-500/40' },
   { border: 'border-orange-500/40',  bg: 'bg-orange-500/10',  text: 'text-orange-400',  badge: 'bg-orange-500/20 text-orange-300 border-orange-500/40' },
 ] as const
@@ -51,18 +51,18 @@ function StepIndicator({ step }: { step: 1 | 2 | 3 }) {
         return (
           <Fragment key={s}>
             {i > 0 && (
-              <div className={`h-px flex-1 mx-2 transition-colors duration-300 ${step > i ? 'bg-amber-500' : 'bg-neutral-200 dark:bg-neutral-700'}`} />
+              <div className={`h-px flex-1 mx-2 transition-colors duration-300 ${step > i ? 'bg-brand' : 'bg-black/[0.10] dark:bg-white/[0.10]'}`} />
             )}
             <div className="flex flex-col items-center gap-1 shrink-0">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-200 ${
-                done   ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400' :
-                active ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/30' :
-                         'bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-400'
+                done   ? 'bg-win/20 border border-win/40 text-win' :
+                active ? 'bg-brand text-black shadow-lg shadow-brand/30' :
+                         'bg-black/[0.05] dark:bg-white/[0.08] border border-black/[0.10] dark:border-white/[0.10] text-tx-caption'
               }`}>
                 {done ? <Check className="w-3 h-3" /> : s}
               </div>
               <span className={`text-[9px] font-bold tracking-[0.12em] uppercase leading-none ${
-                active ? 'text-amber-400' : 'text-neutral-400 dark:text-neutral-500'
+                active ? 'text-brand' : 'text-tx-caption'
               }`}>
                 {label}
               </span>
@@ -149,7 +149,6 @@ export default function CreateTournamentModal({
       })
     }
 
-    // Restore cursor position after React re-render, accounting for added separators
     requestAnimationFrame(() => {
       const input = prizeTotalInputRef.current
       if (!input) return
@@ -170,7 +169,6 @@ export default function CreateTournamentModal({
     return { total: prizeTotal, currency: prizeCurrency, distribution: prizeDistribution }
   }
 
-  // Load group games on mount
   useEffect(() => {
     gamesService.getAllGames().then(all => {
       const filtered = all.filter(g => groupGameIds.includes(g.id))
@@ -274,22 +272,22 @@ export default function CreateTournamentModal({
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full sm:max-w-md bg-surface border border-black/[0.10] dark:border-white/[0.08] rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/80 flex flex-col max-h-[92dvh]">
-        {/* Amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+        {/* Brand accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand/60 to-transparent" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-1 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-              <Trophy className="w-4 h-4 text-amber-400" />
+            <div className="w-8 h-8 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center">
+              <Trophy className="w-4 h-4 text-brand" />
             </div>
-            <h2 className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
+            <h2 className="font-heading text-[11px] font-bold tracking-[0.2em] uppercase text-tx-primary">
               Crear Torneo
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-full text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-black/[0.06] dark:hover:bg-white/[0.06] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-full text-tx-caption hover:text-tx-primary hover:bg-black/[0.06] dark:hover:bg-white/[0.06] transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -306,7 +304,7 @@ export default function CreateTournamentModal({
           {step === 1 && (
             <div className="p-5 space-y-5">
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 mb-1.5">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-1.5">
                   Nombre del torneo
                 </label>
                 <input
@@ -315,16 +313,16 @@ export default function CreateTournamentModal({
                   onChange={e => setName(e.target.value)}
                   placeholder="Copa Libertadores de Pool"
                   autoFocus
-                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/[0.13] focus:border-amber-500/70 dark:focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-neutral-100 font-medium outline-none transition-all placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
+                  className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-brand/30 dark:hover:border-brand/20 focus:border-brand/60 dark:focus:border-brand/40 focus:ring-1 focus:ring-brand/15 rounded-xl px-4 py-2.5 text-sm text-tx-primary font-medium outline-none transition-all placeholder:text-tx-caption"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-2">
                   Juego
                 </label>
                 {games.length === 0 ? (
-                  <div className="flex items-center gap-2 text-neutral-400 font-mono text-xs py-1">
+                  <div className="flex items-center gap-2 text-tx-caption font-mono text-xs py-1">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     Cargando juegos…
                   </div>
@@ -337,8 +335,8 @@ export default function CreateTournamentModal({
                         onClick={() => setGameId(g.id)}
                         className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-[0.08em] uppercase transition-all ${
                           gameId === g.id
-                            ? 'bg-amber-500 text-black'
-                            : 'bg-black/[0.05] dark:bg-white/[0.06] text-neutral-600 dark:text-neutral-300 border border-black/[0.08] dark:border-white/[0.08] hover:border-amber-500/50'
+                            ? 'bg-brand text-black'
+                            : 'bg-black/[0.05] dark:bg-white/[0.06] text-tx-secondary border border-black/[0.08] dark:border-white/[0.08] hover:border-brand/50'
                         }`}
                       >
                         {g.name}
@@ -349,7 +347,7 @@ export default function CreateTournamentModal({
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-2">
                   Formato
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -363,16 +361,16 @@ export default function CreateTournamentModal({
                       onClick={() => setFormat(value)}
                       className={`flex flex-col items-start gap-2 p-3.5 rounded-xl border transition-all text-left ${
                         format === value
-                          ? 'border-amber-500/60 bg-amber-500/10'
-                          : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/[0.14] bg-black/[0.02] dark:bg-white/[0.02]'
+                          ? 'border-brand/60 bg-brand/10'
+                          : 'border-black/[0.08] dark:border-white/[0.08] hover:border-brand/30 bg-black/[0.02] dark:bg-white/[0.02]'
                       }`}
                     >
-                      <Icon className={`w-5 h-5 ${format === value ? 'text-amber-400' : 'text-neutral-400'}`} />
+                      <Icon className={`w-5 h-5 ${format === value ? 'text-brand' : 'text-tx-caption'}`} />
                       <div>
-                        <p className={`text-[11px] font-bold tracking-[0.08em] uppercase ${format === value ? 'text-amber-400' : 'text-neutral-700 dark:text-neutral-200'}`}>
+                        <p className={`text-[11px] font-bold tracking-[0.08em] uppercase ${format === value ? 'text-brand' : 'text-tx-secondary'}`}>
                           {label}
                         </p>
-                        <p className="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 mt-0.5">
+                        <p className="text-[10px] font-mono text-tx-caption mt-0.5">
                           {sub}
                         </p>
                       </div>
@@ -388,7 +386,7 @@ export default function CreateTournamentModal({
             <div className="p-5 space-y-4">
               {/* Players per team */}
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-2">
                   Jugadores por equipo
                 </label>
                 <div className="flex gap-2">
@@ -399,8 +397,8 @@ export default function CreateTournamentModal({
                       onClick={() => { setPlayersPerTeam(n); setHasGenerated(false); setMemberTeamIdx(new Map()) }}
                       className={`w-12 h-10 rounded-xl text-[11px] font-bold border tracking-[0.05em] transition-all ${
                         playersPerTeam === n
-                          ? 'bg-amber-500 text-black border-amber-500'
-                          : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-neutral-600 dark:text-neutral-300 hover:border-amber-500/50'
+                          ? 'bg-brand text-black border-brand'
+                          : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-tx-secondary hover:border-brand/50'
                       }`}
                     >
                       {n}v{n}
@@ -413,7 +411,7 @@ export default function CreateTournamentModal({
               {!hasGenerated && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400">
+                    <label className="text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption">
                       Participantes ({selectedIds.size})
                     </label>
                     <button
@@ -423,7 +421,7 @@ export default function CreateTournamentModal({
                           ? new Set()
                           : new Set(activeMembers.map(m => m.id))
                       )}
-                      className="text-[10px] font-bold tracking-[0.1em] uppercase text-amber-500 hover:text-amber-400 transition-colors"
+                      className="text-[10px] font-bold tracking-[0.1em] uppercase text-brand-text dark:text-brand hover:text-brand transition-colors"
                     >
                       {selectedIds.size === activeMembers.length ? 'Ninguno' : 'Todos'}
                     </button>
@@ -443,14 +441,14 @@ export default function CreateTournamentModal({
                           }}
                           className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                             selected
-                              ? 'border-amber-500/30 bg-amber-500/[0.06]'
-                              : 'border-black/[0.06] dark:border-white/[0.06] hover:border-black/[0.12] dark:hover:border-white/[0.10]'
+                              ? 'border-brand/30 bg-brand/[0.06]'
+                              : 'border-black/[0.06] dark:border-white/[0.06] hover:border-brand/20'
                           }`}
                         >
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 transition-all ${
                             selected
-                              ? 'bg-amber-500 text-black'
-                              : 'bg-black/[0.08] dark:bg-white/[0.08] text-neutral-500 dark:text-neutral-400'
+                              ? 'bg-brand text-black'
+                              : 'bg-black/[0.08] dark:bg-white/[0.08] text-tx-secondary'
                           }`}>
                             {selected
                               ? <Check className="w-3.5 h-3.5" />
@@ -458,10 +456,10 @@ export default function CreateTournamentModal({
                             }
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate leading-tight">
+                            <p className="text-sm font-medium text-tx-primary truncate leading-tight">
                               {member.name}
                             </p>
-                            <p className="font-mono text-[11px] text-amber-500 dark:text-amber-400 truncate leading-tight">
+                            <p className="font-mono text-[11px] text-brand-text dark:text-brand truncate leading-tight">
                               {member.alias}
                             </p>
                           </div>
@@ -476,7 +474,7 @@ export default function CreateTournamentModal({
               {!hasGenerated && (
                 <div className="space-y-2">
                   {selectedIds.size > 0 && selectedIds.size % playersPerTeam !== 0 && (
-                    <p className="text-[11px] font-mono text-amber-500/80 px-1">
+                    <p className="text-[11px] font-mono text-brand/80 px-1">
                       {selectedIds.size} jugadores / {playersPerTeam} por equipo —{' '}
                       {selectedIds.size % playersPerTeam} quedarán sin equipo.
                     </p>
@@ -485,7 +483,7 @@ export default function CreateTournamentModal({
                     type="button"
                     onClick={handleAutoGenerate}
                     disabled={selectedIds.size < 2}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
                   >
                     <Shuffle className="w-4 h-4" />
                     Generar Equipos Aleatorios
@@ -497,20 +495,20 @@ export default function CreateTournamentModal({
               {hasGenerated && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400">
+                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption">
                       {computedTeams.length} equipos
                     </p>
                     <button
                       type="button"
                       onClick={() => { setHasGenerated(false); setMemberTeamIdx(new Map()) }}
-                      className="flex items-center gap-1 text-[10px] font-bold tracking-[0.1em] uppercase text-neutral-400 hover:text-amber-400 transition-colors"
+                      className="flex items-center gap-1 text-[10px] font-bold tracking-[0.1em] uppercase text-tx-caption hover:text-brand transition-colors"
                     >
                       <Shuffle className="w-3 h-3" />
                       Reorganizar
                     </button>
                   </div>
 
-                  <p className="text-[10px] font-mono text-neutral-400 dark:text-neutral-500">
+                  <p className="text-[10px] font-mono text-tx-caption">
                     Toca el badge de equipo para mover al jugador al siguiente.
                   </p>
 
@@ -527,10 +525,10 @@ export default function CreateTournamentModal({
                             key={member.id}
                             className="flex items-center gap-3 p-3 rounded-xl border border-black/[0.06] dark:border-white/[0.06]"
                           >
-                            <div className="w-7 h-7 rounded-full bg-black/[0.08] dark:bg-white/[0.08] flex items-center justify-center font-bold text-[11px] text-neutral-600 dark:text-neutral-300 shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-black/[0.08] dark:bg-white/[0.08] flex items-center justify-center font-bold text-[11px] text-tx-secondary shrink-0">
                               {member.name[0]?.toUpperCase()}
                             </div>
-                            <p className="flex-1 text-sm font-medium text-neutral-900 dark:text-neutral-100 min-w-0 truncate">
+                            <p className="flex-1 text-sm font-medium text-tx-primary min-w-0 truncate">
                               {member.name}
                             </p>
                             <button
@@ -557,7 +555,7 @@ export default function CreateTournamentModal({
                           {team.playerIds.map(pid => {
                             const u = activeMembers.find(m => m.id === pid)
                             return (
-                              <p key={pid} className="text-[11px] text-neutral-600 dark:text-neutral-300 truncate font-mono leading-relaxed">
+                              <p key={pid} className="text-[11px] text-tx-secondary truncate font-mono leading-relaxed">
                                 {u?.name ?? pid}
                               </p>
                             )
@@ -574,13 +572,13 @@ export default function CreateTournamentModal({
           {/* ── Step 3: Premios ── */}
           {step === 3 && (
             <div className="p-5 space-y-5">
-              <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+              <p className="text-[11px] font-mono text-tx-caption">
                 Puntos de bonificación otorgados al finalizar el torneo.
               </p>
 
               {/* Quick presets */}
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption mb-2">
                   Presets rápidos
                 </label>
                 <div className="flex gap-2 flex-wrap">
@@ -597,8 +595,8 @@ export default function CreateTournamentModal({
                         onClick={() => setBonus(p.values)}
                         className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-[0.08em] uppercase transition-all border ${
                           active
-                            ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
-                            : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-neutral-500 dark:text-neutral-400 hover:border-amber-500/40'
+                            ? 'bg-brand/15 border-brand/40 text-brand'
+                            : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-tx-caption hover:border-brand/40'
                         }`}
                       >
                         {p.label}
@@ -611,9 +609,9 @@ export default function CreateTournamentModal({
               {/* Bonus inputs */}
               <div className="space-y-3">
                 {([
-                  { label: '1.° Puesto', emoji: '🥇', key: 'first'  as const, color: 'text-amber-400'                       },
-                  { label: '2.° Puesto', emoji: '🥈', key: 'second' as const, color: 'text-neutral-400'                     },
-                  { label: '3.° Puesto', emoji: '🥉', key: 'third'  as const, color: 'text-amber-700 dark:text-amber-600'   },
+                  { label: '1.° Puesto', emoji: '🥇', key: 'first'  as const, color: 'text-brand'    },
+                  { label: '2.° Puesto', emoji: '🥈', key: 'second' as const, color: 'text-tx-caption' },
+                  { label: '3.° Puesto', emoji: '🥉', key: 'third'  as const, color: 'text-bronze'   },
                 ]).map(({ label, emoji, key, color }) => (
                   <div key={key} className="flex items-center gap-4 p-4 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.02]">
                     <span className="text-xl shrink-0">{emoji}</span>
@@ -626,17 +624,17 @@ export default function CreateTournamentModal({
                       <button
                         type="button"
                         onClick={() => setBonus(b => ({ ...b, [key]: Math.max(0, b[key] - 5) }))}
-                        className="w-7 h-7 rounded-lg bg-black/[0.05] dark:bg-white/[0.05] flex items-center justify-center text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-black/[0.10] dark:hover:bg-white/[0.10] transition-colors font-bold"
+                        className="w-7 h-7 rounded-lg bg-black/[0.05] dark:bg-white/[0.05] flex items-center justify-center text-tx-caption hover:text-tx-primary hover:bg-black/[0.10] dark:hover:bg-white/[0.10] transition-colors font-bold"
                       >
                         −
                       </button>
-                      <span className="font-mono font-bold text-sm text-neutral-900 dark:text-neutral-100 w-10 text-center tabular-nums">
+                      <span className="font-mono font-bold text-sm text-tx-primary w-10 text-center tabular-nums">
                         +{bonus[key]}
                       </span>
                       <button
                         type="button"
                         onClick={() => setBonus(b => ({ ...b, [key]: b[key] + 5 }))}
-                        className="w-7 h-7 rounded-lg bg-black/[0.05] dark:bg-white/[0.05] flex items-center justify-center text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-black/[0.10] dark:hover:bg-white/[0.10] transition-colors font-bold"
+                        className="w-7 h-7 rounded-lg bg-black/[0.05] dark:bg-white/[0.05] flex items-center justify-center text-tx-caption hover:text-tx-primary hover:bg-black/[0.10] dark:hover:bg-white/[0.10] transition-colors font-bold"
                       >
                         +
                       </button>
@@ -646,11 +644,11 @@ export default function CreateTournamentModal({
               </div>
 
               {/* Summary callout */}
-              <div className="flex items-start gap-2 p-3.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/20">
-                <Trophy className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-[11px] font-mono text-neutral-600 dark:text-neutral-300 leading-relaxed">
+              <div className="flex items-start gap-2 p-3.5 rounded-xl bg-brand/[0.06] border border-brand/20">
+                <Trophy className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+                <p className="text-[11px] font-mono text-tx-secondary leading-relaxed">
                   El ganador obtendrá{' '}
-                  <span className="text-amber-400 font-bold">+{bonus.first} pts</span>{' '}
+                  <span className="text-brand font-bold">+{bonus.first} pts</span>{' '}
                   de bonus al completar el torneo.
                 </p>
               </div>
@@ -662,10 +660,10 @@ export default function CreateTournamentModal({
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-neutral-500 dark:text-neutral-400">
+                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-tx-caption">
                       Pozo Monetario
                     </p>
-                    <p className="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 mt-0.5">
+                    <p className="text-[10px] font-mono text-tx-caption mt-0.5">
                       Premio en dinero para los ganadores
                     </p>
                   </div>
@@ -676,7 +674,7 @@ export default function CreateTournamentModal({
                     aria-checked={prizeEnabled}
                     onClick={() => setPrizeEnabled(v => !v)}
                     className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 shrink-0 ${
-                      prizeEnabled ? 'bg-emerald-500' : 'bg-black/[0.12] dark:bg-white/[0.12]'
+                      prizeEnabled ? 'bg-win' : 'bg-black/[0.12] dark:bg-white/[0.12]'
                     }`}
                   >
                     <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
@@ -690,11 +688,11 @@ export default function CreateTournamentModal({
                     {/* Total + currency */}
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-neutral-500 dark:text-neutral-400 mb-1">
+                        <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-tx-caption mb-1">
                           Monto Total
                         </label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-neutral-400 dark:text-neutral-500 pointer-events-none select-none">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-tx-caption pointer-events-none select-none">
                             $
                           </span>
                           <input
@@ -704,18 +702,18 @@ export default function CreateTournamentModal({
                             value={prizeTotalDisplay}
                             onChange={handlePrizeTotalChange}
                             placeholder="15.000"
-                            className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-emerald-500/40 focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20 rounded-xl pl-7 pr-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 font-mono font-bold outline-none transition-all placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
+                            className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-win/40 focus:border-win/60 focus:ring-1 focus:ring-win/20 rounded-xl pl-7 pr-3 py-2 text-sm text-tx-primary font-mono font-bold outline-none transition-all placeholder:text-tx-caption"
                           />
                         </div>
                       </div>
                       <div className="w-20">
-                        <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-neutral-500 dark:text-neutral-400 mb-1">
+                        <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-tx-caption mb-1">
                           Moneda
                         </label>
                         <select
                           value={prizeCurrency}
                           onChange={e => setPrizeCurrency(e.target.value)}
-                          className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-emerald-500/40 focus:border-emerald-500/60 rounded-xl px-2 py-2 text-[11px] font-bold text-neutral-900 dark:text-neutral-100 outline-none transition-all"
+                          className="w-full bg-white dark:bg-white/[0.04] border border-black/[0.10] dark:border-white/[0.08] hover:border-win/40 focus:border-win/60 rounded-xl px-2 py-2 text-[11px] font-bold text-tx-primary outline-none transition-all"
                         >
                           <option value="ARS">ARS</option>
                           <option value="USD">USD</option>
@@ -726,7 +724,7 @@ export default function CreateTournamentModal({
 
                     {/* Distribution presets */}
                     <div>
-                      <p className="text-[10px] font-bold tracking-[0.12em] uppercase text-neutral-500 dark:text-neutral-400 mb-2">
+                      <p className="text-[10px] font-bold tracking-[0.12em] uppercase text-tx-caption mb-2">
                         Distribución
                       </p>
                       <div className="flex gap-2 flex-wrap">
@@ -737,8 +735,8 @@ export default function CreateTournamentModal({
                             onClick={() => applyPrizePreset(idx)}
                             className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-[0.06em] uppercase transition-all border ${
                               activePrizePreset === idx
-                                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                                : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-neutral-500 dark:text-neutral-400 hover:border-emerald-500/40'
+                                ? 'bg-win/15 border-win/40 text-win'
+                                : 'bg-black/[0.04] dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.08] text-tx-caption hover:border-win/40'
                             }`}
                           >
                             {p.label}
@@ -755,10 +753,10 @@ export default function CreateTournamentModal({
                           { emoji: '🥈', label: '2.°', amount: prizeDistribution.second },
                           { emoji: '🥉', label: '3.°', amount: prizeDistribution.third  },
                         ]).map(({ emoji, label, amount }) => (
-                          <div key={label} className="flex flex-col items-center gap-1 p-3 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20">
+                          <div key={label} className="flex flex-col items-center gap-1 p-3 rounded-xl bg-win/[0.06] border border-win/20">
                             <span className="text-base">{emoji}</span>
-                            <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-emerald-500/70">{label}</span>
-                            <span className="font-mono font-bold text-[11px] text-emerald-400 tabular-nums">
+                            <span className="text-[9px] font-bold tracking-[0.1em] uppercase text-win/70">{label}</span>
+                            <span className="font-mono font-bold text-[11px] text-win tabular-nums">
                               {new Intl.NumberFormat('es-AR', { style: 'currency', currency: prizeCurrency, maximumFractionDigits: 0 }).format(amount)}
                             </span>
                           </div>
@@ -778,7 +776,7 @@ export default function CreateTournamentModal({
             <button
               type="button"
               onClick={() => setStep(s => (s - 1) as 1 | 2 | 3)}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-black/[0.10] dark:border-white/[0.08] text-neutral-600 dark:text-neutral-300 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-black/[0.10] dark:border-white/[0.08] text-tx-secondary text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               Atrás
@@ -794,7 +792,7 @@ export default function CreateTournamentModal({
               type="button"
               onClick={() => { if (canGoNext) setStep(s => (s + 1) as 2 | 3) }}
               disabled={!canGoNext}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
             >
               Siguiente
               <ChevronRight className="w-3.5 h-3.5" />
@@ -804,7 +802,7 @@ export default function CreateTournamentModal({
               type="button"
               onClick={() => { void handleSubmit() }}
               disabled={isSaving}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active disabled:opacity-40 disabled:cursor-not-allowed text-black text-[11px] font-bold tracking-[0.15em] uppercase transition-all"
             >
               {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trophy className="w-3.5 h-3.5" />}
               {isSaving ? 'Creando…' : 'Crear Torneo'}

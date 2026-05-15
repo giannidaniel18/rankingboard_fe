@@ -17,7 +17,16 @@
       "Bash(node *)",
       "Bash(Select-Object -First 20)",
       "Bash(Format-Table FullName)",
-      "Skill(frontend-design:frontend-design)"
+      "Skill(frontend-design:frontend-design)",
+      "Skill(ui-ux-pro-max:ui-ux-pro-max)",
+      "Bash(python3 *)",
+      "Skill(superpowers:brainstorming)",
+      "Read(//c/Users/danie/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"competitive gaming billiards pool tournament social dashboard premium dark\" --design-system -p \"RankingBoard\" -f markdown)",
+      "Bash(python scripts/search.py \"premium enterprise SaaS dark dashboard navy orange\" --domain style -n 5 -f markdown)"
     ]
+  },
+  "enabledPlugins": {
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
   }
 }

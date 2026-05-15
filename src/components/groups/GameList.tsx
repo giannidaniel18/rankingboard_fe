@@ -2,9 +2,9 @@
 import type { Game } from '@/types'
 
 const TYPE_STYLES: Record<Game['type'], string> = {
-  Board:  'text-amber-600  dark:text-amber-500  bg-amber-500/10  border-amber-500/20',
+  Board:  'text-brand-text dark:text-brand bg-brand/10 border-brand/20',
   eSport: 'text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20',
-  Sports: 'text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
+  Sports: 'text-win bg-win/10 border-win/20',
 }
 
 const TYPE_ICONS: Record<Game['type'], string> = {
@@ -20,13 +20,13 @@ export default async function GameList({ games, groupId: _ }: { games: Game[]; g
   return (
     <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
       <div className="px-4 py-3 border-b border-black/[0.08] dark:border-white/[0.07]">
-        <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
+        <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-primary">
           {dict.group.games}
         </h2>
       </div>
 
       {games.length === 0 ? (
-        <p className="text-sm text-neutral-400 dark:text-neutral-400 py-6 text-center">
+        <p className="text-sm text-tx-caption py-6 text-center">
           {dict.group.noGames}
         </p>
       ) : (
@@ -35,10 +35,10 @@ export default async function GameList({ games, groupId: _ }: { games: Game[]; g
             <li key={game.id} className="flex items-center gap-3 px-4 py-3">
               <span className="text-base leading-none shrink-0">{TYPE_ICONS[game.type]}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
+                <p className="text-sm font-medium text-tx-primary truncate">
                   {game.name}
                 </p>
-                <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-400 capitalize">
+                <p className="text-[11px] font-mono text-tx-caption capitalize">
                   {game.scoring_type} {dict.group.scoring}
                 </p>
               </div>

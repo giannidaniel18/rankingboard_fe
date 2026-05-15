@@ -12,7 +12,6 @@ function getTier(placement: number): PlacementTier {
   return 'other'
 }
 
-// 1224 rule: rank = index of first participant sharing the same placement + 1
 function computeRank(sorted: MatchParticipantDetail[], participant: MatchParticipantDetail): number {
   const firstIndex = sorted.findIndex(p => p.placement === participant.placement)
   return firstIndex + 1
@@ -26,16 +25,16 @@ const PLACEMENT_LABEL: Record<PlacementTier, string> = {
 }
 
 const PLACEMENT_CLASS: Record<PlacementTier, string> = {
-  1: 'text-amber-400 dark:text-amber-400 font-bold',
-  2: 'text-neutral-400 dark:text-neutral-300 font-semibold',
-  3: 'text-amber-700 dark:text-amber-600 font-semibold',
-  other: 'text-neutral-400 font-normal',
+  1:     'text-brand font-bold',
+  2:     'text-tx-secondary font-semibold',
+  3:     'text-bronze font-semibold',
+  other: 'text-tx-caption font-normal',
 }
 
 const ROW_ACCENT: Record<PlacementTier, string> = {
-  1: 'border-l-2 border-amber-500/60 pl-2',
-  2: 'border-l-2 border-neutral-400/25 pl-2',
-  3: 'border-l-2 border-amber-700/25 pl-2',
+  1:     'border-l-2 border-brand/60 pl-2',
+  2:     'border-l-2 border-tx-caption/25 pl-2',
+  3:     'border-l-2 border-bronze/30 pl-2',
   other: 'pl-[10px]',
 }
 
@@ -56,11 +55,7 @@ function relativeDate(date: Date): string {
 }
 
 function formatMatchDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(date))
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date))
 }
 
 function MatchCard({ match }: { match: MatchDetail }) {
@@ -70,30 +65,28 @@ function MatchCard({ match }: { match: MatchDetail }) {
   const hasScores = !isTournament && !allScoresZero && sorted.some(p => p.score !== undefined)
 
   return (
-    <div className={`border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-black/[0.015] dark:hover:bg-white/[0.015] transition-colors ${isTournament ? 'border-l-2 border-l-amber-500/50' : ''}`}>
-      {/* Match meta row */}
+    <div className={`border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 px-5 py-4 hover:bg-brand/[0.02] dark:hover:bg-white/[0.015] transition-colors ${isTournament ? 'border-l-2 border-l-brand/40' : ''}`}>
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-amber-500 dark:text-amber-400">
+          <span className="font-heading text-[10px] font-bold tracking-[0.18em] uppercase text-brand-text dark:text-brand">
             {match.gameName}
           </span>
           {isTournament && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[8px] font-bold tracking-[0.1em] uppercase bg-amber-500/10 text-amber-400 border-amber-500/20">
-              🏆 Torneo
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[8px] font-bold tracking-[0.1em] uppercase bg-brand/10 text-brand-text dark:text-brand border-brand/20">
+              Torneo
             </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 hidden sm:inline">
+          <span className="font-mono text-[10px] text-tx-caption hidden sm:inline">
             {formatMatchDate(match.date)}
           </span>
-          <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-500">
+          <span className="font-mono text-[10px] text-tx-caption">
             {relativeDate(match.date)}
           </span>
         </div>
       </div>
 
-      {/* Participants */}
       <div className="space-y-1">
         {sorted.map(p => {
           const rank = computeRank(sorted, p)
@@ -106,13 +99,13 @@ function MatchCard({ match }: { match: MatchDetail }) {
               </span>
               <span className={`text-[13px] leading-snug truncate ${
                 tier === 1
-                  ? 'text-neutral-900 dark:text-neutral-100 font-semibold'
-                  : 'text-neutral-600 dark:text-neutral-400 font-normal'
+                  ? 'text-tx-primary font-semibold'
+                  : 'text-tx-secondary font-normal'
               }`}>
                 {p.name}
               </span>
               {hasScores && p.score !== undefined && (
-                <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 ml-auto shrink-0 tabular-nums">
+                <span className="font-mono text-[10px] text-tx-caption ml-auto shrink-0 tabular-nums">
                   {p.score}pts
                 </span>
               )}
@@ -122,7 +115,7 @@ function MatchCard({ match }: { match: MatchDetail }) {
       </div>
 
       {match.comments && (
-        <p className="mt-2 text-[11px] text-neutral-400 dark:text-neutral-500 font-mono italic truncate">
+        <p className="mt-2 text-[11px] text-tx-caption font-mono italic truncate">
           {match.comments}
         </p>
       )}
@@ -132,8 +125,8 @@ function MatchCard({ match }: { match: MatchDetail }) {
 
 function FeedSkeleton() {
   return (
-    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden animate-pulse">
-      <div className="h-11 border-b border-black/[0.08] dark:border-white/[0.07] bg-black/[0.02] dark:bg-white/[0.02]" />
+    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.06] overflow-hidden animate-pulse">
+      <div className="h-11 border-b border-black/[0.08] dark:border-white/[0.06] bg-black/[0.02] dark:bg-white/[0.02]" />
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="px-5 py-4 border-b border-black/[0.05] dark:border-white/[0.05] last:border-0 space-y-2">
           <div className="flex justify-between">
@@ -153,8 +146,8 @@ function FeedSkeleton() {
 function EmptyState({ message = 'Aún no hay partidas' }: { message?: string }) {
   return (
     <div className="px-5 py-10 flex flex-col items-center gap-2 text-center">
-      <span className="font-mono text-2xl text-neutral-300 dark:text-neutral-700">◇</span>
-      <p className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-400 dark:text-neutral-500">
+      <span className="font-mono text-2xl text-tx-caption">◇</span>
+      <p className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-caption">
         {message}
       </p>
     </div>
@@ -200,21 +193,20 @@ export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
   const hasMatches = Boolean(matches && matches.length > 0)
 
   return (
-    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.07] overflow-hidden">
+    <div className="bg-surface rounded border border-black/[0.08] dark:border-white/[0.06] overflow-hidden">
       {/* Header */}
-      <div className="flex items-baseline justify-between px-5 py-3.5 border-b border-black/[0.08] dark:border-white/[0.07]">
-        <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-900 dark:text-neutral-100">
+      <div className="flex items-baseline justify-between px-5 py-3.5 border-b border-black/[0.08] dark:border-white/[0.06]">
+        <h2 className="font-heading text-[10px] font-bold tracking-[0.2em] uppercase text-tx-primary">
           Historial
         </h2>
-        <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+        <span className="font-mono text-[10px] text-tx-caption uppercase tracking-wider">
           {matches?.length ?? 0} partidas
         </span>
       </div>
 
-      {/* Filters — only shown when there are matches to filter */}
+      {/* Filters */}
       {hasMatches && (
-        <div className="px-5 py-3 border-b border-black/[0.08] dark:border-white/[0.07] space-y-3">
-          {/* Type pills */}
+        <div className="px-5 py-3 border-b border-black/[0.08] dark:border-white/[0.06] space-y-3">
           <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5">
             {([
               { value: 'all'        as TypeFilter, label: 'Todas'    },
@@ -227,8 +219,8 @@ export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
                 onClick={() => setTypeFilter(value)}
                 className={`shrink-0 px-4 py-2 rounded-full border text-[10px] font-bold tracking-[0.12em] uppercase transition-all min-h-[36px] ${
                   typeFilter === value
-                    ? 'bg-amber-500 border-amber-500 text-white'
-                    : 'border-black/[0.08] dark:border-white/[0.08] text-neutral-500 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-600 hover:text-neutral-700 dark:hover:text-neutral-200'
+                    ? 'bg-brand border-brand text-black'
+                    : 'border-black/[0.08] dark:border-white/[0.08] text-tx-caption hover:border-brand/30 hover:text-tx-secondary'
                 }`}
               >
                 {label}
@@ -236,20 +228,19 @@ export default function MatchHistoryFeed({ groupId }: { groupId: string }) {
             ))}
           </div>
 
-          {/* Game dropdown — only when more than one game exists */}
           {availableGames.length > 1 && (
             <div className="relative">
               <select
                 value={gameFilter}
                 onChange={e => setGameFilter(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-surface text-[11px] font-mono text-neutral-700 dark:text-neutral-300 focus:outline-none focus:border-amber-500/50 transition-colors appearance-none cursor-pointer min-h-[36px]"
+                className="w-full px-3 py-2 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-surface text-[11px] font-mono text-tx-secondary focus:outline-none focus:border-brand/40 transition-colors appearance-none cursor-pointer min-h-[36px]"
               >
                 <option value="all">Todos los juegos</option>
                 {availableGames.map(g => (
                   <option key={g.id} value={g.id}>{g.name}</option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-tx-caption">
                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                   <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
